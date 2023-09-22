@@ -45,7 +45,7 @@ pygame.display.set_icon(slimeImg)
 
 # This set of variables defines the displayed objects
 
-def initialize():
+def initializePlay():
     # build the land takes the background tiles and generates the scenery
     global BackGround
     global slime
@@ -74,7 +74,7 @@ def initialize():
     horde.add(monster2)
 
 
-initialize()
+initializePlay()
 logging.info("Game Initialized")
 while True:  # the main game loop
     # Instead of filling with white, lets make a tiling of the background and blit it here

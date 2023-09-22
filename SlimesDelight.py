@@ -296,6 +296,7 @@ class Slime(pygame.sprite.Sprite):
 
     # This is designed to make sure that when one facet of position is updated, all facets of the
     # position are updated, ensuring that Bip is where he appears to be
+        self.setPosition(self.slimex, self.slimey)
 
     def setPosition(self, x, y):
         self.slimex = x
