@@ -1,6 +1,3 @@
-# FIX ME: Monster is functional, but needs to be polymorphic. Add all the monsters into a group, and make all the function relating to them
-# act on the group. there are pygame functions for this.
-
 # add references from th eoverhead file for: WINX, WINY, FRAMERATE, DISPLAYSURF
 # This is the file for the main game loop, seperated from the class
 # implementation for bip yum
@@ -14,8 +11,19 @@ from MonsterMash import *
 import MonsterMash
 import Armory
 from Armory import *
-
 import logging
+from Overlay import *
+import pathlib
+#I'm going to create a .txt file called meta to store all the overhead information.
+#it will be a string of numbers and words delimited by :
+#In order, the data is currently:
+#Screen size X
+#Screen size Y
+
+data = (open('Meta.txt')).read()
+META = data.split(':')
+
+
 
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s - MAIN')
@@ -29,7 +37,8 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
 # with coordinated and properties.
 # from there, the update() call will hande
 # his positions and input for movement, etc.
-
+WINX = int(META[0])
+WINY = int(META[1])
 
 fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
@@ -51,6 +60,7 @@ def initializePlay():
     global slime
     global weapons
     global horde
+    global playerHealth
 
     BackGround = BuildTheLand(WINX, WINY)
     # create the player character
@@ -72,6 +82,7 @@ def initializePlay():
     monster2 = Monster()
     monster2.statBlock.setPos((200, 200))
     horde.add(monster2)
+    playerHealth = PlayerHealthBar()
 
 
 initializePlay()
@@ -82,10 +93,12 @@ while True:  # the main game loop
     global slime
     global weapons
     global horde
+    global playerHealth
 
     BackGround.draw(DISPLAYSURF)
     slime.update()
     weapons.update(slime)
+    playerHealth.update(slime)
     # for each monster in the horde, draw them on the screen in their current position if their health is above 0
     for monster in horde:
         if (monster.statBlock.HEALTH > 0):
@@ -97,6 +110,8 @@ while True:  # the main game loop
                 slime.takeDamage(monster)
     # draw the slime to the screen
     DISPLAYSURF.blit(slime.image, slime.position)
+    # Draw the Overlay
+    DISPLAYSURF.blit(playerHealth.HPBAR_SURFACE, playerHealth.pos)
     for sword in weapons:
         if (sword.swing):
             weapons.draw(DISPLAYSURF)

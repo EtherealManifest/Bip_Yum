@@ -4,6 +4,12 @@ import pygame, sys
 from pygame.locals import *
 from StatusBlock import *
 import StatusBlock
+import pathlib
+
+META = (open('Meta.txt')).read().split(':')
+
+WINX = int(META[0])
+WINY = int(META[1])
 
 pygame.init()
 moveDirection = ''
@@ -13,8 +19,6 @@ SLOWR = 1
 MOVET = 100  # determines how long to smooth the movement
 MOVER = 2  # This is used to determine slimes speed across the screen, it is the number of pixels moved per movement of input.
 FPS = 60  # Should match FPS in Main
-WINX = 600
-WINY = 600
 ANIMR = 300  # determines the animation rate, in frames. used in SmoothGrooves
 # These 2 lines are each one frame of animation, there may be an easier way to do this
 slimeImg1 = pygame.image.load('Slime0.png')
