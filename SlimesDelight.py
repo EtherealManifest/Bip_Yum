@@ -2,6 +2,8 @@
 # from StatusBlock import *
 import pygame, sys
 from pygame.locals import *
+from StatusBlock import *
+import StatusBlock
 
 pygame.init()
 moveDirection = ''
@@ -65,10 +67,10 @@ def SmoothGrooves(self):
     slimeImgRight = pygame.transform.flip(self.image, True, False)
 
 
-#   smooth moves is an attempt to smooth the on-screen movement.
-#   the implementation is that it will add less and less movement per frame after the movement button is released.
-#   This method is only called from the main game loop if no buttons are being pressed on the keyboard, and moveTime > 0.
-#   To create a slowing effect, the game will add movement to slime equal to the moveTime / moveRate, while moveRate approaches 0
+# smooth moves is an attempt to smooth the on-screen movement. the implementation is that it will add less and less
+# movement per frame after the movement button is released. This method is only called from the main game loop if no
+# buttons are being pressed on the keyboard, and moveTime > 0. To create a slowing effect, the game will add movement
+# to slime equal to the moveTime / moveRate, while moveRate approaches 0
 def smoothMoves(slime):
     # moveDirection = ''
     # moveRate = 0
@@ -101,6 +103,7 @@ def smoothMoves(slime):
     elif slime.direction == 'down-left':
         slime.slimex -= int(slowRate)
         slime.slimey += int(slowRate)
+    slime.setPosition(slime.slimex, slime.slimey)
 
 
 # Im turning slime into a sprite class, to make him easier to handle
@@ -112,7 +115,7 @@ class Slime(pygame.sprite.Sprite):
     moveRate = 0
     moveTime = 0
     direction = ''
-    position = (0, 0)
+    position = (slimex, slimey)
     jumpTick = 10  # sets the time for a jump.
     jumpHeight = 10  # the height of the jump [duh]
     jump = False  # flag for hopping
@@ -124,6 +127,8 @@ class Slime(pygame.sprite.Sprite):
     knockback = 0
     knockDirection = ''
 
+
+
     def __init__(self):
         # this initializes it as a sprite object by calling the Parent COnstructor
         pygame.sprite.Sprite.__init__(self)
@@ -133,13 +138,13 @@ class Slime(pygame.sprite.Sprite):
         # logging.info("PLAYER INITIALIZED: " + self.statBlock.showStats())
         # sets the slime sprite to this object
         self.image = slimeImg1
-        # these two lines dictate where slime wil spawn
-        slimex = WINX / 2
-        slimey = WINY / 2
-        self.position = (slimex, slimey)
-        self.statBlock.pos = self.position
         # defines the rectangle that bounds the sprite
         self.rect = self.image.get_rect()
+        # this line uses setPosition to set slimes position(across the board) to the
+        # center of the screen
+        self.slimex = 0
+        self.slimey = 0
+
         # defines his current position, a set of coordinates
         self.direction = ''
         self.slowRate = SLOWR
@@ -155,7 +160,7 @@ class Slime(pygame.sprite.Sprite):
         self.knockDirection = ''
 
     def update(self):
-
+        self.setPosition(self.slimex, self.slimey)
         # this is for the animation, it sets the sprite for the animation frame.
         SmoothGrooves(self)
         if (self.isHit):
@@ -289,12 +294,16 @@ class Slime(pygame.sprite.Sprite):
         elif (self.direction == 'right' or self.direction == 'up-right' or self.direction == 'down-right'):
             self.image = slimeImgRight
 
-    def setPositon(x, y):
+    # This is designed to make sure that when one facet of position is updated, all facets of the
+    # position are updated, ensuring that Bip is where he appears to be
+
+    def setPosition(self, x, y):
+        self.slimex = x
+        self.slimey = y
         self.position = (self.slimex, self.slimey)
         self.statBlock.pos = self.position
         self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
-
-    def getPosition():
+    def getPosition(self):
         return self.position
 
     def rectangle(self):
@@ -318,15 +327,3 @@ def initialize(pos_x=0, pos_y=0):
     slime = Slime();
     slime.slimex = pos_x
     slime.slimey = pos_y
-
-
-
-
-
-
-
-
-
-
-
-

@@ -41,50 +41,74 @@ DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 pygame.display.set_caption('Bip Yum')
 WHITE = (255, 255, 255)
 pygame.display.set_icon(slimeImg)
-# build the land takes the background tiles and generates the scenery
-BackGround = BuildTheLand(WINX, WINY)
 
-# create Bip Himself
-slime = Slime()
-# Create a sample Monster
 
-monster = Monster()
-monster.statBlock.setPos((100, 100))
-# THis is a container to hold the weapons. It will hold a dirtySprite weapon, that way it can be made
-# to appear and disappear with each swing
-weapons = pygame.sprite.Group()
-# create a new weapon called sword
-sword = Weapon()
-weapons.add(sword)
-# This is where the little man is born, keep track of it
+# This set of variables defines the displayed objects
 
-# Trying to do the fight scenes in another program isnt working, so I need this main part to
-# Move to another part locally, otherwie it keeps executing the true loop, causing major bugs.
+def initialize():
+    # build the land takes the background tiles and generates the scenery
+    global BackGround
+    global slime
+    global weapons
+    global horde
 
-# I've decided to do an action-RPG instead (A-la a Link to the Past.) Instead of having a battle scene, its
-# Gonna be a sword swing action, tied to the mouse click)
+    BackGround = BuildTheLand(WINX, WINY)
+    # create the player character
+    # create Bip Himself
+    slime = Slime()
+    # create the weapon array
+    weapons = pygame.sprite.Group()
+    # For now, add a weapon. in the future, have a method to read this in from a file
+    sword = Weapon()
+    weapons.add(sword)
+
+    # create the monster group
+    horde = pygame.sprite.Group()
+    # For now, add a monster. in the future, have a method to read this in from a file
+    monster = Monster()
+    monster.statBlock.setPos((100, 100))
+    horde.add(monster)
+    # add another monster for funsies
+    monster2 = Monster()
+    monster2.statBlock.setPos((200, 200))
+    horde.add(monster2)
+
+
+initialize()
 logging.info("Game Initialized")
 while True:  # the main game loop
     # Instead of filling with white, lets make a tiling of the background and blit it here
+    global BackGround
+    global slime
+    global weapons
+    global horde
+
     BackGround.draw(DISPLAYSURF)
     slime.update()
     weapons.update(slime)
-    # draw Slime to the screen, with any potential updates accounted for.
-    if (monster.statBlock.HEALTH > 0):
-        monster.update(slime)
-        DISPLAYSURF.blit(monster.image, (monster.position))
-        DISPLAYSURF.blit(monster.statBlock.HealthBar.HPBAR_SURFACE, (monster.position))
-        # this checks to see if slime is touched by an enemy.
-        if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), monster.rect)):
-            slime.takeDamage(monster)
+    # for each monster in the horde, draw them on the screen in their current position if their health is above 0
+    for monster in horde:
+        if (monster.statBlock.HEALTH > 0):
+            monster.update(slime)
+            DISPLAYSURF.blit(monster.image, (monster.position))
+            DISPLAYSURF.blit(monster.statBlock.HealthBar.HPBAR_SURFACE, (monster.position))
+            # this checks to see if slime is touched by an enemy.
+            if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), monster.rect)):
+                slime.takeDamage(monster)
+    # draw the slime to the screen
     DISPLAYSURF.blit(slime.image, slime.position)
-    if (sword.swing):
-        weapons.draw(DISPLAYSURF)
-        if (pygame.sprite.collide_rect(sword, monster) and monster.statBlock.HEALTH > 0):
-            # logging.info("Enemy has been hit by sword")
-            monster.takeDamage(slime)
-    if (slime.statBlock.HEALTH <= 0):
-        exit()
+    for sword in weapons:
+        if (sword.swing):
+            weapons.draw(DISPLAYSURF)
+            # check to see if any monsters are hit by the sword
+            for monster in horde:
+                if (pygame.sprite.collide_rect(sword, monster) and monster.statBlock.HEALTH > 0):
+                    # logging.info("Enemy has been hit by sword")
+                    monster.takeDamage(slime)
+        # I am become death, destroyer of slimes
+        if (slime.statBlock.HEALTH <= 0):
+            # for now, just exit. In the future, display a death message and then reset the scenario
+            exit()
 
     for event in pygame.event.get():
         if event.type == QUIT:
