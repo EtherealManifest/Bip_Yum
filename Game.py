@@ -60,6 +60,7 @@ def initializePlay():
     global slime
     global weapons
     global horde
+    #change playerHealth to OverLay
     global playerHealth
 
     BackGround = BuildTheLand(WINX, WINY)
