@@ -61,8 +61,7 @@ def initializePlay():
     global weapons
     global horde
     #change playerHealth to OverLay
-    global playerHealth
-
+    global overlay
     BackGround = BuildTheLand(WINX, WINY)
     # create the player character
     # create Bip Himself
@@ -83,7 +82,7 @@ def initializePlay():
     monster2 = Monster()
     monster2.statBlock.setPos((200, 200))
     horde.add(monster2)
-    playerHealth = PlayerHealthBar()
+    overlay = Overlay()
 
 
 initializePlay()
@@ -94,12 +93,12 @@ while True:  # the main game loop
     global slime
     global weapons
     global horde
-    global playerHealth
+    global overlay
 
     BackGround.draw(DISPLAYSURF)
     slime.update()
     weapons.update(slime)
-    playerHealth.update(slime)
+    overlay.update(slime)
     # for each monster in the horde, draw them on the screen in their current position if their health is above 0
     for monster in horde:
         if (monster.statBlock.HEALTH > 0):
@@ -112,7 +111,7 @@ while True:  # the main game loop
     # draw the slime to the screen
     DISPLAYSURF.blit(slime.image, slime.position)
     # Draw the Overlay
-    DISPLAYSURF.blit(playerHealth.HPBAR_SURFACE, playerHealth.pos)
+    DISPLAYSURF.blit(overlay, (0,0))
     for sword in weapons:
         if (sword.swing):
             weapons.draw(DISPLAYSURF)
