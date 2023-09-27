@@ -72,7 +72,7 @@ def initializePlay():
     sword = Weapon()
     weapons.add(sword)
 
-    # create the monster group
+    # create the monster groups
     horde = pygame.sprite.Group()
     # For now, add a monster. in the future, have a method to read this in from a file
     monster = Monster()
@@ -87,47 +87,51 @@ def initializePlay():
 
 initializePlay()
 logging.info("Game Initialized")
-while True:  # the main game loop
-    # Instead of filling with white, lets make a tiling of the background and blit it here
-    global BackGround
-    global slime
-    global weapons
-    global horde
-    global overlay
+def gameplay():
+    while True:  # the main game loop
+        # Instead of filling with white, lets make a tiling of the background and blit it here
+        global BackGround
+        global slime
+        global weapons
+        global horde
+        global overlay
 
-    BackGround.draw(DISPLAYSURF)
-    slime.update()
-    weapons.update(slime)
-    overlay.update(slime)
-    # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-    for monster in horde:
-        if (monster.statBlock.HEALTH > 0):
-            monster.update(slime)
-            DISPLAYSURF.blit(monster.image, (monster.position))
-            DISPLAYSURF.blit(monster.statBlock.HealthBar.HPBAR_SURFACE, (monster.position))
-            # this checks to see if slime is touched by an enemy.
-            if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), monster.rect)):
-                slime.takeDamage(monster)
-    # draw the slime to the screen
-    DISPLAYSURF.blit(slime.image, slime.position)
-    # Draw the Overlay
-    DISPLAYSURF.blit(overlay, (0,0))
-    for sword in weapons:
-        if (sword.swing):
-            weapons.draw(DISPLAYSURF)
-            # check to see if any monsters are hit by the sword
-            for monster in horde:
-                if (pygame.sprite.collide_rect(sword, monster) and monster.statBlock.HEALTH > 0):
-                    # logging.info("Enemy has been hit by sword")
-                    monster.takeDamage(slime)
-        # I am become death, destroyer of slimes
-        if (slime.statBlock.HEALTH <= 0):
-            # for now, just exit. In the future, display a death message and then reset the scenario
-            exit()
+        BackGround.draw(DISPLAYSURF)
+        slime.update()
+        weapons.update(slime)
+        overlay.update(slime)
+        # for each monster in the horde, draw them on the screen in their current position if their health is above 0
+        for monster in horde:
+            if (monster.statBlock.HEALTH > 0):
+                monster.update(slime)
+                DISPLAYSURF.blit(monster.image, (monster.position))
+                DISPLAYSURF.blit(monster.statBlock.HealthBar.HPBAR_SURFACE, (monster.position))
+                # this checks to see if slime is touched by an enemy.
+                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), monster.rect)):
+                    slime.takeDamage(monster)
 
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-    pygame.display.update()
-    fpsClock.tick(FPS)
+        # Draw the Overlay
+        DISPLAYSURF.blit(overlay, (0,0))
+        for sword in weapons:
+            if (sword.swing):
+                weapons.draw(DISPLAYSURF)
+                # check to see if any monsters are hit by the sword
+                for monster in horde:
+                    if (pygame.sprite.collide_rect(sword, monster) and monster.statBlock.HEALTH > 0):
+                        # logging.info("Enemy has been hit by sword")
+                        monster.takeDamage(slime)
+            # I am become death, destroyer of slimes
+            if (slime.statBlock.HEALTH <= 0):
+                # for now, just exit. In the future, display a death message and then reset the scenario
+                exit()
+
+        # draw the slime to the screen
+        DISPLAYSURF.blit(slime.image, slime.position)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.display.update()
+        fpsClock.tick(FPS)
+
+gameplay()
