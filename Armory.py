@@ -5,12 +5,20 @@ from SlimesDelight import *
 import logging
 import math
 
+data = (open('Meta.txt')).read()
+META = data.split(':')
+
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s - MAIN')
 
+#Ive added a few sprite styles for this. if you want to check them out,
+#try entering new colors. each color has a different size, though they all
+#have the same power.
 weaponDefaultImg = pygame.image.load('blue_sword_sprite.png')
 # sets how long the sword swing lasts
-SWINGTIME = 15
+#this is read in from the Meta.txt file. To see the arrangement of the items in the file,
+#see the comments on Game.py
+SWINGTIME = int(META[2])
 
 
 # These are placeholder animations
@@ -67,75 +75,6 @@ class Weapon(pygame.sprite.Sprite):
         swingTick = 0
         facingRight = False
 
-    def weaponPosition(self, player, SWINGTIME, elapsed, swingAngle, startAngle):
-        # the swing angle is the total arc that the sword will take
-        swingAngle = math.radians(swingAngle)
-        # the starting angle is the degrees counterclockwise from the horizontal the swing should start at
-        startAngle = math.radians(startAngle)
-        if elapsed == 0:
-            self.angle = startAngle
-        else:
-            self.angle = startAngle - ((SWINGTIME / elapsed) * swingAngle)
-        self.pos = (
-            player.rect.x + (player.rect.width * (math.cos(self.angle))),
-            player.rect.y + (player.rect.height * (math.sin(self.angle)))
-        )
-        self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-        self.angle = math.degrees(self.angle)
-        # rotate the image accordingly
-        self.image = pygame.transform.rotate(self.image, -self.angle - 90)
-
-    def update(self, player):
-        # it is positioned at the top of the slime, then moved back to
-        # center the blade.
-        # MAY NEED TUNING
-        # this will all be implemented in position()
-        self.position(player)
-        self.image = weaponDefaultImg
-        # the documentsataion said to call get() before get_pressed()
-        pygame.event.get()
-        # if the mouse is clicked, swing the sword
-        # I'm gonna coordinate this as if he is facing left always.
-        # if he faces right, Im going to just flip everything and move it
-        if not self.swing:
-            if pygame.mouse.get_pressed()[0]:
-                self.swing = True
-                self.swingTick = SWINGTIME
-
-        if self.swing == True:
-            # I want to optimize this. I want to make the swing angle
-            # and the position a function of the time
-            if self.direction == 'up':
-                if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, -115, 135)
-                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-                else:
-                    self.swing = False
-            elif self.direction == 'down':
-                if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, -115, 310)
-                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-                else:
-                    self.swing = False
-
-            # if slime is facing left, the swing angle needs to be negative
-            elif (self.direction == 'left' or self.direction == 'down-left'
-                  or self.direction == 'up-left'):
-                if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, -115, 135)
-                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-                else:
-                    self.swing = False
-            # if the player is facing right, then Acoomodate and adjust accordingly
-            else:
-                if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, -115, 135)
-                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-                else:
-                    self.swing = False
-            # decrement the swing counter
-            self.swingTick = self.swingTick - 1
-            # logging.info("Weapon rect Coordinates (" + str(self.rect.x) + ", " + str(self.rect.y) + ")")
 
     '''Alright, big explain here. this is an attempt at creating a method that will
     Uniformly generate the position and angle of the weapon based on its current
@@ -145,3 +84,76 @@ class Weapon(pygame.sprite.Sprite):
     the amount of time elapsed (SWINGTIME - swingtime), the total angle that this
     sword swing will occupy(in degrees), and the starting angle(also in degrees)
     '''
+    def weaponPosition(self, player, SWINGTIME, elapsed, swingAngle, startAngle):
+        # the swing angle is the total arc that the sword will take
+        #these numbers are long, so i decided to declare them here.
+        #they are the necessary offset that is added to the position determiner
+        adjustX = (player.rect.width + self.rect.height / 3)
+        adjustY = (player.rect.height + self.rect.height / 3)
+        swingAngle = math.radians(swingAngle)
+        # the starting angle is the degrees counterclockwise from the horizontal the swing should start at
+        startAngle = math.radians(startAngle)
+        if elapsed == 0:
+            self.angle = startAngle + swingAngle
+        else:
+            self.angle = startAngle + ((elapsed/SWINGTIME ) * swingAngle)
+        self.pos = (
+            player.rect.x + (adjustX * (math.cos(self.angle)) - self.rect.width/2),
+            player.rect.y + (adjustY * (math.sin(self.angle))) - self.rect.width/2)
+        self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+        self.angle = math.degrees(self.angle)
+        # rotate the image accordingly
+        self.image = pygame.transform.rotate(self.image, -self.angle - 90)
+        #update (called once per frame)
+    def update(self, player):
+        # it is positioned at the top of the slime, then moved back to
+        # center the blade.
+        # MAY NEED TUNING
+        # this will all be implemented in position()
+        self.position(player)
+        self.image = weaponDefaultImg
+        # the documentataion said to call get() before get_pressed()
+        pygame.event.get()
+        # if the mouse is clicked, swing the sword
+        if not self.swing:
+            if pygame.mouse.get_pressed()[0]:
+                self.swing = True
+                self.swingTick = SWINGTIME
+                self.angle = 0
+        #if sword is swinging, determine the direction, and then pass the corresponding parameters to
+        #weaponPosition()
+        if self.swing == True:
+            if self.direction == 'up':
+                if (self.swingTick > 0):
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, -180)
+                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+                else:
+                    self.swing = False
+            elif self.direction == 'down':
+                if (self.swingTick > 0):
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, 0)
+                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+                else:
+                    self.swing = False
+
+            # if slime is facing left, the swing angle needs to be negative
+            elif (self.direction == 'left' or self.direction == 'down-left'
+                  or self.direction == 'up-left'):
+                if (self.swingTick > 0):
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, 90)
+                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+                else:
+                    self.swing = False
+
+            # if the player is facing right, then Acoomodate and adjust accordingly
+            else:
+                if (self.swingTick > 0):
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, -180, 90)
+                    self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+                else:
+                    self.swing = False
+            # decrement the swing counter
+            self.swingTick = self.swingTick - 1
+            # logging.info("Weapon rect Coordinates (" + str(self.rect.x) + ", " + str(self.rect.y) + ")")
+
+

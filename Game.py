@@ -19,6 +19,8 @@ import pathlib
 #In order, the data is currently:
 #Screen size X
 #Screen size Y
+#SWINGTIME
+#FRAMERATE
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -42,7 +44,7 @@ WINY = int(META[1])
 
 fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
-FPS = 60  # frames per second setting, there is a copy in BIPYUM1 that should be the same
+FPS = int(META[3])  # frames per second setting, there is a copy in BIPYUM1 that should be the same
 # This sets the size of the display
 DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 
