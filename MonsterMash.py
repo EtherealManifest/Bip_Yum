@@ -3,13 +3,24 @@ from StatusBlock import *
 from SlimesDelight import *
 import SlimesDelight
 import logging
+from pathlib import Path
+import os
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO, format='%(asctime)s -  %(levelname)s -  %(message)s  - MONSTER')
 
 MonsterMoveSpeed = 1
 #the amount of time the monster is knocked back after being hit
 HITTIME = 10
+#this part will import (for now) all the enemy sprites and adds them to an array
+GraveYardSmash = []
+
+monsterList = os.listdir('./EnemySprites/')
+
+for sprite in monsterList:
+    temp = Path('./EnemySprites/' + sprite)
+    GraveYardSmash.append(pygame.image.load(temp))
+
 #not the acidity of the enemy, but the PlaceHolder for the sprite
-EnemyPH = pygame.image.load('skull_enemy_0.png')
+EnemyPH = GraveYardSmash[0]
 class Monster(pygame.sprite.Sprite):
     statBlock = StatBlock()
     monsterX = 0

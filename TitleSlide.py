@@ -3,6 +3,8 @@ from pygame.locals import *
 import random
 import sys
 import GroundMaker
+import os
+from pathlib import Path
 
 # in meta, the size of the screen is recorded. Get it
 META = (open('Meta.txt').read()).split(':')
@@ -12,13 +14,21 @@ fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
 FPS = int(META[3]) - 30  # frames per second setting
 
+#this is for the BIP YUM text, it will be 1/5 at high as the screen
+font = pygame.font.SysFont("Times New Roman", int(WINY/5))
+NameOfTheGame = font.render("Bip Yum", False, (255,225,255))
+GameNamePOS = (((WINX / 2) - NameOfTheGame.get_width()/2), (WINY/2) - NameOfTheGame.get_height()/2)
+
+
 openSky = pygame.Surface((WINX, WINY))
-clouds1 = pygame.image.load('Cloud_1.png')
-clouds2 = pygame.image.load('Cloud_2.png')
-clouds3 = pygame.image.load('Cloud_3.png')
-clouds4 = pygame.image.load('Cloud_4.png')
-clouds5 = pygame.image.load('Cloud_5.png')
-cloudArray = [clouds1, clouds2, clouds3, clouds4, clouds5]
+cloudArray = []
+# Cloud list, which is used to put the actual clouds in the actual sky
+cloudList = os.listdir('./CloudSprites/')
+
+for panel in cloudList:
+    temp = Path('./CloudSprites/' + panel)
+    cloudArray.append(pygame.image.load(temp))
+
 cloudGroup = pygame.sprite.Group()
 cloudMoveSpeed = 1
 #number of clouds to render
@@ -84,9 +94,6 @@ class Cloud(pygame.sprite.Sprite):
         #now update the blitting location
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
-
-
-
 def setTheSkies():
     for i in range(0, cloudNum + 1):
         newCloud = Cloud()
@@ -101,6 +108,11 @@ def runTitle(DISPLAYSURF):
     cloudGroup.draw(openSky)
     DISPLAYSURF.blit(openSky, (0,0))
     Grass = GroundMaker.PlantTheGrass(WINX, WINY)
+
+    #buttons
+
+    #title Text:
+
     while True:
         cloudGroup.update()
         #when the user makes a selection, return the selection to Game.py
@@ -108,12 +120,21 @@ def runTitle(DISPLAYSURF):
         cloudGroup.draw(openSky)
         Grass.draw(openSky)
         DISPLAYSURF.blit(openSky, (0,0))
+        # blit the text onto the screen
+        DISPLAYSURF.blit(NameOfTheGame, GameNamePOS)
+
+
+        #poll for user input.
+        #if they click the "Game" Button,
+        #create a "Game" event and put it on the queue, then return to the
+        #Game.py Loop.
 
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
         pygame.display.update()
         fpsClock.tick(FPS)
 

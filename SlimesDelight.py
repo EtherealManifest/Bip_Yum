@@ -4,7 +4,9 @@ import pygame, sys
 from pygame.locals import *
 from StatusBlock import *
 import StatusBlock
-import pathlib
+from pathlib import Path
+
+
 
 META = (open('Meta.txt')).read().split(':')
 
@@ -20,15 +22,18 @@ MOVET = 100  # determines how long to smooth the movement
 MOVER = 2  # This is used to determine slimes speed across the screen, it is the number of pixels moved per movement of input.
 FPS = 60  # Should match FPS in Main
 ANIMR = 300  # determines the animation rate, in frames. used in SmoothGrooves
-# These 2 lines are each one frame of animation, there may be an easier way to do this
-slimeImg1 = pygame.image.load('Slime0.png')
-slimeImg2 = pygame.image.load('Slime1.png')
-frontSlime1 = pygame.image.load('front_slime_sprite_0.png')
-frontSlime2 = pygame.image.load('front_slime_sprite_1.png')
-backSlime1 = pygame.image.load('back_slime_sprite_0.png')
-backSlime2 = pygame.image.load('back_slime_sprite_1.png')
+# I have finally organized my files, and there is some wild pathing involved with
+# Loading the right sprite to the right place.
+SlimeImgPath = Path('./SlimyIdleFrames/')
+
+slimeImg1 = pygame.image.load(Path(SlimeImgPath / 'Slime0.png'))
+slimeImg2 = pygame.image.load(Path(SlimeImgPath / 'Slime1.png'))
+frontSlime1 = pygame.image.load(Path(SlimeImgPath / 'front_slime_sprite_0.png'))
+frontSlime2 = pygame.image.load(Path(SlimeImgPath / 'front_slime_sprite_1.png'))
+backSlime1 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_0.png'))
+backSlime2 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_1.png'))
 # This is an old placeholder
-slimeImg = pygame.image.load('SlimeOld.png')
+slimeImg = pygame.image.load(Path(SlimeImgPath / 'SlimeOld.png'))
 jumpTick = 10  # sets the time for a jump.
 jumpHeight = 10  # the height of the jump [duh]
 jump = False  # flag for hopping

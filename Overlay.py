@@ -16,12 +16,11 @@ HealthBar = pygame.sprite.Sprite()
 HPBARWIDE = (2 / 3) * WINY
 HPBARHIGH = ((1 / 50) * WINX) + 15
 
-# This initializes the font module as using "monospace"
+# This initializes the font module as using "Planet Comic" Font
 # May change this later
 font = pygame.font.SysFont("Planet Comic", math.ceil(1.2 * HPBARHIGH))
 
 
-# it will include the Health Bar for the Slime
 
 
 class PlayerHealthBar(pygame.sprite.Sprite):

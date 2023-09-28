@@ -139,5 +139,9 @@ def gameplay():
 #Program Start
 initializePlay()
 logging.info("Game Initialized")
-titleScreen()
+#titleScreen()
+#when TitleScreen Returns, it will have an Event generated.
+#Currently, the only two events to be implemented are the
+#"go to gameplay" event to move to the gameplay loop
+# and the "quit" event that ends the game
 gameplay()

@@ -4,6 +4,7 @@ import SlimesDelight
 from SlimesDelight import *
 import logging
 import math
+from pathlib import Path
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -14,7 +15,9 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
 #Ive added a few sprite styles for this. if you want to check them out,
 #try entering new colors. each color has a different size, though they all
 #have the same power.
-weaponDefaultImg = pygame.image.load('blue_sword_sprite.png')
+weaponName = 'green_sword_sprite.png'
+imgPath = Path("./Weapon Sprites/" + weaponName)
+weaponDefaultImg = pygame.image.load(imgPath)
 
 
 # sets how long the sword swing lasts

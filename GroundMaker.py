@@ -1,23 +1,27 @@
-import pygame, sys, random
+import pygame, sys, random, os
+from pathlib import Path
 from pygame.locals import *
 pygame.init()
 
+
+# this is the path to the panel folder, the loop below it loads all of them in to the
+# grasspanels list, which is used to build the background
+panelList = os.listdir('./GroundPanels/')
+
+grassTiles = []
 #These are grass tiles. they are all 100 px x 100 px
-Grass0 = pygame.image.load('Grass_0.png')
-Grass1 = pygame.image.load('Grass_1.png')
-Grass2 = pygame.image.load('Grass_2.png')
-Grass3 = pygame.image.load('Grass_3.png')
-Grass4 = pygame.image.load('Grass_4.png')
-Grass5 = pygame.image.load('Grass_5.png')
-Grass6 = pygame.image.load('Grass_6.png')
-Grass7 = pygame.image.load('Grass_7.png')
+for panel in panelList:
+    temp = Path('./GroundPanels/' + panel)
+    grassTiles.append(pygame.image.load(temp))
 
-#these are plant tiles for the Title screen. They are sorted into groupd of three, each
-#corresponding to a full animation cycle for one image. 
-Plant0 = pygame.image.load('plant_sprite_0.png')
-Plant1 = pygame.image.load('plant_sprite_1.png')
 
-plantTiles = [Plant0,Plant1]
+# loads the plant panels in, just like the grass panels
+plantTiles = []
+panelList = os.listdir('./PlantPanels/')
+for panel in panelList:
+    temp = Path('./PlantPanels/' + panel)
+    plantTiles.append(pygame.image.load(temp))
+
 ThePlants = pygame.sprite.Group()
 
 class Grass(pygame.sprite.Sprite):
@@ -43,7 +47,7 @@ class Plant(pygame.sprite.Sprite):
 
 
 
-grassTiles = [Grass0, Grass1, Grass2, Grass3, Grass4, Grass5, Grass6, Grass7]
+
 
 TheLand = pygame.sprite.Group()
 
