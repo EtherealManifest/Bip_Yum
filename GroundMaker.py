@@ -18,6 +18,7 @@ Plant0 = pygame.image.load('plant_sprite_0.png')
 Plant1 = pygame.image.load('plant_sprite_1.png')
 
 plantTiles = [Plant0,Plant1]
+ThePlants = pygame.sprite.Group()
 
 class Grass(pygame.sprite.Sprite):
     position = (0,0)
@@ -27,26 +28,25 @@ class Grass(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.position = (0,0)
-    def update(DispSurf, self):
-        TheLand.draw(DispSurf)
 
 class Plant(pygame.sprite.Sprite):
     position = (0,0)
-
     def __init__(self, img):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
-        self.rect = self.img.get_rect()
+        self.rect = self.image.get_rect()
         self.position = (0,0)
     def update(DispSurf, self):
         ThePlants.draw(DispSurf)
 
 
 
+
+
 grassTiles = [Grass0, Grass1, Grass2, Grass3, Grass4, Grass5, Grass6, Grass7]
 
 TheLand = pygame.sprite.Group()
-ThePlants = pygame.sprite.Group()
+
 
 
 def BuildTheLand(width, height):

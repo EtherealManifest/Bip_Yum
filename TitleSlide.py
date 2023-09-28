@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 import sys
+import GroundMaker
 
 # in meta, the size of the screen is recorded. Get it
 META = (open('Meta.txt').read()).split(':')
@@ -9,7 +10,7 @@ WINX = int(META[0])
 WINY = int(META[1])
 fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
-FPS = int(META[3])  # frames per second setting
+FPS = int(META[3]) - 30  # frames per second setting
 
 openSky = pygame.Surface((WINX, WINY))
 clouds1 = pygame.image.load('Cloud_1.png')
@@ -25,6 +26,8 @@ cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
 cloudMoveDirection = 1
+
+
 
 
 # add a method that will paint the background blue and set some clouds to scroll
@@ -97,12 +100,15 @@ def runTitle(DISPLAYSURF):
     # to a surface, then blits the surfaces together.
     cloudGroup.draw(openSky)
     DISPLAYSURF.blit(openSky, (0,0))
+    Grass = GroundMaker.PlantTheGrass(WINX, WINY)
     while True:
         cloudGroup.update()
         #when the user makes a selection, return the selection to Game.py
         openSky.fill((25,186,255))
         cloudGroup.draw(openSky)
+        Grass.draw(openSky)
         DISPLAYSURF.blit(openSky, (0,0))
+
 
         for event in pygame.event.get():
             if event.type == QUIT:
