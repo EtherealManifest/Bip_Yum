@@ -14,6 +14,7 @@ from Armory import *
 import logging
 from Overlay import *
 import pathlib
+import TitleSlide
 #I'm going to create a .txt file called meta to store all the overhead information.
 #it will be a string of numbers and words delimited by :
 #In order, the data is currently:
@@ -54,8 +55,9 @@ WHITE = (255, 255, 255)
 pygame.display.set_icon(slimeImg)
 
 
-# This set of variables defines the displayed objects
-
+#this method will be used to render the title screen, which is the next project
+def titleScreen():
+    TitleSlide.runTitle(DISPLAYSURF)
 def initializePlay():
     # build the land takes the background tiles and generates the scenery
     global BackGround
@@ -86,9 +88,6 @@ def initializePlay():
     horde.add(monster2)
     overlay = Overlay()
 
-
-initializePlay()
-logging.info("Game Initialized")
 def gameplay():
     while True:  # the main game loop
         # Instead of filling with white, lets make a tiling of the background and blit it here
@@ -136,4 +135,9 @@ def gameplay():
         pygame.display.update()
         fpsClock.tick(FPS)
 
+
+#Program Start
+initializePlay()
+logging.info("Game Initialized")
+titleScreen()
 gameplay()

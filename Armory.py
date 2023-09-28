@@ -15,6 +15,8 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
 #try entering new colors. each color has a different size, though they all
 #have the same power.
 weaponDefaultImg = pygame.image.load('blue_sword_sprite.png')
+
+
 # sets how long the sword swing lasts
 #this is read in from the Meta.txt file. To see the arrangement of the items in the file,
 #see the comments on Game.py
