@@ -5,6 +5,7 @@ import sys
 import GroundMaker
 import os
 from pathlib import Path
+import Button
 
 # in meta, the size of the screen is recorded. Get it
 META = (open('Meta.txt').read()).split(':')
@@ -14,9 +15,14 @@ fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
 FPS = int(META[3]) - 30  # frames per second setting
 
+#initializez the music mixer
+pygame.mixer.init()
+TitleScreenMusicPath = Path('./Music(not Owned)/Xenoblade 3_ Title Menu Screen Music.mp3')
+TitleScreenMusic = pygame.mixer.Sound(TitleScreenMusicPath)
+
 #this is for the BIP YUM text, it will be 1/5 at high as the screen
-font = pygame.font.SysFont("Times New Roman", int(WINY/5))
-NameOfTheGame = font.render("Bip Yum", False, (255,225,255))
+font = pygame.font.SysFont("Planet Comic", int(WINY/5))
+NameOfTheGame = font.render("Bip Yum", False, (0,0,0))
 GameNamePOS = (((WINX / 2) - NameOfTheGame.get_width()/2), (WINY/2) - NameOfTheGame.get_height()/2)
 
 
@@ -36,7 +42,6 @@ cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
 cloudMoveDirection = 1
-
 
 
 
@@ -89,15 +94,26 @@ class Cloud(pygame.sprite.Sprite):
             self.pos[1] += cloudMoveSpeed
         # if the cloud is completely off screen, set it to a random height and
         # scroll it from the other side
-        if (self.pos[0] < -self.rect.width):
+        if (self.pos[0] < -self.rect.width - 60):
             self.pos[0], self.pos[1] = (WINX, (random.randint(0, WINY)))
         #now update the blitting location
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+
+
 
 def setTheSkies():
     for i in range(0, cloudNum + 1):
         newCloud = Cloud()
         cloudGroup.add(newCloud)
+
+def changeTheSkies(currClouds):
+    for cloud in currClouds:
+        if cloud.pos[0] < -cloud.rect.width:
+            cloud = Cloud()
+
+#def checkClicked():
+
+
 def runTitle(DISPLAYSURF):
     #Program Start:
     openSky.fill((25, 186, 255))
@@ -108,12 +124,20 @@ def runTitle(DISPLAYSURF):
     cloudGroup.draw(openSky)
     DISPLAYSURF.blit(openSky, (0,0))
     Grass = GroundMaker.PlantTheGrass(WINX, WINY)
-
+    # this is the first time I've tried music! see if we cant put some music
+    # in the background!
+    TitleScreenMusic.play(-1)
     #buttons
+    start_button = Button.Button()
+    start_button.modify(_pos = (WINX/2 - start_button.get_rect().width/2, 2*WINY/3), _text = "START",
+                        _label = "start-button")
 
-    #title Text:
 
+
+    #title Text
+    status = ""
     while True:
+        changeTheSkies(cloudGroup)
         cloudGroup.update()
         #when the user makes a selection, return the selection to Game.py
         openSky.fill((25,186,255))
@@ -122,7 +146,22 @@ def runTitle(DISPLAYSURF):
         DISPLAYSURF.blit(openSky, (0,0))
         # blit the text onto the screen
         DISPLAYSURF.blit(NameOfTheGame, GameNamePOS)
+        #ButtonClicked()
+        #Load the button
+        DISPLAYSURF.blit(start_button, start_button.pos)
+        start_button.is_hovered = False
 
+        # check to see if the mouse is positioned over the start button
+        if(start_button.isHovered(pygame.mouse.get_pos())):
+            #set the cursor to a focused cursor
+            start_button.is_hovered = True
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            #if the left button is clicked
+            if(pygame.mouse.get_pressed() ==  (1,0,0)):
+                start_button.is_clicked = True
+            status = start_button.update()
+        if status == "start-button":
+            return "start-game"
 
         #poll for user input.
         #if they click the "Game" Button,
@@ -132,8 +171,8 @@ def runTitle(DISPLAYSURF):
 
         for event in pygame.event.get():
             if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+                return 'Q'
+
 
         pygame.display.update()
         fpsClock.tick(FPS)

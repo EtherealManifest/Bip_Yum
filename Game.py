@@ -57,7 +57,7 @@ pygame.display.set_icon(slimeImg)
 
 #this method will be used to render the title screen, which is the next project
 def titleScreen():
-    TitleSlide.runTitle(DISPLAYSURF)
+    return TitleSlide.runTitle(DISPLAYSURF)
 def initializePlay():
     # build the land takes the background tiles and generates the scenery
     global BackGround
@@ -139,9 +139,16 @@ def gameplay():
 #Program Start
 initializePlay()
 logging.info("Game Initialized")
-#titleScreen()
+
+#this runs the titlescreen, and returns the users selection
+nextStep = titleScreen()
+print(nextStep)
+if nextStep == 'Q':
+    pygame.quit()
+    sys.exit()
 #when TitleScreen Returns, it will have an Event generated.
 #Currently, the only two events to be implemented are the
 #"go to gameplay" event to move to the gameplay loop
 # and the "quit" event that ends the game
-gameplay()
+if nextStep == "start-game":
+    gameplay()
