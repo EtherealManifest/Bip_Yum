@@ -70,6 +70,7 @@ def initializePlay():
     # create the player character
     # create Bip Himself
     slime = Slime()
+    slime.setPosition(WINX/2, WINY/2)
     # create the weapon array
     weapons = pygame.sprite.Group()
     # For now, add a weapon. in the future, have a method to read this in from a file
@@ -79,52 +80,67 @@ def initializePlay():
     # create the monster groups
     horde = pygame.sprite.Group()
     # For now, add a monster. in the future, have a method to read this in from a file
+
     monster = Monster()
-    monster.statBlock.setPos((100, 100))
+    monster.statBlock.setPos((0, 0))
+    monster.setName("Enemy 1")
     horde.add(monster)
     # add another monster for funsies
     monster2 = Monster()
-    monster2.statBlock.setPos((200, 200))
+    monster2.statBlock.setPos((WINX, WINY))
+    monster2.setName("Enemy 2")
     horde.add(monster2)
+
+
+
+
     overlay = Overlay()
 
 def gameplay():
+    #clear the mouse's input stream. Im trying to stop the sword from being swung.
+
     while True:  # the main game loop
-        # Instead of filling with white, lets make a tiling of the background and blit it here
         global BackGround
         global slime
         global weapons
         global horde
         global overlay
-
         BackGround.draw(DISPLAYSURF)
         slime.update()
         weapons.update(slime)
         overlay.update(slime)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-        for monster in horde:
-            if (monster.statBlock.HEALTH > 0):
-                monster.update(slime)
-                DISPLAYSURF.blit(monster.image, (monster.position))
-                DISPLAYSURF.blit(monster.statBlock.HealthBar.HPBAR_SURFACE, (monster.position))
+        for enemy in horde:
+            if enemy.statBlock.HEALTH > 0:
+                enemy.update(slime)
+                DISPLAYSURF.blit(enemy.image, (enemy.position))
+                DISPLAYSURF.blit(enemy.statBlock.HealthBar.HPBAR_SURFACE, (enemy.position))
                 # this checks to see if slime is touched by an enemy.
-                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), monster.rect)):
-                    slime.takeDamage(monster)
+                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), enemy.rect)):
+                    slime.takeDamage(enemy)
 
         # Draw the Overlay
         DISPLAYSURF.blit(overlay, (0,0))
         for sword in weapons:
-            if (sword.swing):
+            if sword.swing:
                 weapons.draw(DISPLAYSURF)
                 # check to see if any monsters are hit by the sword
-                for monster in horde:
-                    if (pygame.sprite.collide_rect(sword, monster) and monster.statBlock.HEALTH > 0):
+                for enemy in horde:
+                    if (pygame.sprite.collide_rect(sword, enemy)
+                            and enemy.statBlock.HEALTH > 0
+                            and not enemy.isHit):
+                        print(enemy.Name + "Has taken damage. Current HP: " + str(enemy.statBlock.HEALTH))
+                        #right now, whenever one enemy is hit, the healthbard of both are effected.
+                        #why?
+                        #I never Initialized it's healthbar, only declared it
                         # logging.info("Enemy has been hit by sword")
-                        monster.takeDamage(slime)
+                        enemy.takeDamage(slime)
+                        enemy.statBlock.HealthBar.update(enemy)
+
             # I am become death, destroyer of slimes
             if (slime.statBlock.HEALTH <= 0):
                 # for now, just exit. In the future, display a death message and then reset the scenario
-                exit()
+                return
 
         # draw the slime to the screen
         DISPLAYSURF.blit(slime.image, slime.position)
@@ -141,14 +157,16 @@ initializePlay()
 logging.info("Game Initialized")
 
 #this runs the titlescreen, and returns the users selection
-nextStep = titleScreen()
-print(nextStep)
-if nextStep == 'Q':
-    pygame.quit()
-    sys.exit()
-#when TitleScreen Returns, it will have an Event generated.
-#Currently, the only two events to be implemented are the
-#"go to gameplay" event to move to the gameplay loop
-# and the "quit" event that ends the game
-if nextStep == "start-game":
-    gameplay()
+while True:
+    nextStep = titleScreen()
+    if nextStep == 'Q' or nextStep == 'quit-button':
+        pygame.quit()
+        sys.exit()
+    #when TitleScreen Returns, it will have an Event generated.
+    #Currently, the only two events to be implemented are the
+    #"go to gameplay" event to move to the gameplay loop
+    # and the "quit" event that ends the game
+    if nextStep == "start-button":
+        #clears the event queue so that the gameplay starts fresh
+        pygame.event.clear()
+        gameplay()

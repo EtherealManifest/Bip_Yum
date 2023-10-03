@@ -43,20 +43,25 @@ class Button(pygame.surface.Surface):
 
         buttonText = font.render(self.text, False, (0, 0, 0))
         self.textx = (self.width / 2 - buttonText.get_width()/2)
-        print("Width: " + str(self.width) + ", height: " + str(self.height))
-        print("Size required to hold text: " + str(font.size(self.text)))
         self.texty = (self.height / 2 - buttonText.get_height()/2)
         self.blit(buttonText, (self.textx, self.texty))
         self.is_clicked = False
         self.is_hovered = False
 
+
     def hovered(self):
         temp_color =(
             self.background_color[0] - 50,
             self.background_color[1] - 50,
-            self.background_color[2] - 50
+            self.background_color[2] - 10
         )
         self.fill(temp_color)
+
+    #this method quickly updates a button to its basic state, meant as
+    #a counterpart to hovered()
+    def quickRender(self):
+        self.fill(self.background_color)
+
 
     def isHovered(self, mousePOS):
         return self.get_rect(topleft = self.pos).collidepoint(mousePOS)
@@ -69,6 +74,9 @@ class Button(pygame.surface.Surface):
         #check to see if it has been clicked
         if self.is_hovered == True:
             self.hovered()
+        else:
+            self.quickRender()
+
         if self.is_clicked == True:
             self.is_clicked = False;
             return self.label

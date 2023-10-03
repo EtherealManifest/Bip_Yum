@@ -9,9 +9,6 @@ from pathlib import Path
 data = (open('Meta.txt')).read()
 META = data.split(':')
 
-logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
-                    format='%(asctime)s -  %(levelname)s -  %(message)s - MAIN')
-
 #Ive added a few sprite styles for this. if you want to check them out,
 #try entering new colors. each color has a different size, though they all
 #have the same power.

@@ -36,7 +36,7 @@ for panel in cloudList:
     cloudArray.append(pygame.image.load(temp))
 
 cloudGroup = pygame.sprite.Group()
-cloudMoveSpeed = 1
+cloudMoveSpeed = .4
 #number of clouds to render
 cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
@@ -45,11 +45,8 @@ cloudMoveDirection = 1
 
 
 
-# add a method that will paint the background blue and set some clouds to scroll
-# across the screen. THis will be the background.
-    # declared Variables
-
-    # this class is the object for each cloud
+#This class declares coulds and gives them a position. It has methods for
+#redrawing clouds on the other side of the screen
 class Cloud(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -111,9 +108,8 @@ def changeTheSkies(currClouds):
         if cloud.pos[0] < -cloud.rect.width:
             cloud = Cloud()
 
-#def checkClicked():
 
-
+#this is the loop that runs the title screen
 def runTitle(DISPLAYSURF):
     #Program Start:
     openSky.fill((25, 186, 255))
@@ -128,10 +124,17 @@ def runTitle(DISPLAYSURF):
     # in the background!
     TitleScreenMusic.play(-1)
     #buttons
+    button_list = []
     start_button = Button.Button()
+    quit_button = Button.Button()
     start_button.modify(_pos = (WINX/2 - start_button.get_rect().width/2, 2*WINY/3), _text = "START",
                         _label = "start-button")
-
+    button_list.append(start_button)
+    quit_button.modify(_pos = (start_button.pos[0],
+                               start_button.pos[1] + 2 * start_button.height),
+                       _text = "QUIT",
+                       _label = 'quit-button')
+    button_list.append(quit_button)
 
 
     #title Text
@@ -146,28 +149,23 @@ def runTitle(DISPLAYSURF):
         DISPLAYSURF.blit(openSky, (0,0))
         # blit the text onto the screen
         DISPLAYSURF.blit(NameOfTheGame, GameNamePOS)
-        #ButtonClicked()
         #Load the button
-        DISPLAYSURF.blit(start_button, start_button.pos)
-        start_button.is_hovered = False
+        for button in button_list:
+            DISPLAYSURF.blit(button, button.pos)
+            button.is_hovered = False
 
         # check to see if the mouse is positioned over the start button
-        if(start_button.isHovered(pygame.mouse.get_pos())):
-            #set the cursor to a focused cursor
-            start_button.is_hovered = True
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            #if the left button is clicked
-            if(pygame.mouse.get_pressed() ==  (1,0,0)):
-                start_button.is_clicked = True
-            status = start_button.update()
-        if status == "start-button":
-            return "start-game"
-
-        #poll for user input.
-        #if they click the "Game" Button,
-        #create a "Game" event and put it on the queue, then return to the
-        #Game.py Loop.
-
+        for button in button_list:
+            if(button.isHovered(pygame.mouse.get_pos())):
+                #set the cursor to a focused cursor
+                button.is_hovered = True
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                #if the left button is clicked
+                if(pygame.mouse.get_pressed()[0]):
+                    button.is_clicked = True
+            status = button.update()
+            if status != "":
+                return status
 
         for event in pygame.event.get():
             if event.type == QUIT:
