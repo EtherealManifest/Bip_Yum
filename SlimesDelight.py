@@ -325,8 +325,10 @@ class Slime(pygame.sprite.Sprite):
                 "\ny: " + str(self.rect.y))
 
     def takeDamage(self, foe):
-        self.knockback = foe.statBlock.ATTACK
+        self.knockback = foe.statBlock.ATTACK % 25
         self.statBlock.HEALTH -= foe.statBlock.ATTACK
+        if self.statBlock.HEALTH < 0:
+            self.statBlock.HEALTH = 0
         self.isHit = True
         self.knockDirection = foe.direction
 

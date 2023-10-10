@@ -12,7 +12,7 @@ META = data.split(':')
 #Ive added a few sprite styles for this. if you want to check them out,
 #try entering new colors. each color has a different size, though they all
 #have the same power.
-weaponName = 'green_sword_sprite.png'
+weaponName = 'blue_sword_sprite.png'
 imgPath = Path("./Weapon Sprites/" + weaponName)
 weaponDefaultImg = pygame.image.load(imgPath)
 

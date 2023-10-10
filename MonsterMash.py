@@ -9,7 +9,7 @@ import os
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s  - MONSTER')
 
-MonsterMoveSpeed = 1
+
 # the amount of time the monster is knocked back after being hit
 HITTIME = 10
 # this part will import (for now) all the enemy sprites and adds them to an array
@@ -33,6 +33,7 @@ class Monster(pygame.sprite.Sprite):
     Description = ""
     position = (monsterX, monsterY)
     statBlock.pos = position
+    MonsterMoveSpeed = 1
     # this is the amount to change his position by when he takes damage, ordered (x,y)
     isHit = False
     hitMove = (0, 0)
@@ -50,6 +51,7 @@ class Monster(pygame.sprite.Sprite):
         self.monsterX = self.statBlock.pos[0]
         self.monsterY = self.statBlock.pos[1]
         self.position = (self.monsterX, self.monsterY)
+        self.MonsterMoveSpeed = self.statBlock.SPEED
         self.isHit = False
         self.hitTick = 0
         self.hitMove = (0, 0)
@@ -74,6 +76,7 @@ class Monster(pygame.sprite.Sprite):
 
     def setMonsterStats(self, HP, ATK, DEF, ARC, ARD, SPD, LCK):
         self.statBlock.setStats(HP, ATK, DEF, ARC, ARD, SPD, LCK)
+        self.MonsterMoveSpeed = self.statBlock.SPEED
 
     def setAll(self, name, desc, HP, ATK, DEF, ARC, ARD, SPD, LCK):
         statBlock = StatBlock(HP, ATK, DEF, ARC, ARD, SPD, LCK)
@@ -88,7 +91,6 @@ class Monster(pygame.sprite.Sprite):
         self.image = Img
 
     def takeDamage(self, player):
-        print(self.Name + " is receiving Damage")
         if self.hitTick == HITTIME:
             self.statBlock.HEALTH = self.statBlock.HEALTH - player.statBlock.ATTACK
         self.hitTick = self.hitTick - 1
@@ -133,42 +135,42 @@ class Monster(pygame.sprite.Sprite):
                 if self.monsterX > slime.slimex:
                     self.hitMove = (self.hitMoveRate, 0)
                     if self.monsterY > slime.slimey:
-                        self.monsterY -= MonsterMoveSpeed
+                        self.monsterY -= self.MonsterMoveSpeed
                         self.direction = 'up-left'
                         self.hitMove = (self.hitMoveRate, self.hitMoveRate)
                     else:
                         self.direction = 'left'
                     if self.monsterY < slime.slimey:
-                        self.monsterY += MonsterMoveSpeed
+                        self.monsterY += self.MonsterMoveSpeed
                         self.direction = 'down-left'
                         self.hitMove = (self.hitMoveRate, -self.hitMoveRate)
                     else:
                         self.direction = 'left'
-                    self.monsterX -= MonsterMoveSpeed
+                    self.monsterX -= self.MonsterMoveSpeed
 
                 elif self.monsterX < slime.slimex:
                     self.hitMove = (-self.hitMoveRate, 0)
                     if self.monsterY > slime.slimey:
-                        self.monsterY -= MonsterMoveSpeed
+                        self.monsterY -= self.MonsterMoveSpeed
                         self.direction = 'up-right'
                         self.hitMove = (-self.hitMoveRate, self.hitMoveRate)
                     else:
                         self.direction = 'right'
                     if self.monsterY < slime.slimey:
-                        self.monsterY += MonsterMoveSpeed
+                        self.monsterY += self.MonsterMoveSpeed
                         self.direction = 'down-right'
                         self.hitMove = (-self.hitMoveRate, -self.hitMoveRate)
                     else:
                         self.direction = 'right'
-                    self.monsterX += MonsterMoveSpeed
+                    self.monsterX += self.MonsterMoveSpeed
 
                 else:
                     if self.monsterY < slime.slimey:
-                        self.monsterY += MonsterMoveSpeed
+                        self.monsterY += self.MonsterMoveSpeed
                         self.hitMove = (0, -self.hitMoveRate)
                         self.direction = 'down'
                     else:
-                        self.monsterY -= MonsterMoveSpeed
+                        self.monsterY -= self.MonsterMoveSpeed
                         self.direction = 'up'
                         self.hitMove = (0, self.hitMoveRate)
 

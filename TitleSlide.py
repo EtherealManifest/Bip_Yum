@@ -165,6 +165,7 @@ def runTitle(DISPLAYSURF):
                     button.is_clicked = True
             status = button.update()
             if status != "":
+                TitleScreenMusic.stop()
                 return status
 
         for event in pygame.event.get():

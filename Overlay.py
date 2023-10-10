@@ -72,7 +72,11 @@ class PlayerHealthBar(pygame.sprite.Sprite):
 
 class Overlay(pygame.Surface):
     playerHealth = PlayerHealthBar()
-    text = pygame.Surface((WINX, WINY))
+    textSurf = pygame.Surface((WINX, WINY))
+    textSurf.set_colorkey((1,1,1))
+    textSurf.fill((1,1,1))
+    text = "NotSet"
+    textTime = 0
 
     def __init__(self):
         pygame.Surface.__init__(self, (WINX, WINY))
@@ -87,3 +91,23 @@ class Overlay(pygame.Surface):
         self.set_colorkey((123, 123, 123))
         #now the HPBAR is on this surface
         self.blit(self.playerHealth.HPBAR_CASE, self.playerHealth.pos)
+        if(self.textTime >= 0):
+            self.blit(self.textSurf, (0,0))
+            self.textTime -= 1
+
+
+
+
+    def showText(self, text, color = (255,255,255), size = 12, duration = 100):
+        self.textTime = duration
+        #define a text object
+        textFont = pygame.font.SysFont("Planet Comic", size)
+        #text is a surface. it needs a location to blit
+        textLabel = font.render(text, False, color)
+
+        textPosition = (
+            (WINX + textLabel.get_width()) / 2,
+            WINY - textLabel.get_height() - 10
+            )
+        self.textSurf.blit(textLabel, textPosition)
+

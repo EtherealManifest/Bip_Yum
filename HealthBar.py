@@ -27,6 +27,8 @@ class HealthBar(pygame.sprite.Sprite):
     def update(self, target):
         self.HP_Remaining_Wide = int(HPBARWIDE * (target.statBlock.HEALTH / target.statBlock.TOTALHEALTH))
         self.HPBAR_SURFACE.fill((0, 0, 0))
+        if(self.HP_Remaining_Wide <=0):
+            self.HP_Remaining_Wide = 0
         self.HP_Remaining = pygame.Surface((self.HP_Remaining_Wide, HPBARHIGH))
         self.HP_Remaining.fill((178, 34, 34))
         # Blit the remaining HP onto the HPSURFACE
