@@ -8,7 +8,7 @@
 Damage on Contact
 block progress
 interactable
-   interaction => new sprite?
+interaction => new sprite?
 swimming?
 death on contact
 regain life
@@ -21,9 +21,15 @@ import pygame
 from pathlib import Path
 import os
 
+data = (open('Meta.txt')).read()
+META = data.split(':')
+WINX = int(META[0])
+WINY = int(META[1])
 
 sceneShop = []
 setPieceList = os.listdir('./setPiecePanels')
+
+
 
 #get all the default sprites(only ones currently generated
 for sprite in setPieceList:
@@ -115,5 +121,77 @@ class setPiece(pygame.sprite.Sprite):
     def setSetPieceHP(self, newHP):
         if(self.destroyable):
             self.setPieceHP = newHP
+
+    def update(self, slime):
+        #if the slime touches this setPiece
+        if pygame.sprite.collide_rect(self, slime):
+            #if this setPiece deals damage on contact, deal that damage
+            if self.dealsDamage:
+                slime.setPieceDamage(self.damage)
+            #if this object is not passable, prevent entry
+            if not self.isPassable:
+                #get the players position, then reduce their motion in that direction
+                position = self.getPlayerPos(slime)
+                slimesPosition = slime.getPosition()
+                playerDir = slime.direction
+
+
+
+    #This method will return the direction that the player is in
+    #relation to the current setPiece. Used to keep the player out
+    #of the object, or knock them back if damaged.
+    #also used to push the object.
+    def getPlayerPos(self, slime):
+        slimey = slime.rect.y
+        slimex = slime.rect.x
+        player_pos = "None"
+
+        #player is to the left
+        if self.rect.x > slimex:
+            player_pos = "left"
+            if self.rect.y > slimey:
+                player_pos = "up-left"
+            elif self.rect.y < slimey:
+                player_pos = "down-left"
+        #player is to the right
+        elif self.rect.x < slimex:
+            player_pos = "right"
+            if self.rect.y > slimey:
+                player_pos = "up-right"
+            elif self.rect.y < slimey:
+                player_pos = "down-right"
+        elif self.rect.x == slimex:
+            if self.rect.y > slimey:
+                player_pos = "up"
+            elif self.rect.y < slimey:
+                player_pos = "down"
+        else:
+            player_pos = "centered"
+
+        return player_pos
+
+
+
+
+#Add a method setTheStage that takes in the screen size and returns a
+#surface with a (reasonable) random number of setPieces set on it.
+#in the future, this will read in from the Scenario to determine what
+#and where to put the setPieces
+
+#Temp class to hold all of the test Sprites:
+class setPieceTester():
+    tester = setPiece()
+    def __init(self):
+        self.tester = setPiece()
+
+def setTheStage(setPieces = 5):
+
+    for i in range(0, setPieces):
+        #create a random setpiece
+        #choose a random number
+        #based on that number, create a new object with properties
+
+
+
 
 

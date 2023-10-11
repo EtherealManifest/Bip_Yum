@@ -24,6 +24,15 @@ import time
 # SWINGTIME
 # FRAMERATE
 
+#IN PREPERATION FOR THE SCENARIO UPDATE
+'''I want the map generation to be done 
+completely externally, with random setpieces being 
+included in the new map. the only interaction that 
+needs to be done in this file is checking when the 
+player is over the setpiece, if it has interactions
+then triggering them.'''
+
+
 data = (open('Meta.txt')).read()
 META = data.split(':')
 
@@ -47,7 +56,6 @@ FPS = int(META[3])  # frames per second setting
 DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 # setting the caption on the screen
 pygame.display.set_caption('Bip Yum')
-WHITE = (255, 255, 255)
 pygame.display.set_icon(slimeImg)
 
 
@@ -55,15 +63,14 @@ pygame.display.set_icon(slimeImg)
 def titleScreen():
     return TitleSlide.runTitle(DISPLAYSURF)
 
-
 def initializePlay():
     # build the land takes the background tiles and generates the scenery
     global BackGround
     global slime
     global weapons
     global horde
-    # change playerHealth to OverLay
     global overlay
+
     overlay = Overlay()
     BackGround = BuildTheLand(WINX, WINY)
     # create the player character
@@ -89,7 +96,7 @@ def initializeMonsters():
     monster.setMonsterStats(Stats[0] + 12, Stats[1], Stats[2], Stats[3], Stats[4], Stats[5] % 4, Stats[6])
     monster.statBlock.setPos((0, 0))
     monster.setName("Enemy 1")
-    horde.add(monster)
+    #horde.add(monster)
     # add another monster for funsies
 
 
@@ -108,6 +115,8 @@ def gameplay():
         global overlay
         BackGround.draw(DISPLAYSURF)
         slime.update()
+        #UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
+        #And CHanges are not overwritten
         weapons.update(slime)
         overlay.update(slime)
         overlay.showText("Test", duration = 60)
@@ -146,7 +155,7 @@ def gameplay():
             if len(horde.sprites()) == 0:
                 BattleMusic.stop()
                 #overlay.showText("You Win!")
-                return
+                #return
         DISPLAYSURF.blit(overlay, (0, 0))
 
         # draw the slime to the screen

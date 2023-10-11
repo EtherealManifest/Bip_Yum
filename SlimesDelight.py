@@ -135,6 +135,7 @@ class Slime(pygame.sprite.Sprite):
     # knockback is going to be determined based on the enemies strength stat, so it will be proportional to damage dealt
     knockback = 0
     knockDirection = ''
+    allowedMoves = {'up' : True, 'down' : True, 'left' : True, 'right' : True}
 
 
 
@@ -153,6 +154,8 @@ class Slime(pygame.sprite.Sprite):
         # center of the screen
         self.slimex = 0
         self.slimey = 0
+        #allowed moves is a dictionary. this is the moves slime is currently allowed to make
+        self.allowedMoves = {'up' : True, 'down' : True, 'left' : True, 'right' : True}
 
         # defines his current position, a set of coordinates
         self.direction = ''
@@ -198,14 +201,17 @@ class Slime(pygame.sprite.Sprite):
                 self.slimex -= self.knockback
 
         # These make sure little slime man doesnt go outside the window
+
+        self.allowAllDirections()
         if self.slimex >= WINX - 32:
-            self.slimex = WINX - 32
+            self.allowedMoves['right'] = False
         if self.slimey >= WINY - 32:
-            self.slimey = WINY - 32
+            self.allowedMoves['down'] = False
         if self.slimey <= 0:
-            self.slimey = 0
+            self.allowedMoves['up'] = False
         if self.slimex <= 0:
-            self.slimex = 0
+            self.allowedMoves['left'] = False
+
 
         # this is jump stuff. he's only in the air for a little bit, but set jump to false once he's back down.
         if self.jump == True:
@@ -224,9 +230,10 @@ class Slime(pygame.sprite.Sprite):
         if not self.isHit:
             if ((pygame.key.get_pressed()[K_a] and pygame.key.get_pressed()[K_w])
                     or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_UP])):  # A W or <- and ^
-
-                self.slimey -= self.moveRate / 2
-                self.slimex -= self.moveRate / 2
+                if self.allowedMoves['up']:
+                    self.slimey -= 2* (self.moveRate) / 3
+                if self.allowedMoves['left']:
+                    self.slimex -= 2 * self.moveRate / 3
                 self.moveTime = MOVET
                 # flip the sprite to face left
                 self.image = slimeImgLeft
@@ -234,8 +241,10 @@ class Slime(pygame.sprite.Sprite):
 
             elif ((pygame.key.get_pressed()[K_a] and pygame.key.get_pressed()[K_s])
                   or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_DOWN])):  # A S <- and \/
-                self.slimey += self.moveRate / 2
-                self.slimex -= self.moveRate / 2
+                if self.allowedMoves['down']:
+                    self.slimey += 2 * self.moveRate / 3
+                if self.allowedMoves['left']:
+                    self.slimex -= 2 * self.moveRate / 3
                 self.moveTime = MOVET
                 # flip the sprite to face left
                 self.image = slimeImgLeft
@@ -243,8 +252,10 @@ class Slime(pygame.sprite.Sprite):
 
             elif ((pygame.key.get_pressed()[K_d] and pygame.key.get_pressed()[K_w])
                   or (pygame.key.get_pressed()[K_RIGHT] and pygame.key.get_pressed()[K_UP])):  # D W
-                self.slimey -= self.moveRate / 2
-                self.slimex += self.moveRate / 2
+                if self.allowedMoves['up']:
+                    self.slimey -= 2 * self.moveRate / 3
+                if self.allowedMoves['right']:
+                    self.slimex += 2 * self.moveRate / 3
                 self.moveTime = MOVET
                 # flip the sprite to face right
                 self.image = slimeImgRight
@@ -252,32 +263,38 @@ class Slime(pygame.sprite.Sprite):
 
             elif ((pygame.key.get_pressed()[K_s] and pygame.key.get_pressed()[K_d])
                   or (pygame.key.get_pressed()[K_DOWN] and pygame.key.get_pressed()[K_RIGHT])):  # D S
-                self.slimey += self.moveRate / 2
-                self.slimex += self.moveRate / 2
+                if self.allowedMoves['down']:
+                    self.slimey += 2 * self.moveRate / 3
+                if self.allowedMoves['right']:
+                    self.slimex += 2 * self.moveRate / 3
                 self.moveTime = MOVET
                 # flip the sprite to face right
                 self.image = slimeImgRight
                 self.direction = 'down-right'
 
             elif pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
-                self.slimey -= self.moveRate
+                if self.allowedMoves['up']:
+                    self.slimey -= self.moveRate
                 self.moveTime = MOVET
                 self.direction = 'up'
 
             elif pygame.key.get_pressed()[K_s] or pygame.key.get_pressed()[K_DOWN]:
-                self.slimey += self.moveRate
+                if self.allowedMoves['down']:
+                    self.slimey += self.moveRate
                 self.moveTime = MOVET
                 self.direction = 'down'
 
             elif pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
-                self.slimex -= self.moveRate
+                if self.allowedMoves['left']:
+                    self.slimex -= self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face left
                 self.image = slimeImgLeft
                 self.direction = 'left'
 
             elif pygame.key.get_pressed()[K_d] or pygame.key.get_pressed()[K_RIGHT]:
-                self.slimex += self.moveRate
+                if self.allowedMoves['right']:
+                    self.slimex += self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face right
                 self.image = slimeImgRight
@@ -307,6 +324,18 @@ class Slime(pygame.sprite.Sprite):
     # position are updated, ensuring that Bip is where he appears to be
         self.setPosition(self.slimex, self.slimey)
 
+    def allowAllDirections(self):
+        self.allowedMoves['right'] = True
+        self.allowedMoves['left'] = True
+        self.allowedMoves['up'] = True
+        self.allowedMoves['down'] = True
+
+    def preventAllDirections(self):
+        self.allowedMoves['right'] = False
+        self.allowedMoves['left'] = False
+        self.allowedMoves['up'] = False
+        self.allowedMoves['down'] = False
+
     def setPosition(self, x, y):
         self.slimex = x
         self.slimey = y
@@ -331,6 +360,13 @@ class Slime(pygame.sprite.Sprite):
             self.statBlock.HEALTH = 0
         self.isHit = True
         self.knockDirection = foe.direction
+
+    def setPieceDamage(self, damage):
+        self.knockback = damage
+        self.statBlock.HEALTH -= damage
+        if self.statBlock.HEALTH < 0:
+            self.statBlock.HEALTH = 0
+        self.isHit = True
 
 
 # This method will initialize the slime at the beginning of the program. It will
