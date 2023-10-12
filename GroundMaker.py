@@ -51,7 +51,7 @@ class Plant(pygame.sprite.Sprite):
         ThePlants.draw(DispSurf)
 
 
-
+#FIXME: UPDATE THIS METHOD TO TAKE IN A FOLDER OF SPRITES AND RETURN A LAND OF THE NEEDED COORDINATES
 def BuildTheLand(width, height):
 #this loop adds random tiles to the land group. it then "stitches" them all together
 #And returns them as a group.

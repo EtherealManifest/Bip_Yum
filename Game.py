@@ -1,5 +1,7 @@
 # This is the file for the main game loop, seperated from the class
 # implementation for bip yum
+#FIXME It's time. the Scenario update is nearly here. This file should read in all the data from a created Scenario and
+# run the scenario accordingly.
 import pygame, sys
 from SlimesDelight import *
 import SlimesDelight  # Slimy Behavior

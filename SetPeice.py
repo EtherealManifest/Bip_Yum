@@ -18,6 +18,7 @@ destroyable
 
 
 import pygame
+from pygame.locals import *
 from pathlib import Path
 import os
 
@@ -41,10 +42,11 @@ class setPiece(pygame.sprite.Sprite):
     isPassable = False
     interactable = False
     interactionTrigger = None
-    swim = False
     killZone = False
     spawnEnemies = False
     enemy = None
+    spawnRate = 0
+    spawnTime = 0
     destroyable = False
     setPieceHP = 0
 
@@ -60,35 +62,40 @@ class setPiece(pygame.sprite.Sprite):
         self.isPassable = False
         self.interactable = False
         self.interactionTrigger = None
-        self.swim = False
         self.killZone = False
         self.spawnEnemies = False
         self.enemy = None
+        self.spawnRate = 0
+        self.spawnTime = 0
         self.destroyable = False
         self.setPieceHP = 0
 
     #buildSetPiece lets me define a new setPiece with All Details.
     #if no new details are defined, it just set everything to the defaults
 
-    def buildSetPiece(self, _image = sceneShop[0], _rect = self.image.get_rect(), _pos = (0,0),
+    def buildSetPiece(self, _image = sceneShop[0], _rect = None, _pos = (0,0),
                       _dealsDamage = False, _damage = 0, _isPassable = False, _interactable = False,
-                      _interactionTrigger = None, _swim = False, _killZone = False, _spawnEnemies = False,
-                      _enemy = None, _destroyable = False, _setPieceHP = 0):
-
+                      _interactionTrigger = None, _killZone = False, _spawnEnemies = False,
+                      _enemy = None, _spawnRate = 1000, _destroyable = False, _setPieceHP = 0):
         self.image = _image
-        self.rect = _rect
+        if(_rect == None):
+            self.rect = self.image.get_rect()
+        else:
+            self.rect = _rect
         self.pos = _pos
         self.dealsDamage = _dealsDamage
         self.damage = _damage
         self.isPassable = _isPassable
         self.interactable = _interactable
         self.interactionTrigger = _interactionTrigger
-        self.swim = _swim
         self.killZone = _killZone
         self.spawnEnemies = _spawnEnemies
         self.enemy = _enemy
+        self.spawnRate = _spawnRate
         self.destroyable = _destroyable
         self.setPieceHP = _setPieceHP
+
+
 
     def setImage(self, newImage):
         self.image = newImage
@@ -107,8 +114,6 @@ class setPiece(pygame.sprite.Sprite):
         self.interactable = not self.interactable
     def setInteractionTrigger(self, trigger):
         self.interactionTrigger = trigger
-    def toggleSwim(self):
-        self.swim = not self.swim
     def toggleKillZone(self):
         self.killZone = not self.killZone
     def toggleSpawnEnemies(self):
@@ -122,7 +127,7 @@ class setPiece(pygame.sprite.Sprite):
         if(self.destroyable):
             self.setPieceHP = newHP
 
-    def update(self, slime):
+    def update(self, slime, horde):
         #if the slime touches this setPiece
         if pygame.sprite.collide_rect(self, slime):
             #if this setPiece deals damage on contact, deal that damage
@@ -130,10 +135,26 @@ class setPiece(pygame.sprite.Sprite):
                 slime.setPieceDamage(self.damage)
             #if this object is not passable, prevent entry
             if not self.isPassable:
-                #get the players position, then reduce their motion in that direction
-                position = self.getPlayerPos(slime)
-                slimesPosition = slime.getPosition()
-                playerDir = slime.direction
+                #get the slimes allowed movement directions.
+                #this will stop the slime from moving
+                #on to this surface
+                self.getPlayerPos(slime)
+            if self.interactable:
+                #if the spacebar is pressed, trigger the trigger
+                if pygame.key.get_pressed()[K_SPACE]:
+                    self.interactionTrigger()
+            if self.killZone:
+                #It's a kill zone, so slime DIES!!!
+                slime.statBlock.HEALTH = 0
+            if self.spawnEnemies:
+                if self.spawnTime ==0:
+                    horde.add(self.enemy)
+                    self.spawnTime = self.spawnRate
+                else:
+                    self.spawnTime -= self.spawnTime
+
+
+
 
 
 
@@ -142,33 +163,23 @@ class setPiece(pygame.sprite.Sprite):
     #of the object, or knock them back if damaged.
     #also used to push the object.
     def getPlayerPos(self, slime):
-        slimey = slime.rect.y
-        slimex = slime.rect.x
-        player_pos = "None"
+        # If clipped_line is not an empty tuple then the line
+        # collides/overlaps with the rect.
+        clipped_line = self.rect.clipline(slime.rect.left)
+        if clipped_line:
+            slime.allowedMoves['left'] = False
+        clipped_line = self.rect.clipline(slime.rect.right)
+        if clipped_line:
+            slime.allowedMoves['right'] = False
+        clipped_line = self.rect.clipline(slime.rect.top)
+        if clipped_line:
+            slime.allowedMoves['up'] = False
+        clipped_line = self.rect.clipline(slime.rect.bottom)
+        if clipped_line:
+            slime.allowedMoves['down'] = False
 
-        #player is to the left
-        if self.rect.x > slimex:
-            player_pos = "left"
-            if self.rect.y > slimey:
-                player_pos = "up-left"
-            elif self.rect.y < slimey:
-                player_pos = "down-left"
-        #player is to the right
-        elif self.rect.x < slimex:
-            player_pos = "right"
-            if self.rect.y > slimey:
-                player_pos = "up-right"
-            elif self.rect.y < slimey:
-                player_pos = "down-right"
-        elif self.rect.x == slimex:
-            if self.rect.y > slimey:
-                player_pos = "up"
-            elif self.rect.y < slimey:
-                player_pos = "down"
-        else:
-            player_pos = "centered"
+        return slime.allowedMoves
 
-        return player_pos
 
 
 
@@ -184,12 +195,6 @@ class setPieceTester():
     def __init(self):
         self.tester = setPiece()
 
-def setTheStage(setPieces = 5):
-
-    for i in range(0, setPieces):
-        #create a random setpiece
-        #choose a random number
-        #based on that number, create a new object with properties
 
 
 

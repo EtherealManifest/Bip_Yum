@@ -172,6 +172,7 @@ class Slime(pygame.sprite.Sprite):
         self.knockDirection = ''
 
     def update(self):
+        #if he is swimming, reassign images
         self.setPosition(self.slimex, self.slimey)
         # this is for the animation, it sets the sprite for the animation frame.
         SmoothGrooves(self)
