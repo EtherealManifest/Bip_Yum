@@ -15,8 +15,11 @@ from Armory import *
 import logging
 from Overlay import *
 import pathlib
+from pathlib import Path
 import TitleSlide
 import time
+import Scenario
+
 
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
@@ -60,6 +63,8 @@ DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 pygame.display.set_caption('Bip Yum')
 pygame.display.set_icon(slimeImg)
 
+#temporary tester for the new background maker
+BackGroundLocale = Path('./GroundPanels/Lava/')
 
 # this method will be used to render the title screen, which is the next project
 def titleScreen():
@@ -74,16 +79,19 @@ def initializePlay():
     global overlay
 
     overlay = Overlay()
-    BackGround = BuildTheLand(WINX, WINY)
+    BackGround = BuildTheLand(WINX, WINY, BackGroundLocale)
     # create the player character
     # create Bip Himself
     slime = Slime()
+    slime.statBlock.setStats(200, 25, 10, 10, 10, 10, 10)
     slime.setPosition(WINX / 2, WINY / 2)
     # create the weapon array
     weapons = pygame.sprite.Group()
     # For now, add a weapon. in the future, have a method to read this in from a file
     sword = Weapon()
+    sword.setStats(15, 180)
     weapons.add(sword)
+    slime.statBlock.ATTACK = slime.statBlock.ATTACK + sword.power
     # create the monster groups
     horde = pygame.sprite.Group()
     # For now, add a monster. in the future, have a method to read this in from a file
@@ -95,10 +103,11 @@ def initializeMonsters():
     # randomly assign the stats for the Monsterd
     for i in range(0, 8):
         Stats.append(random.randrange(1, 100))
-    monster.setMonsterStats(Stats[0] + 12, Stats[1], Stats[2], Stats[3], Stats[4], Stats[5] % 4, Stats[6])
-    monster.statBlock.setPos((0, 0))
+    monster.setMonsterStats(Stats[0] + 12, Stats[1], Stats[2], Stats[3], Stats[4], (Stats[5] % 12) , Stats[6])
+    monster.statBlock.setPos((200,200))
+    monster.setKnockback(slime)
     monster.setName("Enemy 1")
-    #horde.add(monster)
+    horde.add(monster)
     # add another monster for funsies
 
 
@@ -121,10 +130,10 @@ def gameplay():
         #And CHanges are not overwritten
         weapons.update(slime)
         overlay.update(slime)
-        overlay.showText("Test", duration = 60)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
         for enemy in horde:
             if enemy.statBlock.HEALTH > 0:
+                enemy.setKnockback(slime.statBlock.ATTACK)
                 enemy.update(slime)
                 DISPLAYSURF.blit(enemy.image, (enemy.position))
                 DISPLAYSURF.blit(enemy.statBlock.HealthBar.HPBAR_SURFACE, (enemy.position))
@@ -152,12 +161,10 @@ def gameplay():
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
                 BattleMusic.stop()
-                #overlay.showText("You Lose!")
                 return
             if len(horde.sprites()) == 0:
                 BattleMusic.stop()
-                #overlay.showText("You Win!")
-                #return
+
         DISPLAYSURF.blit(overlay, (0, 0))
 
         # draw the slime to the screen

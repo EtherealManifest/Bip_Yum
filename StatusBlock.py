@@ -8,8 +8,6 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s - MAIN')
 
 
-
-
 # a healthBar will consist of 2 sprites, a black one underneath that
 # denotes total health, and a red one above that denotes health remaining
 # As the monster takes damage, the red rectangle will get smaller to the left.
@@ -49,6 +47,10 @@ class StatBlock():
         self.SPEED = SPD
         self.LUCK = LCK
         self.pos = (0, 0)
+
+    def getStats(self):
+        return [self.TOTALHEALTH, self.HEALTH, self.ATTACK, self.DEFENSE, self.ARCANA,
+                self.ARCDEF, self.SPEED, self.LUCK, self.pos]
 
     def showStats(self):
         return ("TOTAL HEALTH: " + str(self.TOTALHEALTH)

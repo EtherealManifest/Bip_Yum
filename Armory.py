@@ -8,15 +8,12 @@ from pathlib import Path
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
-
 #Ive added a few sprite styles for this. if you want to check them out,
 #try entering new colors. each color has a different size, though they all
 #have the same power.
 weaponName = 'blue_sword_sprite.png'
 imgPath = Path("./Weapon Sprites/" + weaponName)
 weaponDefaultImg = pygame.image.load(imgPath)
-
-
 # sets how long the sword swing lasts
 #this is read in from the Meta.txt file. To see the arrangement of the items in the file,
 #see the comments on Game.py
@@ -42,6 +39,29 @@ class Weapon(pygame.sprite.Sprite):
     swingTick = 0
     # the current angle of the weapon in radians, used to determine the angle.
     angle = 0
+    #the boost to attack that this weapon gives to it's wielder
+    power = 0
+    #the total arc of this weapons swing
+    arc = 0
+
+    def __init__(self):
+        # this initializes it as a Sprite
+        pygame.sprite.Sprite.__init__(self)
+        # these are Sprite Attributes
+        self.pos = (0, 0)
+        self.image = weaponDefaultImg
+        # effectively, the Hitbox
+        self.rect = self.image.get_rect()
+        self.direction = ''
+        swing = False
+        swingTick = 0
+        facingRight = False
+        self.power = 0
+        self.arc = 0
+
+    def setStats(self, _power, _arc):
+        self.arc = _arc
+        self.power = _power
 
     def position(self, player):
         if (player.direction == 'up'):
@@ -64,18 +84,6 @@ class Weapon(pygame.sprite.Sprite):
         self.rect.y = self.pos[1]
         self.direction = player.direction
 
-    def __init__(self):
-        # this initializes it as a Sprite
-        pygame.sprite.Sprite.__init__(self)
-        # these are Sprite Attributes
-        self.pos = (0, 0)
-        self.image = weaponDefaultImg
-        # effectively, the Hitbox
-        self.rect = self.image.get_rect()
-        self.direction = ''
-        swing = False
-        swingTick = 0
-        facingRight = False
 
 
     '''Alright, big explain here. this is an attempt at creating a method that will
@@ -110,7 +118,6 @@ class Weapon(pygame.sprite.Sprite):
     def update(self, player):
         # it is positioned at the top of the slime, then moved back to
         # center the blade.
-        # MAY NEED TUNING
         # this will all be implemented in position()
         self.position(player)
         self.image = weaponDefaultImg
@@ -127,13 +134,13 @@ class Weapon(pygame.sprite.Sprite):
         if self.swing == True:
             if self.direction == 'up':
                 if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, -180)
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, self.arc, -180)
                     self.rect.x, self.rect.y = self.pos[0], self.pos[1]
                 else:
                     self.swing = False
             elif self.direction == 'down':
                 if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, 0)
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, self.arc, 0)
                     self.rect.x, self.rect.y = self.pos[0], self.pos[1]
                 else:
                     self.swing = False
@@ -142,7 +149,7 @@ class Weapon(pygame.sprite.Sprite):
             elif (self.direction == 'left' or self.direction == 'down-left'
                   or self.direction == 'up-left'):
                 if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, 180, 90)
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, self.arc, 90)
                     self.rect.x, self.rect.y = self.pos[0], self.pos[1]
                 else:
                     self.swing = False
@@ -150,7 +157,7 @@ class Weapon(pygame.sprite.Sprite):
             # if the player is facing right, then Acoomodate and adjust accordingly
             else:
                 if (self.swingTick > 0):
-                    self.weaponPosition(player, SWINGTIME, self.swingTick, -180, 90)
+                    self.weaponPosition(player, SWINGTIME, self.swingTick, -self.arc, 90)
                     self.rect.x, self.rect.y = self.pos[0], self.pos[1]
                 else:
                     self.swing = False

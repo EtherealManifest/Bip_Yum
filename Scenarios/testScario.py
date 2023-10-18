@@ -5,3 +5,5 @@ once the scenario is complete, this main file will return all the local variable
 defaults and await the next scenario
 '''
 
+import PropStorage, Crypt, Atlas
+

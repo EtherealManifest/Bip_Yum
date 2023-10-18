@@ -194,7 +194,7 @@ class setPieceTester():
     tester = setPiece()
     def __init(self):
         self.tester = setPiece()
-
+        
 
 
 

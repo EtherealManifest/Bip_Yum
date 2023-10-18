@@ -1,10 +1,12 @@
 import pygame
+import Cluster
 from StatusBlock import *
 from SlimesDelight import *
 import SlimesDelight
 import logging
 from pathlib import Path
 import os
+import AICore
 
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s  - MONSTER')
@@ -40,6 +42,10 @@ class Monster(pygame.sprite.Sprite):
     hitMoveRate = 0
     hitTick = 0
     direction = ""
+    #AICore is an outside class that holds the AI attributes for this enemy. to move the
+    #enemy and determine it's position, use AICore.update or call AICore.movement, passing the monster
+    #And the player.
+    AICore = None
 
     def __init__(self):
         # this initializes it as a sprite object by calling the Parent COnstructor
@@ -54,7 +60,7 @@ class Monster(pygame.sprite.Sprite):
         self.MonsterMoveSpeed = self.statBlock.SPEED
         self.isHit = False
         self.hitTick = 0
-        self.hitMove = (0, 0)
+        self.hitMove = (self.hitMoveRate, self.hitMoveRate)
         # This is the knockback rate, how far this enemy moves when slime hits it
         self.hitMoveRate = 1
         # giving it an image so that it shows up helps to establish position
@@ -62,6 +68,9 @@ class Monster(pygame.sprite.Sprite):
         self.image = EnemyPH
         # because it extends Sprite, it has to have a rectangle and a position
         self.rect = self.image.get_rect()
+        self.AICore = Cluster.PASSIVE
+        self.AICore.monster = self
+
 
     # These are a variety of set and mod options for the stats and attributes.
     def setName(self, name):
@@ -83,12 +92,23 @@ class Monster(pygame.sprite.Sprite):
         self.Name = name
         self.Description = desc
 
+    #THe knockback is defined as the number of pixels the enemy will be pushed back per frame
     def setKnockback(self, num):
         self.hitMoveRate = num
+        # set the knockback to the players current attack stat
+        self.hitMove = (self.hitMoveRate, self.hitMoveRate)
+
 
     # These methods deal with setting the look of the beastie
     def setImage(self, Img):
         self.image = Img
+
+    def setRect(self):
+        self.rect = self.image.get_rect()
+
+    def setCore(self, core):
+        self.AICore = core
+        self.AICore.monster = self
 
     def takeDamage(self, player):
         if self.hitTick == HITTIME:
@@ -97,8 +117,8 @@ class Monster(pygame.sprite.Sprite):
         if self.hitTick > 0:
             # Update the Health Block
             self.statBlock.HealthBar.update(self)
-            self.monsterX = self.monsterX + self.hitMove[0]
-            self.monsterY = self.monsterY + self.hitMove[1]
+            self.monsterX = self.monsterX + self.hitMove[0]/HITTIME
+            self.monsterY = self.monsterY + self.hitMove[1]/HITTIME
         elif self.hitTick == 0:
             self.isHit = False
         else:
@@ -107,9 +127,11 @@ class Monster(pygame.sprite.Sprite):
 
     def update(self, slime):
         if self.statBlock.HEALTH > 0:
+            #as long as he's alive, run the AICore's movement option to determine his new position
             self.position = self.statBlock.pos
             self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
             self.monsterX, self.monsterY = self.statBlock.pos[0], self.statBlock.pos[1]
+
             # these are actually gonna come from outside the frame, but they will
             # move towards the player
             # if the monster is hit, then dont move towards the player, take damage instead
@@ -132,48 +154,8 @@ class Monster(pygame.sprite.Sprite):
             elif not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)):
                 # for this part, there is a wierd line about assigning moverate to movehit.
                 # this is a system that makes sure that he moves in the right direction when he is hit.
-                if self.monsterX > slime.slimex:
-                    self.hitMove = (self.hitMoveRate, 0)
-                    if self.monsterY > slime.slimey:
-                        self.monsterY -= self.MonsterMoveSpeed
-                        self.direction = 'up-left'
-                        self.hitMove = (self.hitMoveRate, self.hitMoveRate)
-                    else:
-                        self.direction = 'left'
-                    if self.monsterY < slime.slimey:
-                        self.monsterY += self.MonsterMoveSpeed
-                        self.direction = 'down-left'
-                        self.hitMove = (self.hitMoveRate, -self.hitMoveRate)
-                    else:
-                        self.direction = 'left'
-                    self.monsterX -= self.MonsterMoveSpeed
-
-                elif self.monsterX < slime.slimex:
-                    self.hitMove = (-self.hitMoveRate, 0)
-                    if self.monsterY > slime.slimey:
-                        self.monsterY -= self.MonsterMoveSpeed
-                        self.direction = 'up-right'
-                        self.hitMove = (-self.hitMoveRate, self.hitMoveRate)
-                    else:
-                        self.direction = 'right'
-                    if self.monsterY < slime.slimey:
-                        self.monsterY += self.MonsterMoveSpeed
-                        self.direction = 'down-right'
-                        self.hitMove = (-self.hitMoveRate, -self.hitMoveRate)
-                    else:
-                        self.direction = 'right'
-                    self.monsterX += self.MonsterMoveSpeed
-
-                else:
-                    if self.monsterY < slime.slimey:
-                        self.monsterY += self.MonsterMoveSpeed
-                        self.hitMove = (0, -self.hitMoveRate)
-                        self.direction = 'down'
-                    else:
-                        self.monsterY -= self.MonsterMoveSpeed
-                        self.direction = 'up'
-                        self.hitMove = (0, self.hitMoveRate)
-
+                #Update from the core to move in the appropriate direction
+                self.AICore.update(slime)
             self.position = (self.monsterX, self.monsterY)
             self.statBlock.pos = self.position
             self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
@@ -185,3 +167,4 @@ class Monster(pygame.sprite.Sprite):
                 "\nright: " + str(self.rect.right) +
                 "\nx: " + str(self.rect.x) +
                 "\ny: " + str(self.rect.y))
+

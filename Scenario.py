@@ -15,6 +15,7 @@ class Scenario:
     trove = []
     # the background
     vista = []
+    #the locale will be the folder to pull from, becuase BuildTheLand uses a Folder to build Tiles
     locale = Path("")
     # slimes original position
     slimyPOS = (0, 0)
@@ -37,3 +38,4 @@ class Scenario:
         # this group will be passed to the main function and blit, and from there
         # relevant updates will be called.
         self.vista = GroundMaker.BuildTheLand(self.locale)
+
