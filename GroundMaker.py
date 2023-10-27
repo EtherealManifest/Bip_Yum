@@ -6,8 +6,6 @@ pygame.init()
 
 # this is the path to the panel folder, the loop below it loads all of them in to the
 # grasspanels list, which is used to build the background
-
-landTiles = []
 TheLand = pygame.sprite.Group()
 plantTiles = []
 ThePlants = pygame.sprite.Group()
@@ -57,6 +55,8 @@ def BuildTheLand(width, height, locale=Path('./GroundPanels/Grass')):
     # And returns them as a group.
     # search the given folder, and get the list of land tiles
     # search the given folder, and get the list of land tiles
+    TheLand.empty()
+    landTiles = []
     panelList = os.listdir(locale)
     for panel in panelList:
         temp = Path(str(locale) + '\\' + panel)

@@ -24,8 +24,6 @@ class AICore:
         #FIXME: MAY NEED TO RETURN THE STATBLOCK OF SELF.MONSTER TO ACTUALLY UPDATE THE MONSTERS POSITION
         self.movement(self.monster, slime)
 
-
-
 #THis is the Default Movement method for the Core.
 def defaultMovement(monster, slime):
     if monster.monsterX > slime.slimex:

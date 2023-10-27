@@ -126,10 +126,11 @@ class setPiece(pygame.sprite.Sprite):
     def setSetPieceHP(self, newHP):
         if(self.destroyable):
             self.setPieceHP = newHP
-
+    def get_rect(self):
+        return self.rect
     def update(self, slime, horde):
         #if the slime touches this setPiece
-        if pygame.sprite.collide_rect(self, slime):
+        if slime.rect.colliderect(self.rect):
             #if this setPiece deals damage on contact, deal that damage
             if self.dealsDamage:
                 slime.setPieceDamage(self.damage)
@@ -165,18 +166,18 @@ class setPiece(pygame.sprite.Sprite):
     def getPlayerPos(self, slime):
         # If clipped_line is not an empty tuple then the line
         # collides/overlaps with the rect.
-        clipped_line = self.rect.clipline(slime.rect.left)
-        if clipped_line:
-            slime.allowedMoves['left'] = False
-        clipped_line = self.rect.clipline(slime.rect.right)
+        clipped_line = self.rect.clipline(slime.rect.topleft, slime.rect.bottomleft)
         if clipped_line:
             slime.allowedMoves['right'] = False
-        clipped_line = self.rect.clipline(slime.rect.top)
+        clipped_line = self.rect.clipline(slime.rect.topright, slime.rect.bottomright)
         if clipped_line:
-            slime.allowedMoves['up'] = False
-        clipped_line = self.rect.clipline(slime.rect.bottom)
+            slime.allowedMoves['left'] = False
+        clipped_line = self.rect.clipline(slime.rect.topleft, slime.rect.topright)
         if clipped_line:
             slime.allowedMoves['down'] = False
+        clipped_line = self.rect.clipline(slime.rect.bottomleft, slime.rect.bottomright)
+        if clipped_line:
+            slime.allowedMoves['up'] = False
 
         return slime.allowedMoves
 

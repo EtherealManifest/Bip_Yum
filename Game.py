@@ -19,6 +19,8 @@ from pathlib import Path
 import TitleSlide
 import time
 import Scenario
+import Cluster
+import TestScenario
 
 
 # I'm going to create a .txt file called meta to store all the overhead information.
@@ -70,60 +72,21 @@ BackGroundLocale = Path('./GroundPanels/Lava/')
 def titleScreen():
     return TitleSlide.runTitle(DISPLAYSURF)
 
-def initializePlay():
-    # build the land takes the background tiles and generates the scenery
-    global BackGround
-    global slime
-    global weapons
-    global horde
-    global overlay
-
-    overlay = Overlay()
-    BackGround = BuildTheLand(WINX, WINY, BackGroundLocale)
-    # create the player character
-    # create Bip Himself
-    slime = Slime()
-    slime.statBlock.setStats(200, 25, 10, 10, 10, 10, 10)
-    slime.setPosition(WINX / 2, WINY / 2)
-    # create the weapon array
-    weapons = pygame.sprite.Group()
-    # For now, add a weapon. in the future, have a method to read this in from a file
-    sword = Weapon()
-    sword.setStats(15, 180)
-    weapons.add(sword)
-    slime.statBlock.ATTACK = slime.statBlock.ATTACK + sword.power
-    # create the monster groups
-    horde = pygame.sprite.Group()
-    # For now, add a monster. in the future, have a method to read this in from a file
-
-
-def initializeMonsters():
-    monster = Monster()
-    Stats = []
-    # randomly assign the stats for the Monsterd
-    for i in range(0, 8):
-        Stats.append(random.randrange(1, 100))
-    monster.setMonsterStats(Stats[0] + 12, Stats[1], Stats[2], Stats[3], Stats[4], (Stats[5] % 12) , Stats[6])
-    monster.statBlock.setPos((200,200))
-    monster.setKnockback(slime)
-    monster.setName("Enemy 1")
-    horde.add(monster)
-    # add another monster for funsies
-
-
-def gameplay():
+def gameplay(SCENARIO):
     # play music
     end = False
-    BattleMusicPath = Path('./Music(not Owned)/Meta Knight s Revenge.mp3')
-    BattleMusic = pygame.mixer.Sound(BattleMusicPath)
-    BattleMusic.play(-1)
+    #read the Scenario
+    slime = SCENARIO.TheWanderer
+    BackGround = SCENARIO.vista
+    horde = []
+    for monster in SCENARIO.horde:
+        horde.append(monster)
+    weapons = pygame.sprite.Group()
+    weapons.add(SCENARIO.weapon)
+    #set the overlay
+    overlay = Overlay()
 
     while True:  # the main game loop
-        global BackGround
-        global slime
-        global weapons
-        global horde
-        global overlay
         BackGround.draw(DISPLAYSURF)
         slime.update()
         #UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
@@ -131,39 +94,43 @@ def gameplay():
         weapons.update(slime)
         overlay.update(slime)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-        for enemy in horde:
-            if enemy.statBlock.HEALTH > 0:
-                enemy.setKnockback(slime.statBlock.ATTACK)
-                enemy.update(slime)
-                DISPLAYSURF.blit(enemy.image, (enemy.position))
-                DISPLAYSURF.blit(enemy.statBlock.HealthBar.HPBAR_SURFACE, (enemy.position))
-                # this checks to see if slime is touched by an enemy.
-                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), enemy.rect)):
-                    slime.takeDamage(enemy)
-            if enemy.statBlock.HEALTH <= 0:
-                enemy.remove(horde)
-
+        for i in range(0, len(horde)):
+            if not horde[i].isDead:
+                horde[i].setKnockback(slime.statBlock.ATTACK)
+                horde[i].update(slime)
+                DISPLAYSURF.blit(horde[i].image, horde[i].position)
+                DISPLAYSURF.blit(horde[i].statBlock.HealthBar.HPBAR_SURFACE, (horde[i].position))
+                # this checks to see if slime is touched by an horde[i].
+                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), horde[i].rect)):
+                    slime.takeDamage(horde[i])
+            if horde[i].deathAnimFrame > 0 and horde[i].isDead:
+                horde[i].update(slime)
+                DISPLAYSURF.blit(horde[i].image, (horde[i].position))
+            elif horde[i].isDead and horde[i].deathAnimFrame == 0:
+                continue
         # Draw the Overlay
 
         for sword in weapons:
             if sword.swing:
                 weapons.draw(DISPLAYSURF)
                 # check to see if any monsters are hit by the sword
-                for enemy in horde:
-                    if (pygame.sprite.collide_rect(sword, enemy)
-                            and enemy.statBlock.HEALTH > 0
-                            and not enemy.isHit):
-                        # logging.info("Enemy has been hit by sword")
-                        enemy.takeDamage(slime)
-                        enemy.statBlock.HealthBar.update(enemy)
+                for i in range(0, len(horde)):
+                    if (pygame.sprite.collide_rect(sword, horde[i])
+                            and horde[i].statBlock.HEALTH > 0
+                            and not horde[i].isHit):
+                        # logging.info("horde[i] has been hit by sword")
+                        horde[i].takeDamage(slime)
+                        horde[i].statBlock.HealthBar.update(horde[i])
 
-            # I am become death, destroyer of slimes
+            # I have become death, destroyer of slimes
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
-                BattleMusic.stop()
+                #BattleMusic.stop()
                 return
-            if len(horde.sprites()) == 0:
-                BattleMusic.stop()
+            if len(horde) == 0:
+                #BattleMusic.stop()
+                return
+
 
         DISPLAYSURF.blit(overlay, (0, 0))
 
@@ -181,8 +148,6 @@ def gameplay():
 
 # this runs the titlescreen, and returns the users selection
 while True:
-    initializePlay()
-    initializeMonsters()
     logging.info("Game Initialized")
     nextStep = titleScreen()
     if nextStep == 'Q' or nextStep == 'quit-button':
@@ -195,7 +160,7 @@ while True:
     if nextStep == "start-button":
         # clears the event queue so that the gameplay starts fresh
         pygame.event.clear()
-        gameplay()
+        gameplay(TestScenario.SCENARIO)
         # if i am running this game multiple times in a row, It becomes SUPER laggy
 
 '''when the game runs gameplay, it needs to read in a scenario. the scenario will consist of 

@@ -62,6 +62,9 @@ class Weapon(pygame.sprite.Sprite):
     def setStats(self, _power, _arc):
         self.arc = _arc
         self.power = _power
+    def setImage(self, newImg):
+        self.image = newImg
+        self.rect = self.image.get_rect()
 
     def position(self, player):
         if (player.direction == 'up'):

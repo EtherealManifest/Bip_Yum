@@ -1,16 +1,37 @@
 import AICore
 import random
 
+data = (open('Meta.txt')).read()
+META = data.split(':')
+WINX = int(META[0])
+WINY = int(META[1])
+class AgressiveMovement(AICore.AICore):
+    def __init__(self):
+        super().__init__()
+        self.movement = agressiveMovement
+
+class ChaoticMovement(AICore.AICore):
+    def __init__(self):
+        super().__init__()
+        self.movement = chaoticMovement
+
+
+class SimpleMovement(AICore.AICore):
+    def __init__(self):
+        super().__init__()
+        self.movement = simpleMovement
+
+
 def agressiveMovement(monster, slime):
-    if monster.monsterX > slime.slimex:
+    if monster.monsterX > slime.slimex and monster.monsterX > 0:
         monster.hitMove = (monster.hitMoveRate, 0)
-        if monster.monsterY > slime.slimey:
+        if monster.monsterY > slime.slimey and monster.monsterY > 0:
             monster.monsterY -= monster.MonsterMoveSpeed
             monster.direction = 'up-left'
             monster.hitMove = (monster.hitMoveRate, monster.hitMoveRate)
         else:
             monster.direction = 'left'
-        if monster.monsterY < slime.slimey:
+        if monster.monsterY < slime.slimey and monster.monsterY < WINY:
             monster.monsterY += monster.MonsterMoveSpeed
             monster.direction = 'down-left'
             monster.hitMove = (monster.hitMoveRate, -monster.hitMoveRate)
@@ -18,15 +39,15 @@ def agressiveMovement(monster, slime):
             monster.direction = 'left'
         monster.monsterX -= monster.MonsterMoveSpeed
 
-    elif monster.monsterX < slime.slimex:
+    elif monster.monsterX < slime.slimex and monster.monsterX < WINX:
         monster.hitMove = (-monster.hitMoveRate, 0)
-        if monster.monsterY > slime.slimey:
+        if monster.monsterY > slime.slimey and monster.monsterY > 0:
             monster.monsterY -= monster.MonsterMoveSpeed
             monster.direction = 'up-right'
             monster.hitMove = (-monster.hitMoveRate, monster.hitMoveRate)
         else:
             monster.direction = 'right'
-        if monster.monsterY < slime.slimey:
+        if monster.monsterY < slime.slimey and monster.monsterY < WINY:
             monster.monsterY += monster.MonsterMoveSpeed
             monster.direction = 'down-right'
             monster.hitMove = (-monster.hitMoveRate, -monster.hitMoveRate)
@@ -35,56 +56,57 @@ def agressiveMovement(monster, slime):
         monster.monsterX += monster.MonsterMoveSpeed
 
     else:
-        if monster.monsterY < slime.slimey:
+        if monster.monsterY < slime.slimey and monster.monsterY < WINY:
             monster.monsterY += monster.MonsterMoveSpeed
             monster.hitMove = (0, -monster.hitMoveRate)
             monster.direction = 'down'
-        else:
+        elif monster.monsterY > 0:
             monster.monsterY -= monster.MonsterMoveSpeed
             monster.direction = 'up'
             monster.hitMove = (0, monster.hitMoveRate)
-
-def passiveMovement(monster, slime):
+def chaoticMovement(monster, slime):
     #this is a vector that corresponds with directions.
     #it is defined as follows:
     #[U, UR, R, DR, D, DL, L, UL]
-    #load the vector to determine his movements
+    #load the vector to determine his movement
     movementVector = [0,0,0,0,0,0,0,0]
     #change a random direction to 1
     movementVector[random.randint(0,7)] = 1
-    if movementVector[7] == 1:
+    if(random.randint(0,5)== 2):
+        movementVector[random.randint(0, 7)] = 1
+    if movementVector[7] and monster.monsterX > 0 and monster.monsterY > 0:
         monster.monsterY -= monster.MonsterMoveSpeed
         monster.monsterX -= monster.MonsterMoveSpeed
         monster.hitMove = (monster.hitMoveRate, monster.hitMoveRate)
         monster.direction = 'up-left'
-    elif movementVector[6] == 1:
+    elif movementVector[6] and monster.monsterX > 0:
         monster.monsterX -= monster.MonsterMoveSpeed
         monster.hitMove = (monster.hitMoveRate, 0)
         monster.direction = 'left'
-    elif movementVector[5] == 1:
+    elif movementVector[5]  and monster.monsterX > 0 and monster.monsterY < WINY:
         monster.monsterY += monster.MonsterMoveSpeed
         monster.monsterX -= monster.MonsterMoveSpeed
         monster.direction = 'down-left'
         monster.hitMove = (monster.hitMoveRate, -monster.hitMoveRate)
-    elif movementVector[4] == 1:
+    elif movementVector[4] and monster.monsterY < WINY:
         monster.monsterY += monster.MonsterMoveSpeed
         monster.direction = 'down'
         monster.hitMove = (0, -monster.hitMoveRate)
-    elif movementVector[3] == 1:
+    elif movementVector[3] and monster.monsterX < WINX and monster.monsterY < WINY:
         monster.monsterY += monster.MonsterMoveSpeed
         monster.monsterX += monster.MonsterMoveSpeed
         monster.direction = 'down-right'
         monster.hitMove = (-monster.hitMoveRate, -monster.hitMoveRate)
-    elif movementVector[2] == 1:
+    elif movementVector[2] and monster.monsterX < WINX:
         monster.monsterX += monster.MonsterMoveSpeed
         monster.direction = 'right'
         monster.hitMove = (-monster.hitMoveRate, 0)
-    elif movementVector[1] == 1:
+    elif movementVector[1] and monster.monsterX < WINX and monster.monsterY > 0:
         monster.monsterY -= monster.MonsterMoveSpeed
         monster.monsterX += monster.MonsterMoveSpeed
         monster.direction = 'up-right'
         monster.hitMove = (-monster.hitMoveRate, monster.hitMoveRate)
-    elif movementVector[0] == 1:
+    elif movementVector[0] and monster.monsterY > 0:
         monster.monsterY -= monster.MonsterMoveSpeed
         monster.direction = 'up'
         monster.hitMove = (0, monster.hitMoveRate)
@@ -136,12 +158,17 @@ def simpleMovement(monster, slime):
 def Stay(monster, slime):
     return
 
+def printDirection(monster):
+    return (monster.Name + " : " + monster.direction + ", (" + str(monster.monsterX) + ", " + str(monster.monsterY) +
+        "), Speed: " + str(monster.statBlock.SPEED))
+
+
 SIMPLE = AICore.AICore()
 AGRESSIVE = AICore.AICore()
-PASSIVE = AICore.AICore()
+CHAOTIC = AICore.AICore()
 STAY = AICore.AICore()
 
 SIMPLE.movement = simpleMovement
-PASSIVE.movement = passiveMovement
+CHAOTIC.movement = chaoticMovement
 AGRESSIVE.movement = agressiveMovement
 STAY.movement = Stay

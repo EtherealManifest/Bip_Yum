@@ -15,8 +15,6 @@ class Scenario:
     trove = []
     # the background
     vista = []
-    #the locale will be the folder to pull from, becuase BuildTheLand uses a Folder to build Tiles
-    locale = Path("")
     # slimes original position
     slimyPOS = (0, 0)
     # slimes weapon
@@ -24,18 +22,14 @@ class Scenario:
     # slime himself
     TheWanderer = SlimesDelight.Slime()
 
-    def __init__(self, _horde, _trove, _vista, _locale, _slimyPOS, _weapon, _TheWanderer):
+    def __init__(self, _horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer):
         self.horde = _horde
         self.trove = _trove
-        # vista is not defined because BuildTheLand needs to act on Locale First
-        self.locale = _locale
+        self.vista = _vista
         self.slimyPOS = _slimyPOS
         self.weapon = _weapon
         self.TheWanderer = _TheWanderer
 
-    def loadScenario(self):
-        # the goal of this method is to get everything as a surface.
-        # this group will be passed to the main function and blit, and from there
-        # relevant updates will be called.
-        self.vista = GroundMaker.BuildTheLand(self.locale)
+
+
 
