@@ -23,6 +23,7 @@ class DefaultSetPiece(SetPeice.setPiece):
         #self.isPassable = False      PASSED
         #self.dealsDamage = True      PASSED
         #self.damage = 10             PASSED
+        self.killZone = True
 
 DEFAULTSETPIECE = DefaultSetPiece()
 
