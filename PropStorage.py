@@ -20,7 +20,9 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.image = sceneShop[0]
         self.rect = self.image.get_rect()
         self.buildSetPiece(self.image, self.rect, (99,123))
-        self.isPassable = False
+        #self.isPassable = False      PASSED
+        #self.dealsDamage = True      PASSED
+        #self.damage = 10             PASSED
 
 DEFAULTSETPIECE = DefaultSetPiece()
 

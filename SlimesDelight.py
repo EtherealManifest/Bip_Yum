@@ -395,7 +395,25 @@ class Slime(pygame.sprite.Sprite):
         if self.statBlock.HEALTH < 0:
             self.statBlock.HEALTH = 0
         self.isHit = True
+        self.knockDirection = self.reverseDirection()
 
+    def reverseDirection(self):
+        if self.direction == 'left':
+            return 'right'
+        if self.direction == 'down-left':
+            return 'up-right'
+        if self.direction == 'down':
+            return 'up'
+        if self.direction == 'down-right':
+            return 'up-left'
+        if self.direction == 'right':
+            return 'left'
+        if self.direction == 'up-right':
+            return 'down-left'
+        if self.direction == 'up':
+            return 'down'
+        if self.direction == 'up-left':
+            return 'down-right'
     def rectangle(self):
         return ("Slime:\ntop: " + str(self.rect.top) +
                 "\nbottom:" + str(self.rect.bottom) +
