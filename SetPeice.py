@@ -61,6 +61,7 @@ class setPiece(pygame.sprite.Sprite):
 
         #sprite Information
         self.image = sceneShop[0]
+        self.destroyedImage = sceneShop[1]
         self.rect = self.image.get_rect()
         self.pos= (0,0)
         self.dealsDamage = False
@@ -76,6 +77,7 @@ class setPiece(pygame.sprite.Sprite):
         self.destroyable = False
         self.setPieceHP = 0
         self.resetEnemy = stub
+        self.destroyTrigger = stub
 
     #buildSetPiece lets me define a new setPiece with All Details.
     #if no new details are defined, it just set everything to the defaults
@@ -102,7 +104,8 @@ class setPiece(pygame.sprite.Sprite):
         self.spawnRate = _spawnRate
         self.destroyable = _destroyable
         self.setPieceHP = _setPieceHP
-
+        # destroyTrigger is overridden in the actual setpiece Definition
+        # resetEnemy is overridden and defined in the actual setPiece Definition
 
     def setImage(self, newImage):
         self.image = newImage
@@ -181,12 +184,6 @@ class setPiece(pygame.sprite.Sprite):
                 #It's a kill zone, so slime DIES!!!
                 slime.statBlock.HEALTH = 0
 
-
-
-
-
-
-
     #This method will return the direction that the player is in
     #relation to the current setPiece. Used to keep the player out
     #of the object, or knock them back if damaged.
@@ -247,6 +244,16 @@ class setPiece(pygame.sprite.Sprite):
             slime.allowedMoves['right'] = False
         if right_cross == longest:
             slime.allowedMoves['left'] = False
+
+    #this method is used to render the setpieces taking damage. if it is called, then the sword has struck the
+    # setpiece. reduce the health. If it would go past zero, modify the setpiece to no longer take damage and
+    # set it's image to its broken image and change any other relevant settings.
+    def takeDamage(self, slime):
+        self.setPieceHP -= slime.statBlock.ATTACK
+        if self.setPieceHP <= 0:
+            self.destroyable = False
+            self.image = self.destroyedImage
+            self.destroyTrigger()
 
     # here, p1 and p2 are both tuples of coordinates representing the endpoints of a line. this method
     # will return a single integer representing the length of that line. It is used in getPlayerPos

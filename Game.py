@@ -128,8 +128,8 @@ def gameplay(SCENARIO):
                         enemy.takeDamage(slime)
                         enemy.statBlock.HealthBar.update(horde[i])
                 for i in range(0, len(setPieces)):
-                    if (pygame.sprite.collide_rect(sword, setPieces[i])):
-                        setPieces[i].setPieceHP -= slime.statBlock.ATTACK
+                    if (pygame.sprite.collide_rect(sword, setPieces[i]) and setPieces[i].destroyable):
+                        setPieces[i].takeDamage(slime)
             # I have become death, destroyer of slimes
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
