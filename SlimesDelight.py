@@ -212,7 +212,6 @@ class Slime(pygame.sprite.Sprite):
 
         # These make sure little slime man doesnt go outside the window
 
-        self.allowAllDirections()
         if self.slimex >= WINX - 32:
             self.allowedMoves['right'] = False
         if self.slimey >= WINY - 32:
@@ -380,13 +379,7 @@ class Slime(pygame.sprite.Sprite):
     def getPosition(self):
         return self.position
 
-    def rectangle(self):
-        return ("Slime:\ntop: " + str(self.rect.top) +
-                "\nbottom:" + str(self.rect.bottom) +
-                "\nleft: " + str(self.rect.left) +
-                "\nright: " + str(self.rect.right) +
-                "\nx: " + str(self.rect.x) +
-                "\ny: " + str(self.rect.y))
+
 
     def takeDamage(self, foe):
         self.knockback = foe.statBlock.ATTACK % 25
@@ -403,10 +396,22 @@ class Slime(pygame.sprite.Sprite):
             self.statBlock.HEALTH = 0
         self.isHit = True
 
-
+    def rectangle(self):
+        return ("Slime:\ntop: " + str(self.rect.top) +
+                "\nbottom:" + str(self.rect.bottom) +
+                "\nleft: " + str(self.rect.left) +
+                "\nright: " + str(self.rect.right) +
+                "\nx: " + str(self.rect.x) +
+                "\ny: " + str(self.rect.y))
+    def printAllowedMoves(self):
+        return ("Right: " + str(self.allowedMoves['right']) +
+                ", Left: " + str(self.allowedMoves['left']) +
+                ", Up: " + str(self.allowedMoves['up']) +
+                ", Down: " + str(self.allowedMoves['down']))
 # This method will initialize the slime at the beginning of the program. It will
 # have position, color, and animation style.
 def initialize(pos_x=0, pos_y=0):
     slime = Slime();
     slime.slimex = pos_x
     slime.slimey = pos_y
+

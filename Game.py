@@ -77,6 +77,7 @@ def gameplay(SCENARIO):
     end = False
     #read the Scenario
     slime = SCENARIO.TheWanderer
+    setPieces = SCENARIO.trove
     BackGround = SCENARIO.vista
     horde = []
     for monster in SCENARIO.horde:
@@ -88,11 +89,15 @@ def gameplay(SCENARIO):
 
     while True:  # the main game loop
         BackGround.draw(DISPLAYSURF)
-        slime.update()
         #UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
         #And CHanges are not overwritten
+        slime.allowAllDirections()
         weapons.update(slime)
         overlay.update(slime)
+        for prop in setPieces:
+            DISPLAYSURF.blit(prop.image, prop.pos)
+            prop.update(slime, horde)
+        slime.update()
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
         for i in range(0, len(horde)):
             if not horde[i].isDead:
@@ -109,7 +114,6 @@ def gameplay(SCENARIO):
             elif horde[i].isDead and horde[i].deathAnimFrame == 0:
                 continue
         # Draw the Overlay
-
         for sword in weapons:
             if sword.swing:
                 weapons.draw(DISPLAYSURF)
@@ -121,19 +125,12 @@ def gameplay(SCENARIO):
                         # logging.info("horde[i] has been hit by sword")
                         horde[i].takeDamage(slime)
                         horde[i].statBlock.HealthBar.update(horde[i])
-
             # I have become death, destroyer of slimes
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
                 #BattleMusic.stop()
                 return
-            if len(horde) == 0:
-                #BattleMusic.stop()
-                return
-
-
         DISPLAYSURF.blit(overlay, (0, 0))
-
         # draw the slime to the screen
         DISPLAYSURF.blit(slime.image, slime.position)
         for event in pygame.event.get():

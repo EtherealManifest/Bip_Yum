@@ -10,7 +10,8 @@ wolf2 = Crypt.WOLF()
 wolf1.Name = "Wolf1"
 wolf2.Name = "Wolf2"
 wolf2.setPosition((500, 500))
-_horde = [wolf1, wolf2]
+#FIXME: Set horde to nothing to test the setpieces
+_horde = []
 
 _trove = [PropStorage.DEFAULTSETPIECE]
 #this has to be called as a function, otherwise will just paint as lava

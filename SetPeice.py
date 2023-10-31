@@ -15,7 +15,7 @@ regain life
 spawns enemies
 destroyable
 '''
-
+import math
 
 import pygame
 from pygame.locals import *
@@ -83,6 +83,7 @@ class setPiece(pygame.sprite.Sprite):
         else:
             self.rect = _rect
         self.pos = _pos
+        self.rect.x, self.rect.y = self.pos[0], self.pos[1]
         self.dealsDamage = _dealsDamage
         self.damage = _damage
         self.isPassable = _isPassable
@@ -101,8 +102,12 @@ class setPiece(pygame.sprite.Sprite):
         self.image = newImage
     def setRect(self, newRect):
         self.rect = newRect
+        self.pos = (self.rect.x, self.rect.y)
+
     def setPos(self, newPos):
         self.pos = newPos
+        self.rect.x = self.pos[0]
+        self.rect.y = self.pos[1]
     def toggleDealsDamage(self):
         self.dealsDamage = not self.dealsDamage
     def setDamage(self, newDamage):
@@ -128,9 +133,23 @@ class setPiece(pygame.sprite.Sprite):
             self.setPieceHP = newHP
     def get_rect(self):
         return self.rect
+
+    def toString(self):
+        return ("\n  Deals Damage: " + str(self.dealsDamage) +
+                ",\n Rect: X:" + str(self.rect.x) + ", Y: " + str(self.rect.y) +
+                ",\n Position: " + str(self.pos) +
+                ",\n damage: " + str(self.damage) +
+                ",\n is passable: " + str(self.isPassable) +
+                ",\n is Interactable: " + str(self.interactable) +
+                ",\n Killzone: " + str(self.killZone) +
+                ",\n SPawns Enemies: " + str(self.spawnEnemies) +
+                ",\n Destroyable: " + str(self.destroyable) +
+                ",\n HP: " + str(self.setPieceHP))
+
     def update(self, slime, horde):
         #if the slime touches this setPiece
         if slime.rect.colliderect(self.rect):
+            #print(self.toString())
             #if this setPiece deals damage on contact, deal that damage
             if self.dealsDamage:
                 slime.setPieceDamage(self.damage)
@@ -139,7 +158,7 @@ class setPiece(pygame.sprite.Sprite):
                 #get the slimes allowed movement directions.
                 #this will stop the slime from moving
                 #on to this surface
-                self.getPlayerPos(slime)
+                self.slimeCollide(slime)
             if self.interactable:
                 #if the spacebar is pressed, trigger the trigger
                 if pygame.key.get_pressed()[K_SPACE]:
@@ -149,7 +168,7 @@ class setPiece(pygame.sprite.Sprite):
                 slime.statBlock.HEALTH = 0
             if self.spawnEnemies:
                 if self.spawnTime ==0:
-                    horde.add(self.enemy)
+                    horde.append(self.enemy)
                     self.spawnTime = self.spawnRate
                 else:
                     self.spawnTime -= self.spawnTime
@@ -163,41 +182,77 @@ class setPiece(pygame.sprite.Sprite):
     #relation to the current setPiece. Used to keep the player out
     #of the object, or knock them back if damaged.
     #also used to push the object.
-    def getPlayerPos(self, slime):
+    def slimeCollide(self, slime):
         # If clipped_line is not an empty tuple then the line
         # collides/overlaps with the rect.
-        clipped_line = self.rect.clipline(slime.rect.topleft, slime.rect.bottomleft)
-        if clipped_line:
-            slime.allowedMoves['right'] = False
-        clipped_line = self.rect.clipline(slime.rect.topright, slime.rect.bottomright)
-        if clipped_line:
-            slime.allowedMoves['left'] = False
-        clipped_line = self.rect.clipline(slime.rect.topleft, slime.rect.topright)
-        if clipped_line:
+        #This method gets a little icky because I need it to not disable directions
+        #there only one pixel is on the line
+
+        #this array is to hold the sides that are currently intersected
+        sides = []
+
+        clipped_line_top = self.rect.clipline(slime.rect.bottomleft, slime.rect.bottomright)
+        clipped_line_right = self.rect.clipline(slime.rect.topleft, slime.rect.bottomleft)
+        clipped_line_left = self.rect.clipline(slime.rect.topright, slime.rect.bottomright)
+        clipped_line_bottom = self.rect.clipline(slime.rect.topleft, slime.rect.topright)
+
+        #go through, one side at a time, and figure out how much of each side slime currently touches.
+        if(clipped_line_top):
+            top_cross = lineLength(clipped_line_top[0], clipped_line_top[1])
+            sides.append(top_cross)
+        else:
+            top_cross = 0
+
+        if(clipped_line_bottom):
+            bottom_cross = lineLength(clipped_line_bottom[0], clipped_line_bottom[1])
+        else:
+            bottom_cross = 0
+
+        if(clipped_line_left):
+            left_cross = lineLength(clipped_line_left[0], clipped_line_left[1])
+        else:
+            left_cross = 0
+
+        if(clipped_line_right):
+            right_cross = lineLength(clipped_line_right[0], clipped_line_right[1])
+        else:
+            right_cross = 0
+
+        sides = [top_cross, bottom_cross, left_cross, right_cross]
+
+        longest = -1
+        for side in sides:
+            #if this side is 0 or shorter than the current longest, remove it from the list of sides.
+            if side > longest:
+                longest = side
+        #if all of the sides are 0, then return.
+        if longest == 0:
+            return
+
+
+        if top_cross == longest:
+            print("touching top, length " + str(top_cross))
             slime.allowedMoves['down'] = False
-        clipped_line = self.rect.clipline(slime.rect.bottomleft, slime.rect.bottomright)
-        if clipped_line:
+        if bottom_cross == longest:
             slime.allowedMoves['up'] = False
-
-        return slime.allowedMoves
-
-
-
-
-
-#Add a method setTheStage that takes in the screen size and returns a
-#surface with a (reasonable) random number of setPieces set on it.
-#in the future, this will read in from the Scenario to determine what
-#and where to put the setPieces
-
-#Temp class to hold all of the test Sprites:
-class setPieceTester():
-    tester = setPiece()
-    def __init(self):
-        self.tester = setPiece()
-        
+            print("touching bottom, length " + str(bottom_cross))
+        if left_cross == longest:
+            slime.allowedMoves['right'] = False
+            print("touching left, length " + str(left_cross))
+        if right_cross == longest:
+            slime.allowedMoves['left'] = False
+            print("touching right, length " + str(right_cross))
 
 
+    # here, p1 and p2 are both tuples of coordinates representing the endpoints of a line. this method
+    # will return a single integer representing the length of that line. It is used in getPlayerPos
+    # to determine which side of the setpiece that slime is interacting with.
+def lineLength(p1, p2):
+    p1_y = p1[0] - p2[0]
+    p1_x = p1[1] - p2[1]
+    #use the pythagorean theorem to determine line length
+    py_l = math.sqrt(((p1_y * p1_y) + (p1_x * p1_x)))
+    return abs(py_l)
 
 
 
