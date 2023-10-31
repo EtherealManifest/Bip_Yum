@@ -426,6 +426,10 @@ class Slime(pygame.sprite.Sprite):
                 ", Left: " + str(self.allowedMoves['left']) +
                 ", Up: " + str(self.allowedMoves['up']) +
                 ", Down: " + str(self.allowedMoves['down']))
+
+    def reset(self, pos):
+        self.setPosition(pos[0], pos[1])
+        self.statBlock.HEALTH = self.statBlock.TOTALHEALTH
 # This method will initialize the slime at the beginning of the program. It will
 # have position, color, and animation style.
 def initialize(pos_x=0, pos_y=0):

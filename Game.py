@@ -129,7 +129,7 @@ def gameplay(SCENARIO):
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
                 #BattleMusic.stop()
-                return
+                slime.reset(SCENARIO.slimyPOS)
         DISPLAYSURF.blit(overlay, (0, 0))
         # draw the slime to the screen
         DISPLAYSURF.blit(slime.image, slime.position)
