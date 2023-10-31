@@ -99,32 +99,37 @@ def gameplay(SCENARIO):
             prop.update(slime, horde)
         slime.update()
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-        for i in range(0, len(horde)):
-            if not horde[i].isDead:
-                horde[i].setKnockback(slime.statBlock.ATTACK)
-                horde[i].update(slime)
-                DISPLAYSURF.blit(horde[i].image, horde[i].position)
-                DISPLAYSURF.blit(horde[i].statBlock.HealthBar.HPBAR_SURFACE, (horde[i].position))
+        for enemy in horde:
+            if not enemy.isDead:
+                enemy.setKnockback(slime.statBlock.ATTACK)
+                enemy.update(slime)
+                DISPLAYSURF.blit(enemy.image, enemy.position)
+                DISPLAYSURF.blit(enemy.statBlock.HealthBar.HPBAR_SURFACE, (enemy.position))
                 # this checks to see if slime is touched by an horde[i].
-                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), horde[i].rect)):
-                    slime.takeDamage(horde[i])
-            if horde[i].deathAnimFrame > 0 and horde[i].isDead:
-                horde[i].update(slime)
-                DISPLAYSURF.blit(horde[i].image, (horde[i].position))
-            elif horde[i].isDead and horde[i].deathAnimFrame == 0:
+                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), enemy.rect)):
+                    slime.takeDamage(enemy)
+            if enemy.deathAnimFrame > 0 and enemy.isDead:
+                enemy.update(slime)
+                DISPLAYSURF.blit(enemy.image, (enemy.position))
+            elif enemy.isDead and enemy.deathAnimFrame == 0:
+                print(enemy.Name + " has been deadified!")
+                horde.remove(horde[i])
                 continue
         # Draw the Overlay
         for sword in weapons:
             if sword.swing:
                 weapons.draw(DISPLAYSURF)
                 # check to see if any monsters are hit by the sword
-                for i in range(0, len(horde)):
-                    if (pygame.sprite.collide_rect(sword, horde[i])
-                            and horde[i].statBlock.HEALTH > 0
-                            and not horde[i].isHit):
+                for enemy in horde:
+                    if (pygame.sprite.collide_rect(sword, enemy)
+                            and enemy.statBlock.HEALTH > 0
+                            and not enemy.isHit):
                         # logging.info("horde[i] has been hit by sword")
-                        horde[i].takeDamage(slime)
-                        horde[i].statBlock.HealthBar.update(horde[i])
+                        enemy.takeDamage(slime)
+                        enemy.statBlock.HealthBar.update(horde[i])
+                for i in range(0, len(setPieces)):
+                    if (pygame.sprite.collide_rect(sword, setPieces[i])):
+                        setPieces[i].setPieceHP -= slime.statBlock.ATTACK
             # I have become death, destroyer of slimes
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario

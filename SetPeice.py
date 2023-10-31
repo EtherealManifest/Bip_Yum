@@ -21,6 +21,8 @@ import pygame
 from pygame.locals import *
 from pathlib import Path
 import os
+import Crypt
+import copy
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -36,6 +38,10 @@ setPieceList = os.listdir('./setPiecePanels')
 for sprite in setPieceList:
     temp = Path('./setPiecePanels/' + sprite)
     sceneShop.append(pygame.image.load(temp))
+
+def stub():
+    pass
+
 class setPiece(pygame.sprite.Sprite):
     dealsDamage = False
     damage = 0
@@ -69,6 +75,7 @@ class setPiece(pygame.sprite.Sprite):
         self.spawnTime = 0
         self.destroyable = False
         self.setPieceHP = 0
+        self.resetEnemy = stub
 
     #buildSetPiece lets me define a new setPiece with All Details.
     #if no new details are defined, it just set everything to the defaults
@@ -95,7 +102,6 @@ class setPiece(pygame.sprite.Sprite):
         self.spawnRate = _spawnRate
         self.destroyable = _destroyable
         self.setPieceHP = _setPieceHP
-
 
 
     def setImage(self, newImage):
@@ -147,6 +153,14 @@ class setPiece(pygame.sprite.Sprite):
                 ",\n HP: " + str(self.setPieceHP))
 
     def update(self, slime, horde):
+        if self.spawnEnemies:
+            if self.spawnTime == 0:
+                #this method needs to redeclare this enemy with fresh stats.
+                self.resetEnemy()
+                horde.append(self.enemy)
+                self.spawnTime = self.spawnRate
+            else:
+                self.spawnTime -= 1
         #if the slime touches this setPiece
         if slime.rect.colliderect(self.rect):
             #print(self.toString())
@@ -166,12 +180,7 @@ class setPiece(pygame.sprite.Sprite):
             if self.killZone:
                 #It's a kill zone, so slime DIES!!!
                 slime.statBlock.HEALTH = 0
-            if self.spawnEnemies:
-                if self.spawnTime ==0:
-                    horde.append(self.enemy)
-                    self.spawnTime = self.spawnRate
-                else:
-                    self.spawnTime -= self.spawnTime
+
 
 
 
@@ -231,18 +240,13 @@ class setPiece(pygame.sprite.Sprite):
 
 
         if top_cross == longest:
-            print("touching top, length " + str(top_cross))
             slime.allowedMoves['down'] = False
         if bottom_cross == longest:
             slime.allowedMoves['up'] = False
-            print("touching bottom, length " + str(bottom_cross))
         if left_cross == longest:
             slime.allowedMoves['right'] = False
-            print("touching left, length " + str(left_cross))
         if right_cross == longest:
             slime.allowedMoves['left'] = False
-            print("touching right, length " + str(right_cross))
-
 
     # here, p1 and p2 are both tuples of coordinates representing the endpoints of a line. this method
     # will return a single integer representing the length of that line. It is used in getPlayerPos

@@ -12,7 +12,6 @@ wolf1 = pygame.image.load(imgPath(wolfName))
 wolf2 = pygame.image.load(imgPath(wolfDamagedName))
 wolf3 = pygame.image.load(imgPath(wolfDeadName))
 
-
 class WOLF(MonsterMash.Monster):
     def __init__(self):
         super().__init__()

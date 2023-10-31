@@ -1,5 +1,5 @@
 #Define the setpieces to be used here
-import SetPeice, os,pygame
+import SetPeice, os,pygame, Crypt
 from pathlib import Path
 
 
@@ -20,10 +20,18 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.image = sceneShop[0]
         self.rect = self.image.get_rect()
         self.buildSetPiece(self.image, self.rect, (99,123))
-        #self.isPassable = False      PASSED
+        self.isPassable = True
         #self.dealsDamage = True      PASSED
         #self.damage = 10             PASSED
-        self.killZone = True
+        #self.killZone = True         PASSED
+        self.spawnEnemies = True
+        self.enemy = Crypt.WOLF()
+        self.spawnRate = 300
+        self.resetEnemy = self.wolfResetEnemy
+
+    def wolfResetEnemy(self):
+        print("enemy reset!")
+        self.enemy = Crypt.WOLF()
 
 DEFAULTSETPIECE = DefaultSetPiece()
 
