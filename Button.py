@@ -78,7 +78,8 @@ class Button(pygame.surface.Surface):
             self.quickRender()
 
         if self.is_clicked == True:
-            self.is_clicked = False;
+            self.is_clicked = False
             return self.label
+
         self.blit(font.render(self.text, False, (0, 0, 0)), (self.textx, self.texty))
         return ""

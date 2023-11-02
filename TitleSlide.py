@@ -15,22 +15,16 @@ fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
 FPS = int(META[3]) - 30  # frames per second setting
 
-#initializez the music mixer
-pygame.mixer.init()
-TitleScreenMusicPath = Path('./Music(not Owned)/Xenoblade 3_ Title Menu Screen Music.mp3')
-TitleScreenMusic = pygame.mixer.Sound(TitleScreenMusicPath)
-
 #this is for the BIP YUM text, it will be 1/5 at high as the screen
 font = pygame.font.SysFont("Planet Comic", int(WINY/5))
 NameOfTheGame = font.render("Bip Yum", False, (0,0,0))
 GameNamePOS = (((WINX / 2) - NameOfTheGame.get_width()/2), (WINY/2) - NameOfTheGame.get_height()/2)
 
 
-openSky = pygame.Surface((WINX, WINY))
+
 cloudArray = []
 # Cloud list, which is used to put the actual clouds in the actual sky
 cloudList = os.listdir('./CloudSprites/')
-
 for panel in cloudList:
     temp = Path('./CloudSprites/' + panel)
     cloudArray.append(pygame.image.load(temp))
@@ -41,7 +35,7 @@ cloudMoveSpeed = .4
 cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
-cloudMoveDirection = 1
+cloudMoveDirection = 2
 
 
 
@@ -96,8 +90,6 @@ class Cloud(pygame.sprite.Sprite):
         #now update the blitting location
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
-
-
 def setTheSkies():
     for i in range(0, cloudNum + 1):
         newCloud = Cloud()
@@ -112,6 +104,7 @@ def changeTheSkies(currClouds):
 #this is the loop that runs the title screen
 def runTitle(DISPLAYSURF):
     #Program Start:
+    openSky = pygame.Surface((WINX, WINY))
     openSky.fill((25, 186, 255))
     setTheSkies()
     #I want to be able to scale the clouds. in order to do that, they need to
@@ -120,9 +113,6 @@ def runTitle(DISPLAYSURF):
     cloudGroup.draw(openSky)
     DISPLAYSURF.blit(openSky, (0,0))
     Grass = GroundMaker.PlantTheGrass(WINX, WINY)
-    # this is the first time I've tried music! see if we cant put some music
-    # in the background!
-    TitleScreenMusic.play(-1)
     #buttons
     button_list = []
     start_button = Button.Button()
@@ -138,7 +128,6 @@ def runTitle(DISPLAYSURF):
 
 
     #title Text
-    status = ""
     while True:
         changeTheSkies(cloudGroup)
         cloudGroup.update()
@@ -165,7 +154,6 @@ def runTitle(DISPLAYSURF):
                     button.is_clicked = True
             status = button.update()
             if status != "":
-                TitleScreenMusic.stop()
                 return status
 
         for event in pygame.event.get():

@@ -157,6 +157,7 @@ class setPiece(pygame.sprite.Sprite):
 
     def update(self, slime, horde):
         if self.spawnEnemies:
+            print(self.spawnTime)
             if self.spawnTime == 0:
                 #this method needs to redeclare this enemy with fresh stats.
                 self.resetEnemy()

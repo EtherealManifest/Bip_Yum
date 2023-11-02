@@ -2,25 +2,16 @@
 # implementation for bip yum
 #FIXME It's time. the Scenario update is nearly here. This file should read in all the data from a created Scenario and
 # run the scenario accordingly.
-import pygame, sys
-from SlimesDelight import *
-import SlimesDelight  # Slimy Behavior
-from GroundMaker import *
-import GroundMaker  # Draws the Background
-from pygame.locals import *
-from MonsterMash import *
-import MonsterMash
-import Armory
 from Armory import *
 import logging
 from Overlay import *
-import pathlib
 from pathlib import Path
 import TitleSlide
-import time
-import Scenario
-import Cluster
 import TestScenario
+import gc
+import Scenario
+import threading
+import copy
 
 
 # I'm going to create a .txt file called meta to store all the overhead information.
@@ -69,21 +60,20 @@ pygame.display.set_icon(slimeImg)
 BackGroundLocale = Path('./GroundPanels/Lava/')
 
 # this method will be used to render the title screen, which is the next project
-def titleScreen():
-    return TitleSlide.runTitle(DISPLAYSURF)
 
-def gameplay(SCENARIO):
+
+def playScenario(Scenario):
     # play music
-    end = False
     #read the Scenario
-    slime = SCENARIO.TheWanderer
-    setPieces = SCENARIO.trove
-    BackGround = SCENARIO.vista
+    scenario = Scenario
+    slime = scenario.TheWanderer
+    setPieces = scenario.trove
+    BackGround = scenario.vista
     horde = []
-    for monster in SCENARIO.horde:
+    for monster in scenario.horde:
         horde.append(monster)
     weapons = pygame.sprite.Group()
-    weapons.add(SCENARIO.weapon)
+    weapons.add(scenario.weapon)
     #set the overlay
     overlay = Overlay()
 
@@ -98,6 +88,7 @@ def gameplay(SCENARIO):
             DISPLAYSURF.blit(prop.image, prop.pos)
             prop.update(slime, horde)
         slime.update()
+        scenario.winCondition(horde)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
         for enemy in horde:
             if not enemy.isDead:
@@ -134,7 +125,10 @@ def gameplay(SCENARIO):
             if slime.statBlock.HEALTH <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
                 #BattleMusic.stop()
-                slime.reset(SCENARIO.slimyPOS)
+                slime.reset(scenario.slimyPOS)
+        if(scenario.Win):
+            return None
+
         DISPLAYSURF.blit(overlay, (0, 0))
         # draw the slime to the screen
         DISPLAYSURF.blit(slime.image, slime.position)
@@ -145,24 +139,38 @@ def gameplay(SCENARIO):
         pygame.display.update()
         fpsClock.tick(FPS)
 
-
+def runScenario(Scenario):
+    playScenario(Scenario)
 # Program Start
 
 # this runs the titlescreen, and returns the users selection
-while True:
-    logging.info("Game Initialized")
-    nextStep = titleScreen()
-    if nextStep == 'Q' or nextStep == 'quit-button':
-        pygame.quit()
-        sys.exit()
-    # when TitleScreen Returns, it will have an Event generated.
-    # Currently, the only two events to be implemented are the
-    # "go to gameplay" event to move to the gameplay loop
-    # and the "quit" event that ends the game
-    if nextStep == "start-button":
-        # clears the event queue so that the gameplay starts fresh
-        pygame.event.clear()
-        gameplay(TestScenario.SCENARIO)
+
+logging.info("Game Initialized")
+TheScenario = None
+nextStep = TitleSlide.runTitle(DISPLAYSURF)
+if nextStep == 'Q' or nextStep == 'quit-button':
+    pygame.quit()
+    sys.exit()
+# when TitleScreen Returns, it will have an Event generated.
+# Currently, the only two events to be implemented are the
+# "go to gameplay" event to move to the gameplay loop
+# and the "quit" event that ends the game
+if nextStep == "start-button":
+    TheScenario = TestScenario.TestScenario()
+    nextStep = TitleSlide.runTitle(DISPLAYSURF)
+while(nextStep == 'start-button'):
+    # clears the event queue so that the gameplay starts fresh
+    TheScenario.reset()
+    runScenario(TheScenario)
+    print("scenario Complete")
+    nextStep = TitleSlide.runTitle((DISPLAYSURF))
+
+
+
+
+
+
+
         # if i am running this game multiple times in a row, It becomes SUPER laggy
 
 '''when the game runs gameplay, it needs to read in a scenario. the scenario will consist of 

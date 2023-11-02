@@ -22,13 +22,56 @@ class Scenario:
     # slime himself
     TheWanderer = SlimesDelight.Slime()
 
-    def __init__(self, _horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer):
+
+    def __init__(self):
+        # an array of monsters
+        self.horde = []
+        # an array of setPieces
+        self.trove = []
+        # the background
+        self.vista = []
+        # slimes original position
+        self.slimyPOS = (0, 0)
+        # slimes weapon
+        self.weapon = Armory.Weapon()
+        # slime himself
+        self.TheWanderer = SlimesDelight.Slime()
+        self.Win = False
+
+    def setTheScene(self, _horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer):
+        # an array of monsters
         self.horde = _horde
+        # an array of setPieces
         self.trove = _trove
+        # the background
         self.vista = _vista
+        # slimes original position
         self.slimyPOS = _slimyPOS
+        # slimes weapon
         self.weapon = _weapon
+        # slime himself
         self.TheWanderer = _TheWanderer
+        self.Win = False
+    def __del__(self):
+        print("This Scenario is being deleted. Calling Del on all attributes.")
+        del self.trove
+        del self.horde
+        del self.vista
+        del self.slimyPOS
+        del self.weapon
+        del self.TheWanderer
+        del self.Win
+
+    def winCondition(self, horde):
+        print("Win? There are " + str(len(horde)) + " left")
+        if len(horde) == 0:
+            self.Win = True
+            print("you win!")
+
+    # this allows the function that calls this to get a copy of this scenario, not the actual thing. Ideally. Hopefully
+    def generate(self):
+        temp = self
+        return temp
 
 
 
