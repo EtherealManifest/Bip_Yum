@@ -1,5 +1,6 @@
 import AICore
 import random
+import pygame.transform
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -20,6 +21,11 @@ class SimpleMovement(AICore.AICore):
     def __init__(self):
         super().__init__()
         self.movement = simpleMovement
+
+class TumbleweedMovement(AICore.AICore):
+    def __init__(self):
+        super().__init__()
+        self.movement = tumbeweedMovement
 
 
 def agressiveMovement(monster, slime):
@@ -111,6 +117,19 @@ def chaoticMovement(monster, slime):
         monster.direction = 'up'
         monster.hitMove = (0, monster.hitMoveRate)
 
+def tumbeweedMovement(monster, slime):
+    #tumbleweed movement just moves the enemy from left to right, bouncing.
+    monster.rotations += 1
+    monster.image = monster.baseImage
+    #the very last number in this is the number of degrees to rotate by per frame
+    monster.image = pygame.transform.rotate(monster.image, monster.rotations * 10)
+    monster.monsterX -= monster.MonsterMoveSpeed
+    if monster.bounceCount == (1 + monster.bounceWidth):
+        monster.bounceCount = 0
+    heightJump = -(    (monster.bounceHeight * (monster.bounceCount - 10))/25   )
+    monster.monsterY += heightJump
+    monster.bounceCount += 1
+
 def simpleMovement(monster, slime):
     if(random.randint(0,100) < 75):
         if monster.monsterX > slime.slimex:
@@ -167,8 +186,11 @@ SIMPLE = AICore.AICore()
 AGRESSIVE = AICore.AICore()
 CHAOTIC = AICore.AICore()
 STAY = AICore.AICore()
+TUMBLEWEED = AICore.AICore()
 
 SIMPLE.movement = simpleMovement
 CHAOTIC.movement = chaoticMovement
 AGRESSIVE.movement = agressiveMovement
 STAY.movement = Stay
+TUMBLEWEED.movement = tumbeweedMovement
+

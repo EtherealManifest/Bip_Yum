@@ -63,10 +63,8 @@ class Scenario:
         del self.Win
 
     def winCondition(self, horde):
-        print("Win? There are " + str(len(horde)) + " left")
         if len(horde) == 0:
             self.Win = True
-            print("you win!")
 
     # this allows the function that calls this to get a copy of this scenario, not the actual thing. Ideally. Hopefully
     def generate(self):

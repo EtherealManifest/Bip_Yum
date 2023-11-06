@@ -11,7 +11,7 @@ WINY = int(META[1])
 PLAINS = Path("./GroundPanels/Grass/")
 SANDS = Path("./GroundPanels/Desert/")
 FLAMES = Path("./GroundPanels/Lava/")
-
+SPACES = Path("./GroundPanels/Space/")
 #each of these is a group of sprites
 def GRASS():
     return GroundMaker.BuildTheLand(WINX, WINY, PLAINS)
@@ -19,3 +19,7 @@ def DESERT():
     return GroundMaker.BuildTheLand(WINX, WINY, SANDS)
 def LAVA():
     return GroundMaker.BuildTheLand(WINX, WINY, FLAMES)
+
+def SPACE():
+    return GroundMaker.BuildTheLand(WINX, WINY, SPACES)
+

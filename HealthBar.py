@@ -19,20 +19,24 @@ class HealthBar(pygame.sprite.Sprite):
         self.HPBAR_SURFACE.fill((178, 34, 34))
         self.HP_Remaining.fill((178, 34, 34))
         self.HP_Remaining_Wide = 0
+        self.show = True
         # the image will be the merging of the 2 sprites, total firrst then remaining
 
         # the position will be HPBARHIGH above the monsters sprite
         # This will have to be set in the monsters program
 
+    def noShow(self):
+        self.HPBAR_SURFACE.set_colorkey((178, 34, 34))
     def update(self, target):
-        self.HP_Remaining_Wide = int(HPBARWIDE * (target.statBlock.HEALTH / target.statBlock.TOTALHEALTH))
-        self.HPBAR_SURFACE.fill((0, 0, 0))
-        if(self.HP_Remaining_Wide <=0):
-            self.HP_Remaining_Wide = 0
-        self.HP_Remaining = pygame.Surface((self.HP_Remaining_Wide, HPBARHIGH))
-        self.HP_Remaining.fill((178, 34, 34))
-        # Blit the remaining HP onto the HPSURFACE
-        self.HPBAR_SURFACE.blit(self.HP_Remaining, (0, 0))
+        if(self.show):
+            self.HP_Remaining_Wide = int(HPBARWIDE * (target.statBlock.HEALTH / target.statBlock.TOTALHEALTH))
+            self.HPBAR_SURFACE.fill((0, 0, 0))
+            if(self.HP_Remaining_Wide <=0):
+                self.HP_Remaining_Wide = 0
+            self.HP_Remaining = pygame.Surface((self.HP_Remaining_Wide, HPBARHIGH))
+            self.HP_Remaining.fill((178, 34, 34))
+            # Blit the remaining HP onto the HPSURFACE
+            self.HPBAR_SURFACE.blit(self.HP_Remaining, (0, 0))
 
     def dump(self):
         return "HPBARWIDE: " + str(HPBARWIDE) + "\n" + "HP_Remaining_Wide: " + str(self.HP_Remaining_Wide)

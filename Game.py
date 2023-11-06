@@ -67,6 +67,7 @@ def playScenario(Scenario):
     #read the Scenario
     scenario = Scenario
     slime = scenario.TheWanderer
+    slime.setPosition(scenario.slimyPOS[0], scenario.slimyPOS[1])
     setPieces = scenario.trove
     BackGround = scenario.vista
     horde = []
@@ -90,23 +91,21 @@ def playScenario(Scenario):
         slime.update()
         scenario.winCondition(horde)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-        for enemy in horde:
-            if not enemy.isDead:
-                enemy.setKnockback(slime.statBlock.ATTACK)
-                enemy.update(slime)
-                DISPLAYSURF.blit(enemy.image, enemy.position)
-                DISPLAYSURF.blit(enemy.statBlock.HealthBar.HPBAR_SURFACE, (enemy.position))
+        for i  in range(0, len(horde)):
+            if not horde[i].isDead:
+                horde[i].setKnockback(slime.statBlock.ATTACK)
+                horde[i].update(slime)
+                DISPLAYSURF.blit(horde[i].image, horde[i].position)
+                DISPLAYSURF.blit(horde[i].statBlock.HealthBar.HPBAR_SURFACE, (horde[i].position))
                 # this checks to see if slime is touched by an horde[i].
-                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), enemy.rect)):
-                    slime.takeDamage(enemy)
-            if enemy.deathAnimFrame > 0 and enemy.isDead:
-                enemy.update(slime)
-                DISPLAYSURF.blit(enemy.image, (enemy.position))
-            elif enemy.isDead and enemy.deathAnimFrame == 0:
-                print(enemy.Name + " has been deadified!")
-                horde.remove(horde[i])
+                if (pygame.Rect.colliderect(slime.rect.inflate(-5, -5), horde[i].rect)):
+                    slime.takeDamage(horde[i])
+            if horde[i].deathAnimFrame > 0 and horde[i].isDead:
+                horde[i].update(slime)
+                DISPLAYSURF.blit(horde[i].image, (horde[i].position))
+            elif horde[i].isDead and horde[i].deathAnimFrame == 0:
                 continue
-        # Draw the Overlay
+        # Draw the Overlays
         for sword in weapons:
             if sword.swing:
                 weapons.draw(DISPLAYSURF)
@@ -128,6 +127,9 @@ def playScenario(Scenario):
                 slime.reset(scenario.slimyPOS)
         if(scenario.Win):
             return None
+        for enemy in horde:
+            if enemy.isDead and enemy.deathAnimFrame == 0:
+                horde.remove(enemy)
 
         DISPLAYSURF.blit(overlay, (0, 0))
         # draw the slime to the screen
