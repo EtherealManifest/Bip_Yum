@@ -1,3 +1,5 @@
+#THis is the collection for different scenarios
+
 import Scenario, Jukebox, PropStorage, Arsenal, SlimesDelight, Atlas, MonsterMash, copy, Crypt
 import pygame
 data = (open('Meta.txt')).read()
@@ -7,7 +9,7 @@ WINY = int(META[1])
 
 
 
-class TestScenario(Scenario.Scenario):
+class DesertScenario(Scenario.Scenario):
     def __init__(self):
         super().__init__()
         wolf1 = Crypt.WOLF()
@@ -36,3 +38,5 @@ class TestScenario(Scenario.Scenario):
             if pieces.destroyable != False:
                 return False
         return True
+
+DESERT = DesertScenario()

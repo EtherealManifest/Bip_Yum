@@ -57,6 +57,7 @@ class Monster(pygame.sprite.Sprite):
         self.AICore.monster = self
         self.isDead = False
         self.deathAnimFrame = 10
+        self.stopOnHit = True
 
 
     # These are a variety of set and mod options for the stats and attributes.
@@ -146,7 +147,7 @@ class Monster(pygame.sprite.Sprite):
                 # his position will be adjusted here
                 self.takeDamage(slime)
             # make sure that the monster doesnt go inside of slime. IF they arent Overlapping, move enemy
-            elif not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)):
+            elif (not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)) or not self.stopOnHit):
                 #Update from the core to move in the appropriate direction
                 self.AICore.update(slime)
             self.position = (self.monsterX, self.monsterY)

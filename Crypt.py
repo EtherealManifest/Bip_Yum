@@ -41,7 +41,7 @@ class TUMBLEWEED(MonsterMash.Monster):
         self.setRect()
         self.setCore(Cluster.TumbleweedMovement())
         self.setPosition((200, 200))
-        self.bounceHeight = -40
+        self.bounceHeight = -20
         self.bounceWidth = 20
         self.bounceCount = 0
         self.direction = 'left'
@@ -49,5 +49,6 @@ class TUMBLEWEED(MonsterMash.Monster):
         self.statBlock.HealthBar.noShow()
         self.deadImage = Mausoleum.get("Tumbleweed_1.png")
         self.baseImage = self.image
+        self.stopOnHit = False
 
 CRYPT = [WOLF, TUMBLEWEED]

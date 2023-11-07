@@ -92,10 +92,12 @@ class TumbleweedLord(SetPeice.setPiece):
         self.isPassable = True
         self.spawnEnemies = True
         self.enemy = Crypt.TUMBLEWEED()
-        self.spawnRate = 200
+        self.spawnRate = 10
         self.spawnTime = 0
         self.resetEnemy = self.tumbleweedResetEnemy
 
     def tumbleweedResetEnemy(self):
+        scaleFactor = (.5 + (1.5-.5) * random.random()) #this should generate a number between .5 and 1.5
         self.enemy = Crypt.TUMBLEWEED()
+        self.enemy.baseImage = pygame.transform.scale_by(self.enemy.image, scaleFactor)
         self.enemy.setPosition((WINX + 1, random.randint(32, int(WINY))))
