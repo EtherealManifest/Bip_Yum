@@ -13,7 +13,7 @@ WINX = int(META[0])
 WINY = int(META[1])
 fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
-FPS = int(META[3]) - 30  # frames per second setting
+FPS = int(META[3])  # frames per second setting
 
 #this is for the BIP YUM text, it will be 1/5 at high as the screen
 font = pygame.font.SysFont("Planet Comic", int(WINY/5))
@@ -35,7 +35,7 @@ cloudMoveSpeed = .4
 cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
-cloudMoveDirection = 2
+cloudMoveDirection = 5
 
 
 
@@ -163,5 +163,3 @@ def runTitle(DISPLAYSURF):
 
         pygame.display.update()
         fpsClock.tick(FPS)
-
-

@@ -29,7 +29,6 @@ class TestScenario(Scenario.Scenario):
 
 
     def winCondition(self, horde):
-
         pass
     def alldestroyed(self):
         for pieces in self.trove:

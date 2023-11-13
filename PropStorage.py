@@ -95,6 +95,7 @@ class TumbleweedLord(SetPeice.setPiece):
         self.spawnRate = 10
         self.spawnTime = 0
         self.resetEnemy = self.tumbleweedResetEnemy
+        self.tumbleWeedsKilled = 0
 
     def tumbleweedResetEnemy(self):
         scaleFactor = (.5 + (1.5-.5) * random.random()) #this should generate a number between .5 and 1.5

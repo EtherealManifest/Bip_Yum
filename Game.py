@@ -8,10 +8,6 @@ from Overlay import *
 from pathlib import Path
 import TitleSlide
 import TestScenario
-import gc
-import Scenario
-import threading
-import copy
 
 
 # I'm going to create a .txt file called meta to store all the overhead information.
@@ -104,6 +100,7 @@ def playScenario(Scenario):
                 horde[i].update(slime)
                 DISPLAYSURF.blit(horde[i].image, (horde[i].position))
             elif horde[i].isDead and horde[i].deathAnimFrame == 0:
+                print(len(horde))
                 continue
         # Draw the Overlays
         for sword in weapons:
@@ -121,10 +118,10 @@ def playScenario(Scenario):
                     if (pygame.sprite.collide_rect(sword, setPieces[i]) and setPieces[i].destroyable):
                         setPieces[i].takeDamage(slime)
             # I have become death, destroyer of slimes
-            if slime.statBlock.HEALTH <= 0:
+            if slime.statBlock.HEALTH <= 0 and slime.deathFrame <=0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
                 #BattleMusic.stop()
-                slime.reset(scenario.slimyPOS)
+                return
         if(scenario.Win):
             return None
         for enemy in horde:

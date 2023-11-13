@@ -6,8 +6,6 @@ from StatusBlock import *
 import StatusBlock
 from pathlib import Path
 
-
-
 META = (open('Meta.txt')).read().split(':')
 
 WINX = int(META[0])
@@ -32,6 +30,7 @@ frontSlime1 = pygame.image.load(Path(SlimeImgPath / 'front_slime_sprite_0.png'))
 frontSlime2 = pygame.image.load(Path(SlimeImgPath / 'front_slime_sprite_1.png'))
 backSlime1 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_0.png'))
 backSlime2 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_1.png'))
+doomSlime = pygame.image.load(Path(SlimeImgPath / 'doom_slime_sprite_0.png'))
 # This is an old placeholder
 slimeImg = pygame.image.load(Path(SlimeImgPath / 'SlimeOld.png'))
 jumpTick = 10  # sets the time for a jump.
@@ -135,13 +134,11 @@ class Slime(pygame.sprite.Sprite):
     # knockback is going to be determined based on the enemies strength stat, so it will be proportional to damage dealt
     knockback = 0
     knockDirection = ''
-    allowedMoves = {'up' : True, 'down' : True, 'left' : True, 'right' : True}
-    #The time between dodges
+    allowedMoves = {'up': True, 'down': True, 'left': True, 'right': True}
+    # The time between dodges
     dodgeCooldown = 100
-    #Can He Dodge?
+    # Can He Dodge?
     dodge = True
-
-
 
     def __init__(self):
         # this initializes it as a sprite object by calling the Parent COnstructor
@@ -152,14 +149,15 @@ class Slime(pygame.sprite.Sprite):
         # logging.info("PLAYER INITIALIZED: " + self.statBlock.showStats())
         # sets the slime sprite to this object
         self.image = slimeImg1
+        self.deathImage = doomSlime
         # defines the rectangle that bounds the sprite
         self.rect = self.image.get_rect()
         # this line uses setPosition to set slimes position(across the board) to the
         # center of the screen
         self.slimex = 0
         self.slimey = 0
-        #allowed moves is a dictionary. this is the moves slime is currently allowed to make
-        self.allowedMoves = {'up' : True, 'down' : True, 'left' : True, 'right' : True}
+        # allowed moves is a dictionary. this is the moves slime is currently allowed to make
+        self.allowedMoves = {'up': True, 'down': True, 'left': True, 'right': True}
 
         # defines his current position, a set of coordinates
         self.direction = ''
@@ -174,14 +172,21 @@ class Slime(pygame.sprite.Sprite):
         self.isHit = False
         self.knockback = 0
         self.knockDirection = ''
-
+        self.deathTime = 30
+        self.deathFrame = 30
 
     def update(self):
-        #if he is swimming, reassign images
-        if(self.dodgeCooldown > 0):
-            self.dodgeCooldown -= 1
-        else:
-            self.dodge = True
+        # FIXME: if slimy is oput of health, instead of listening for movement events, run the death sequence
+        if self.statBlock.HEALTH <= 0:
+            if self.deathFrame > 0:
+                self.image = self.deathImage
+                self.rect = self.image.get_rect()
+                self.deathFrame -= 1
+                return
+        #slimy is uh...done dying (deathframe is 0 or less
+            return
+
+        # if he is swimming, reassign images
         self.setPosition(self.slimex, self.slimey)
         # this is for the animation, it sets the sprite for the animation frame.
         SmoothGrooves(self)
@@ -221,7 +226,6 @@ class Slime(pygame.sprite.Sprite):
         if self.slimex <= 0:
             self.allowedMoves['left'] = False
 
-
         # this is jump stuff. he's only in the air for a little bit, but set jump to false once he's back down.
         if self.jump == True:
             # The last frame before landing
@@ -240,7 +244,7 @@ class Slime(pygame.sprite.Sprite):
             if ((pygame.key.get_pressed()[K_a] and pygame.key.get_pressed()[K_w])
                     or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_UP])):  # A W or <- and ^
                 if self.allowedMoves['up']:
-                    self.slimey -= 2* (self.moveRate) / 3
+                    self.slimey -= 2 * (self.moveRate) / 3
                     if (pygame.key.get_pressed()[K_SPACE]):
                         self.slimey -= 2 * self.moveRate
                 if self.allowedMoves['left']:
@@ -256,7 +260,7 @@ class Slime(pygame.sprite.Sprite):
                   or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_DOWN])):  # A S <- and \/
                 if self.allowedMoves['down']:
                     self.slimey += 2 * self.moveRate / 3
-                    if(pygame.key.get_pressed()[K_SPACE]):
+                    if (pygame.key.get_pressed()[K_SPACE]):
                         self.slimey += 2 * self.moveRate
                 if self.allowedMoves['left']:
                     self.slimex -= 2 * self.moveRate / 3
@@ -354,8 +358,8 @@ class Slime(pygame.sprite.Sprite):
         elif (self.direction == 'right' or self.direction == 'up-right' or self.direction == 'down-right'):
             self.image = slimeImgRight
 
-    # This is designed to make sure that when one facet of position is updated, all facets of the
-    # position are updated, ensuring that Bip is where he appears to be
+        # This is designed to make sure that when one facet of position is updated, all facets of the
+        # position are updated, ensuring that Bip is where he appears to be
         self.setPosition(self.slimex, self.slimey)
 
     def allowAllDirections(self):
@@ -376,10 +380,9 @@ class Slime(pygame.sprite.Sprite):
         self.position = (self.slimex, self.slimey)
         self.statBlock.pos = self.position
         self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
+
     def getPosition(self):
         return self.position
-
-
 
     def takeDamage(self, foe):
         self.knockback = foe.statBlock.ATTACK % 25
@@ -414,6 +417,7 @@ class Slime(pygame.sprite.Sprite):
             return 'down'
         if self.direction == 'up-left':
             return 'down-right'
+
     def rectangle(self):
         return ("Slime:\ntop: " + str(self.rect.top) +
                 "\nbottom:" + str(self.rect.bottom) +
@@ -421,6 +425,7 @@ class Slime(pygame.sprite.Sprite):
                 "\nright: " + str(self.rect.right) +
                 "\nx: " + str(self.rect.x) +
                 "\ny: " + str(self.rect.y))
+
     def printAllowedMoves(self):
         return ("Right: " + str(self.allowedMoves['right']) +
                 ", Left: " + str(self.allowedMoves['left']) +
@@ -430,10 +435,11 @@ class Slime(pygame.sprite.Sprite):
     def reset(self, pos):
         self.setPosition(pos[0], pos[1])
         self.statBlock.HEALTH = self.statBlock.TOTALHEALTH
+
+
 # This method will initialize the slime at the beginning of the program. It will
 # have position, color, and animation style.
 def initialize(pos_x=0, pos_y=0):
     slime = Slime();
     slime.slimex = pos_x
     slime.slimey = pos_y
-

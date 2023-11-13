@@ -39,4 +39,34 @@ class DesertScenario(Scenario.Scenario):
                 return False
         return True
 
+class PlainsScenario(Scenario.Scenario):
+    def __init__(self):
+        super().__init__()
+        #FIXME: CHANGE ENEMIES
+        wolf1 = Crypt.WOLF()
+        wolf2 = Crypt.WOLF()
+        wolf1.Name = "Wolf1"
+        wolf2.Name = "Wolf2"
+        wolf2.setPosition((500, 500))
+        _horde = [wolf1, wolf2]
+        #FIXME: CHANGE TROVE
+        _trove = [PropStorage.Round_Cactus(), PropStorage.Tall_Cactus(), PropStorage.TumbleweedLord()]
+        # this has to be called as a function, otherwise will just paint as lava
+        _vista = Atlas.GRASS()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.BLUESWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+    def reset(self):
+        self.__init__()
+    def winCondition(self, horde):
+        #FIXME: ADD A WIN CONDITION
+        pass
+    def alldestroyed(self):
+        for pieces in self.trove:
+            if pieces.destroyable != False:
+                return False
+        return True
+
 DESERT = DesertScenario()
