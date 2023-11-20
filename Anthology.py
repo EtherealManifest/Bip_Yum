@@ -85,6 +85,7 @@ ANTHOLOGY = [DESERT]
 def retrieveScenario(target_name):
     for scenario in ANTHOLOGY:
         if scenario.name == target_name:
+            scenario.reset()
             return scenario
     #return nothing to indicate that the scenario could not be found.
     return ""

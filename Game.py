@@ -124,6 +124,7 @@ def playScenario(Scenario):
                 #BattleMusic.stop()
                 return
         if(scenario.Win):
+            scenario.reset()
             return None
         for enemy in horde:
             if enemy.isDead and enemy.deathAnimFrame == 0:
@@ -146,7 +147,6 @@ def runScenario(Scenario):
 # this runs the titlescreen, and returns the users selection
 
 logging.info("Game Initialized")
-TheScenario = None
 nextStep = TitleSlide.runTitle(DISPLAYSURF)
 '''nextstep is either going to be Q, or it will be the name of a scenario that can be found
 in ANTHOLOGY.ANTHOLOGY. if it is the latter, go get it and set that as the current scenario, then run it.'''
@@ -160,9 +160,9 @@ if nextStep == 'Q' or nextStep == 'quit-button':
 if nextStep != "":
     runScenario(Anthology.retrieveScenario(nextStep))
     nextStep = TitleSlide.runTitle(DISPLAYSURF)
-while(nextStep == 'start-button'):
+while(nextStep != ''):
     # clears the event queue so that the gameplay starts fresh
-    runScenario(TheScenario)
+    runScenario(Anthology.retrieveScenario(nextStep))
     print("scenario Complete")
     nextStep = TitleSlide.runTitle((DISPLAYSURF))
 
