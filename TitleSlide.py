@@ -6,6 +6,7 @@ import GroundMaker
 import os
 from pathlib import Path
 import Button
+import math
 
 # in meta, the size of the screen is recorded. Get it
 META = (open('Meta.txt').read()).split(':')
@@ -15,12 +16,10 @@ fpsClock = pygame.time.Clock()
 pygame.key.set_repeat(20)
 FPS = int(META[3])  # frames per second setting
 
-#this is for the BIP YUM text, it will be 1/5 at high as the screen
-font = pygame.font.SysFont("Planet Comic", int(WINY/5))
-NameOfTheGame = font.render("Bip Yum", False, (0,0,0))
-GameNamePOS = (((WINX / 2) - NameOfTheGame.get_width()/2), (WINY/2) - NameOfTheGame.get_height()/2)
-
-
+# this is for the BIP YUM text, it will be 1/5 at high as the screen
+font = pygame.font.SysFont("Planet Comic", int(WINY / 5))
+NameOfTheGame = font.render("Bip Yum", False, (0, 0, 0))
+GameNamePOS = (((WINX / 2) - NameOfTheGame.get_width() / 2), (WINY / 2) - NameOfTheGame.get_height() / 2)
 
 cloudArray = []
 # Cloud list, which is used to put the actual clouds in the actual sky
@@ -31,16 +30,15 @@ for panel in cloudList:
 
 cloudGroup = pygame.sprite.Group()
 cloudMoveSpeed = .4
-#number of clouds to render
+# number of clouds to render
 cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
 cloudMoveDirection = 5
 
 
-
-#This class declares coulds and gives them a position. It has methods for
-#redrawing clouds on the other side of the screen
+# This class declares coulds and gives them a position. It has methods for
+# redrawing clouds on the other side of the screen
 class Cloud(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -87,13 +85,15 @@ class Cloud(pygame.sprite.Sprite):
         # scroll it from the other side
         if (self.pos[0] < -self.rect.width - 60):
             self.pos[0], self.pos[1] = (WINX, (random.randint(0, WINY)))
-        #now update the blitting location
+        # now update the blitting location
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
+
 
 def setTheSkies():
     for i in range(0, cloudNum + 1):
         newCloud = Cloud()
         cloudGroup.add(newCloud)
+
 
 def changeTheSkies(currClouds):
     for cloud in currClouds:
@@ -101,65 +101,202 @@ def changeTheSkies(currClouds):
             cloud = Cloud()
 
 
-#this is the loop that runs the title screen
+# returns a list of rows, each holding a list of  buttons centered in a menu that is centered on the screen.
+# It bases the position of the buttons on the current number of created scenarios, specifically the number in
+# ANTHOLOGY.ANTHOLOGY. To prevent a scenario from appearing in the menu, remove it from there.
+def set_buttons_scenarios():
+    # menu width is the maximum width the menu can occupy
+    menu_width = WINX * (7 / 8)
+    # menu width is the maximum height the menu can occupy
+    menu_height = WINY * (7 / 8)
+    # where the menu is positioned on screen
+    menu_pos = [(WINX / 8) / 2, (WINY / 8) / 2]  # Center the menu window
+    # a constiner for the buttons, an array of all of them
+    button_grid = []
+    # a variable that holds the accumulated value of all the buttons
+    total_width = 0
+    # the list of buttons
+    button_list = []
+    # create buttons for Every Scenario
+    from Anthology import ANTHOLOGY
+    for scenario in ANTHOLOGY:
+        # create a button, then add to the button list.
+        newButton = Button.Button()
+        newButton.modify(_pos=(0, 0), _text=scenario.name,
+                         _label=scenario.name)
+        button_list.append(newButton)
+    # determine the number of rows and add the buttons to the Button Grid
+    # find the total length of all the buttons together
+    for button in button_list:
+        total_width += button.width
+    # Now total width should equal the total width of all the buttons put together.
+    # if the total width is greater than the maximum allowed width, there need to be multiple rows.
+    if total_width > menu_width:
+        num_rows = math.ceil(total_width / menu_width)
+    else:
+        num_rows = 1
+    # take the value found above and divide the buttons into num_rows groups
+
+    # make the button grid the size of the number of rows needed
+    for i in range(0, num_rows):
+        # add needed blank rows to the grid
+        button_grid.append([])
+    # divide the pool of buttons into "equal" groups based on the number of rows
+    buttons_per_row = math.ceil(len(button_list) / num_rows)
+    row = 0
+    i = 0
+    for button in button_list:
+        # go through all of the buttons, adding them one row at a time.
+        if i < buttons_per_row:
+            button_grid[row].append(button)
+            i += 1
+        else:
+            row += 1
+            i = 0
+            button_grid[row].append(button)
+    # at this point, all the buttons have been added, and are sorted into groups.
+    # now, the buttons need to be formatted.
+    # for each row, balance all of the buttons. First set the width.
+    # The default dimensions for a button are 20pxh x 100pxw
+
+    i = 0
+    # for each row in button grid
+    for i in range(0, len(button_grid)):
+        # determine the position of each button
+        # for each button in this row
+        # currently referenced button in this row
+        index = 0
+        # set the x-position for this row
+        # the average space between each button in this row
+        spacing_constant = menu_width / (len(button_grid[i]) +1)
+        for button in button_grid[i]:
+            #this looks dumb, and it kinda is. Its a massive coordinate tuple
+            button_grid[i][index].pos = (menu_pos[0] + ((spacing_constant * (index + 1)) - ((1 / 2) * button.width)), 0 )
+    # now, the x-positions for all of the buttons should be set
+
+    # set the y positions
+    for i in range(0, len(button_grid)):
+        # determine the position of each button
+        # for each button in this row
+        # currently referenced button in this row
+        index = 0
+        # set the x-position for this row
+        # the average space between each button in this row
+        spacing_constant = menu_height / (len(button_grid) + 1)
+        for button in button_grid[i]:
+            #this looks stupid, it's a massive tuple so that it can be assigned to pos.
+            #it takes the current X value and midifies the Y
+            button_grid[i][index].pos = (button_grid[i][index].pos[0], menu_pos[1] + ((spacing_constant * (i + 1)) - ((1 / 2) * button.height)))
+
+    # now each button should be in the correct Y position.
+    # add listeners to each button that will return the scenario that they point to back to the
+    # game.py to run the scenario.
+    '''this is handled outside of here. See documentation for Button,update()'''
+    return button_grid
+
+
+# this is the loop that runs the title screen
 def runTitle(DISPLAYSURF):
-    #Program Start:
+    # Program Start:
     openSky = pygame.Surface((WINX, WINY))
     openSky.fill((25, 186, 255))
     setTheSkies()
-    #I want to be able to scale the clouds. in order to do that, they need to
+    # I want to be able to scale the clouds. in order to do that, they need to
     # be surfaces, not sprites. I'm gonna add an intermediary that converts them
     # to a surface, then blits the surfaces together.
     cloudGroup.draw(openSky)
-    DISPLAYSURF.blit(openSky, (0,0))
+    DISPLAYSURF.blit(openSky, (0, 0))
     Grass = GroundMaker.PlantTheGrass(WINX, WINY)
-    #buttons
+    # buttons
     button_list = []
     start_button = Button.Button()
     quit_button = Button.Button()
-    start_button.modify(_pos = (WINX/2 - start_button.get_rect().width/2, 2*WINY/3), _text = "START",
-                        _label = "start-button")
+    start_button.modify(_pos=(WINX / 2 - start_button.get_rect().width / 2, 2 * WINY / 3), _text="START",
+                        _label="start-button")
     button_list.append(start_button)
-    quit_button.modify(_pos = (start_button.pos[0],
-                               start_button.pos[1] + 2 * start_button.height),
-                       _text = "QUIT",
-                       _label = 'quit-button')
+    quit_button.modify(_pos=(start_button.pos[0],
+                             start_button.pos[1] + 2 * start_button.height),
+                       _text="QUIT",
+                       _label='quit-button')
     button_list.append(quit_button)
 
+    # load the scenario menu
+    scenario_menu_list = set_buttons_scenarios()
 
-    #title Text
+    # title Text
     while True:
         changeTheSkies(cloudGroup)
         cloudGroup.update()
-        #when the user makes a selection, return the selection to Game.py
-        openSky.fill((25,186,255))
+        # when the user makes a selection, return the selection to Game.py
+        openSky.fill((25, 186, 255))
         cloudGroup.draw(openSky)
         Grass.draw(openSky)
-        DISPLAYSURF.blit(openSky, (0,0))
+        DISPLAYSURF.blit(openSky, (0, 0))
         # blit the text onto the screen
         DISPLAYSURF.blit(NameOfTheGame, GameNamePOS)
-        #Load the button
+        # Load the button
         for button in button_list:
             DISPLAYSURF.blit(button, button.pos)
             button.is_hovered = False
 
+            # before I get here, if start has been selected, the button list needs to be changed to show all available
+        # scenarios.
         # check to see if the mouse is positioned over the start button
         for button in button_list:
-            if(button.isHovered(pygame.mouse.get_pos())):
-                #set the cursor to a focused cursor
+            if (button.isHovered(pygame.mouse.get_pos())):
+                # set the cursor to a focused cursor
                 button.is_hovered = True
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                #if the left button is clicked
-                if(pygame.mouse.get_pressed()[0]):
+                # if the left button is clicked
+                if (pygame.mouse.get_pressed()[0]):
                     button.is_clicked = True
             status = button.update()
+
+            if status == 'start-button':
+                # enter another While True loop. This time for the scenario buttons.
+                # this will be escaped either by selecting a scenario (return scenario code) or
+                # by pressing back to come back to this menu (break)
+                while True:
+                    changeTheSkies(cloudGroup)
+                    cloudGroup.update()
+                    # when the user makes a selection, return the selection to Game.py
+                    openSky.fill((25, 186, 255))
+                    cloudGroup.draw(openSky)
+                    DISPLAYSURF.blit(openSky, (0, 0))
+                    for row in scenario_menu_list:
+                        for button in row:
+                            DISPLAYSURF.blit(button, button.pos)
+                            button.is_hovered = False
+                    # check to see if the mouse is positioned over any button
+                    for row in scenario_menu_list:
+                        for button in row:
+                            if (button.isHovered(pygame.mouse.get_pos())):
+                                # set the cursor to a focused cursor
+                                button.is_hovered = True
+                                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                                # if the left button is clicked
+                                if (pygame.mouse.get_pressed()[0]):
+                                    button.is_clicked = True
+                            status = button.update()
+
+                    if status != "":
+                        #return all the way to game.py
+                        return status
+
+                    for event in pygame.event.get():
+                        if event.type == QUIT:
+                            return 'Q'
+
+                    pygame.display.update()
+                    fpsClock.tick(FPS)
+
             if status != "":
+                #return all the way to game.py
                 return status
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 return 'Q'
-
 
         pygame.display.update()
         fpsClock.tick(FPS)

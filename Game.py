@@ -7,6 +7,7 @@ import logging
 from Overlay import *
 from pathlib import Path
 import TitleSlide
+import Anthology
 import TestScenario
 
 
@@ -147,6 +148,8 @@ def runScenario(Scenario):
 logging.info("Game Initialized")
 TheScenario = None
 nextStep = TitleSlide.runTitle(DISPLAYSURF)
+'''nextstep is either going to be Q, or it will be the name of a scenario that can be found
+in ANTHOLOGY.ANTHOLOGY. if it is the latter, go get it and set that as the current scenario, then run it.'''
 if nextStep == 'Q' or nextStep == 'quit-button':
     pygame.quit()
     sys.exit()
@@ -154,12 +157,11 @@ if nextStep == 'Q' or nextStep == 'quit-button':
 # Currently, the only two events to be implemented are the
 # "go to gameplay" event to move to the gameplay loop
 # and the "quit" event that ends the game
-if nextStep == "start-button":
-    TheScenario = TestScenario.TestScenario()
+if nextStep != "":
+    runScenario(Anthology.retrieveScenario(nextStep))
     nextStep = TitleSlide.runTitle(DISPLAYSURF)
 while(nextStep == 'start-button'):
     # clears the event queue so that the gameplay starts fresh
-    TheScenario.reset()
     runScenario(TheScenario)
     print("scenario Complete")
     nextStep = TitleSlide.runTitle((DISPLAYSURF))

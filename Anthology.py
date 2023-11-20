@@ -12,6 +12,7 @@ WINY = int(META[1])
 class DesertScenario(Scenario.Scenario):
     def __init__(self):
         super().__init__()
+        self.name = "Desert Battle"
         wolf1 = Crypt.WOLF()
         wolf2 = Crypt.WOLF()
         wolf1.Name = "Wolf1"
@@ -29,10 +30,13 @@ class DesertScenario(Scenario.Scenario):
     def reset(self):
         self.__init__()
 
-
+    #to win, kill teh wolves. This can be checked by whether or not the first and second
+    # enemies are named wolf1 and wolf2
     def winCondition(self, horde):
-
-        pass
+        if (horde[0].Name != "Wolf1" and horde[0].Name != "Wolf2") and horde[1].Name != "Wolf2":
+            self.Win = True
+        else:
+            self.Win = False
     def alldestroyed(self):
         for pieces in self.trove:
             if pieces.destroyable != False:
@@ -43,6 +47,7 @@ class PlainsScenario(Scenario.Scenario):
     def __init__(self):
         super().__init__()
         #FIXME: CHANGE ENEMIES
+        self.name = "Plains Adventure"
         wolf1 = Crypt.WOLF()
         wolf2 = Crypt.WOLF()
         wolf1.Name = "Wolf1"
@@ -60,8 +65,8 @@ class PlainsScenario(Scenario.Scenario):
         self.Win = False
     def reset(self):
         self.__init__()
+    #should see if the wolves are dead. may not work right.
     def winCondition(self, horde):
-        #FIXME: ADD A WIN CONDITION
         pass
     def alldestroyed(self):
         for pieces in self.trove:
@@ -69,4 +74,18 @@ class PlainsScenario(Scenario.Scenario):
                 return False
         return True
 
+
 DESERT = DesertScenario()
+
+ANTHOLOGY = [DESERT]
+
+
+#in the menu, the button related to each scenario will return the name for that scenario when it is pressed.
+#the main menu will then call this, passing the name as a parameter. return the scenario they are looking for.
+def retrieveScenario(target_name):
+    for scenario in ANTHOLOGY:
+        if scenario.name == target_name:
+            return scenario
+    #return nothing to indicate that the scenario could not be found.
+    return ""
+

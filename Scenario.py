@@ -24,6 +24,7 @@ class Scenario:
 
 
     def __init__(self):
+        self.name = ""
         # an array of monsters
         self.horde = []
         # an array of setPieces

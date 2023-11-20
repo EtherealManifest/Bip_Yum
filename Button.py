@@ -48,7 +48,7 @@ class Button(pygame.surface.Surface):
         self.is_clicked = False
         self.is_hovered = False
 
-
+    #sets the background color to slightly less (mathematically) than the current background color.
     def hovered(self):
         temp_color =(
             self.background_color[0] - 50,
@@ -62,14 +62,15 @@ class Button(pygame.surface.Surface):
     def quickRender(self):
         self.fill(self.background_color)
 
-
+    #returns a bool denoting whether or not the button is currently being hovered
     def isHovered(self, mousePOS):
         return self.get_rect(topleft = self.pos).collidepoint(mousePOS)
-
+    #set the buttons 'clicked' status to True
     def clicked(self):
         self.is_clicked = True
         self.background_color = (183, 183, 183)
 
+    '''if the button is clicked while hovered, it returns This buttons Label.'''
     def update(self):
         #check to see if it has been clicked
         if self.is_hovered == True:
