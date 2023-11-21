@@ -52,6 +52,7 @@ class Round_Cactus(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
         self.image = sceneShop.get("Round_Cactus.png", None)
+        self.setBothImages(self.image)
         self.rect = self.image.get_rect()
         self.buildSetPiece(self.image, self.rect, (10, 123))
         self.isPassable = False
@@ -68,7 +69,7 @@ class Round_Cactus(SetPeice.setPiece):
 class Tall_Cactus(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
-        self.image = sceneShop.get("Tall_Cactus.png", None)
+        self.setBothImages(sceneShop.get("Tall_Cactus.png", None))
         self.rect = self.image.get_rect()
         self.buildSetPiece(self.image, self.rect, (100, 300))
         self.isPassable = False
@@ -85,7 +86,7 @@ class Tall_Cactus(SetPeice.setPiece):
 class TumbleweedLord(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
-        self.image = sceneShop.get("Buzz-Buzz.png")
+        self.setBothImages(sceneShop.get("Buzz-Buzz.png"))
         self.rect = self.image.get_rect()
         self.pos = (WINX, WINY)
         self.dealsDamage = False
@@ -102,3 +103,25 @@ class TumbleweedLord(SetPeice.setPiece):
         self.enemy = Crypt.TUMBLEWEED()
         self.enemy.baseImage = pygame.transform.scale_by(self.enemy.image, scaleFactor)
         self.enemy.setPosition((WINX + 1, random.randint(32, int(WINY))))
+
+class Cabbage(SetPeice.setPiece):
+    def __init__(self):
+        super().__init__()
+        self.setBothImages(sceneShop.get("Cabbage_0.png"))
+        self.rect = self.image.get_rect()
+        self.pos = (0,0)
+        self.dealsDamage = False
+        self.isPassable = True
+        self.interactable = True
+        self.interactionTrigger = self.eat
+        self.eaten = False
+
+    def eat(self, slime, horde):
+        self.setBothImages(sceneShop.get("Cabbage_1.png"))
+        self.interactable = False
+        self.eaten = True
+        if(slime.statBlock.HEALTH < slime.statBlock.TOTALHEALTH):
+            slime.statBlock.HEALTH += 20
+        if(slime.statBlock.HEALTH > slime.statBlock.TOTALHEALTH):
+            slime.statBlock.HEALTH = slime.statBlock.TOTALHEALTH
+

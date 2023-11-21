@@ -18,4 +18,4 @@ green.setStats(25, 180)
 
 REDSWORD =red
 BLUESWORD = blue
-GREENSOWRD = green
+GREENSWORD = green

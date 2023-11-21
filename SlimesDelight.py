@@ -31,6 +31,7 @@ frontSlime2 = pygame.image.load(Path(SlimeImgPath / 'front_slime_sprite_1.png'))
 backSlime1 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_0.png'))
 backSlime2 = pygame.image.load(Path(SlimeImgPath / 'back_slime_sprite_1.png'))
 doomSlime = pygame.image.load(Path(SlimeImgPath / 'doom_slime_sprite_0.png'))
+victorySlime = pygame.image.load(Path(SlimeImgPath / 'victory_slime_sprite.png'))
 # This is an old placeholder
 slimeImg = pygame.image.load(Path(SlimeImgPath / 'SlimeOld.png'))
 jumpTick = 10  # sets the time for a jump.
@@ -172,18 +173,27 @@ class Slime(pygame.sprite.Sprite):
         self.isHit = False
         self.knockback = 0
         self.knockDirection = ''
-        self.deathTime = 30
-        self.deathFrame = 30
+        self.deathTime = 60
+        self.deathFrame = self.deathTime
+        self.victoryImage = victorySlime
 
-    def update(self):
-        # FIXME: if slimy is oput of health, instead of listening for movement events, run the death sequence
+    def update(self, win=False):
+        if win:
+            if self.deathFrame >= 0:
+                self.deathFrame -= 1
+                self.image = self.victoryImage
+                self.rect = self.image.get_rect()
+                return
+            #Victory is imminent!
+            return
+
         if self.statBlock.HEALTH <= 0:
             if self.deathFrame > 0:
                 self.image = self.deathImage
                 self.rect = self.image.get_rect()
                 self.deathFrame -= 1
                 return
-        #slimy is uh...done dying (deathframe is 0 or less
+            # slimy is uh...done dying (deathframe is 0 or less
             return
 
         # if he is swimming, reassign images
@@ -385,7 +395,7 @@ class Slime(pygame.sprite.Sprite):
         return self.position
 
     def takeDamage(self, foe):
-        self.knockback = foe.statBlock.ATTACK % 25
+        self.knockback = foe.statBlock.ATTACK % 12
         self.statBlock.HEALTH -= foe.statBlock.ATTACK
         if self.statBlock.HEALTH < 0:
             self.statBlock.HEALTH = 0

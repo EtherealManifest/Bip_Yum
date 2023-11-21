@@ -34,13 +34,14 @@ class Button(pygame.surface.Surface):
         # blit this to the surface later
         self.width = _width
         self.height = _height
+        pygame.surface.Surface.__init__(self, (self.width, self.height))
+        self.rect = self.get_rect()
         self.pos = _pos
         self.background_color = _background_color
         self.fill(self.background_color)
         self.label = _label
         global font
         font = pygame.font.SysFont("System", self.height)
-
         buttonText = font.render(self.text, False, (0, 0, 0))
         self.textx = (self.width / 2 - buttonText.get_width()/2)
         self.texty = (self.height / 2 - buttonText.get_height()/2)

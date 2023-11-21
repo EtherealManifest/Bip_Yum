@@ -1,7 +1,5 @@
 # This is the file for the main game loop, seperated from the class
 # implementation for bip yum
-#FIXME It's time. the Scenario update is nearly here. This file should read in all the data from a created Scenario and
-# run the scenario accordingly.
 from Armory import *
 import logging
 from Overlay import *
@@ -9,7 +7,6 @@ from pathlib import Path
 import TitleSlide
 import Anthology
 import TestScenario
-
 
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
@@ -19,14 +16,13 @@ import TestScenario
 # SWINGTIME
 # FRAMERATE
 
-#IN PREPERATION FOR THE SCENARIO UPDATE
+# IN PREPERATION FOR THE SCENARIO UPDATE
 '''I want the map generation to be done 
 completely externally, with random setpieces being 
 included in the new map. the only interaction that 
 needs to be done in this file is checking when the 
 player is over the setpiece, if it has interactions
 then triggering them.'''
-
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -53,15 +49,16 @@ DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 pygame.display.set_caption('Bip Yum')
 pygame.display.set_icon(slimeImg)
 
-#temporary tester for the new background maker
+# temporary tester for the new background maker
 BackGroundLocale = Path('./GroundPanels/Lava/')
+
 
 # this method will be used to render the title screen, which is the next project
 
 
 def playScenario(Scenario):
     # play music
-    #read the Scenario
+    # read the Scenario
     scenario = Scenario
     slime = scenario.TheWanderer
     slime.setPosition(scenario.slimyPOS[0], scenario.slimyPOS[1])
@@ -72,25 +69,28 @@ def playScenario(Scenario):
         horde.append(monster)
     weapons = pygame.sprite.Group()
     weapons.add(scenario.weapon)
-    #set the overlay
+    # set the overlay
     overlay = Overlay()
 
     while True:  # the main game loop
         BackGround.draw(DISPLAYSURF)
-        #UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
-        #And CHanges are not overwritten
+        # UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
+        # And CHanges are not overwritten
         slime.allowAllDirections()
         weapons.update(slime)
         overlay.update(slime)
         for prop in setPieces:
             DISPLAYSURF.blit(prop.image, prop.pos)
             prop.update(slime, horde)
-        slime.update()
+        if scenario.Win:
+            slime.update(win=True)
+        else:
+            slime.update()
         scenario.winCondition(horde)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
-        for i  in range(0, len(horde)):
+        for i in range(0, len(horde)):
             if not horde[i].isDead:
-                horde[i].setKnockback(slime.statBlock.ATTACK)
+                horde[i].setKnockback(slime.statBlock.ATTACK - horde[i].statBlock.DEFENSE)
                 horde[i].update(slime)
                 DISPLAYSURF.blit(horde[i].image, horde[i].position)
                 DISPLAYSURF.blit(horde[i].statBlock.HealthBar.HPBAR_SURFACE, (horde[i].position))
@@ -101,7 +101,6 @@ def playScenario(Scenario):
                 horde[i].update(slime)
                 DISPLAYSURF.blit(horde[i].image, (horde[i].position))
             elif horde[i].isDead and horde[i].deathAnimFrame == 0:
-                print(len(horde))
                 continue
         # Draw the Overlays
         for sword in weapons:
@@ -119,11 +118,11 @@ def playScenario(Scenario):
                     if (pygame.sprite.collide_rect(sword, setPieces[i]) and setPieces[i].destroyable):
                         setPieces[i].takeDamage(slime)
             # I have become death, destroyer of slimes
-            if slime.statBlock.HEALTH <= 0 and slime.deathFrame <=0:
+            if slime.statBlock.HEALTH <= 0 and slime.deathFrame <= 0:
                 # for now, just exit. In the future, display a death message and then reset the scenario
-                #BattleMusic.stop()
+                # BattleMusic.stop()
                 return
-        if(scenario.Win):
+        if scenario.Win and slime.deathFrame <= 0:
             scenario.reset()
             return None
         for enemy in horde:
@@ -140,8 +139,11 @@ def playScenario(Scenario):
         pygame.display.update()
         fpsClock.tick(FPS)
 
+
 def runScenario(Scenario):
     playScenario(Scenario)
+
+
 # Program Start
 
 # this runs the titlescreen, and returns the users selection
@@ -158,25 +160,13 @@ if nextStep == 'Q' or nextStep == 'quit-button':
 # "go to gameplay" event to move to the gameplay loop
 # and the "quit" event that ends the game
 if nextStep != "":
+    print("Playing " + nextStep)
     runScenario(Anthology.retrieveScenario(nextStep))
     nextStep = TitleSlide.runTitle(DISPLAYSURF)
-while(nextStep != ''):
+while (nextStep != ''):
+    if nextStep == 'Q' or nextStep == 'quit-button':
+        pygame.quit()
+        sys.exit()
     # clears the event queue so that the gameplay starts fresh
     runScenario(Anthology.retrieveScenario(nextStep))
-    print("scenario Complete")
     nextStep = TitleSlide.runTitle((DISPLAYSURF))
-
-
-
-
-
-
-
-        # if i am running this game multiple times in a row, It becomes SUPER laggy
-
-'''when the game runs gameplay, it needs to read in a scenario. the scenario will consist of 
-enemies and locations, the background tiles, and the music. the scenario will be loaded at gameplay, and
-then run until a completion event occurs, be it the player dying or the enemies all dying. 
-once the scenario is complete, this main file will return all the local variables to their 
-defaults and await the next scenario
-'''

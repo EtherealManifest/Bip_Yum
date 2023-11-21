@@ -122,8 +122,10 @@ def set_buttons_scenarios():
     for scenario in ANTHOLOGY:
         # create a button, then add to the button list.
         newButton = Button.Button()
+        name_length = len(scenario.name)
+        new_width = (name_length * 10)
         newButton.modify(_pos=(0, 0), _text=scenario.name,
-                         _label=scenario.name)
+                         _label=scenario.name, _width=new_width)
         button_list.append(newButton)
     # determine the number of rows and add the buttons to the Button Grid
     # find the total length of all the buttons together
@@ -171,7 +173,8 @@ def set_buttons_scenarios():
         spacing_constant = menu_width / (len(button_grid[i]) +1)
         for button in button_grid[i]:
             #this looks dumb, and it kinda is. Its a massive coordinate tuple
-            button_grid[i][index].pos = (menu_pos[0] + ((spacing_constant * (index + 1)) - ((1 / 2) * button.width)), 0 )
+            button_grid[i][index].pos = (menu_pos[0] + ((spacing_constant * (index + 1)) - ((1 / 2) * button.width)), 0)
+            index += 1
     # now, the x-positions for all of the buttons should be set
 
     # set the y positions
@@ -186,12 +189,13 @@ def set_buttons_scenarios():
         for button in button_grid[i]:
             #this looks stupid, it's a massive tuple so that it can be assigned to pos.
             #it takes the current X value and midifies the Y
-            button_grid[i][index].pos = (button_grid[i][index].pos[0], menu_pos[1] + ((spacing_constant * (i + 1)) - ((1 / 2) * button.height)))
-
+            button_grid[i][index].pos = (button_grid[i][index].pos[0], menu_pos[1] + ((spacing_constant * (i + 1)) -
+                                                                                      ((1 / 2) * button.height)))
+            index += 1
     # now each button should be in the correct Y position.
     # add listeners to each button that will return the scenario that they point to back to the
     # game.py to run the scenario.
-    '''this is handled outside of here. See documentation for Button,update()'''
+    '''this is handled outside of here. See documentation for Button.update()'''
     return button_grid
 
 
@@ -278,10 +282,10 @@ def runTitle(DISPLAYSURF):
                                 if (pygame.mouse.get_pressed()[0]):
                                     button.is_clicked = True
                             status = button.update()
-
-                    if status != "":
-                        #return all the way to game.py
-                        return status
+                            if status != "":
+                                print(status + " scenario selected")
+                                #return all the way to game.py
+                                return status
 
                     for event in pygame.event.get():
                         if event.type == QUIT:

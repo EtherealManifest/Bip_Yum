@@ -22,7 +22,7 @@ class WOLF(MonsterMash.Monster):
     def __init__(self):
         super().__init__()
         self.setAll("Wolf", "A small Canine. Ferocious, but not usually a threat unless attacking in Packs.",
-                    150, 5, 5, 0, 5, 2, 20)
+                    150, 5, 5, 0, 5, 3, 20)
         self.setImage(Mausoleum.get("Wolf_1.png"))
         self.setRect()
         self.setCore(Cluster.AgressiveMovement())
@@ -51,4 +51,21 @@ class TUMBLEWEED(MonsterMash.Monster):
         self.baseImage = self.image
         self.stopOnHit = False
 
-CRYPT = [WOLF, TUMBLEWEED]
+class AGGRABBAGE(MonsterMash.Monster):
+    def __init__(self):
+        super().__init__()
+        self.setAll("Aggrabbage", "Massive and angry. While it appears to be a cabbage, it is, in fact, made "
+                                  "of stone. Very defensive. ",
+                    100, 11, 12, 15, 5, 1, 20)
+        self.setImage(Mausoleum.get("Aggrabbage_0.png"))
+        self.setRect()
+        self.setCore(Cluster.AgressiveMovement())
+        self.setPosition((200, 200))
+        self.normalImage = Mausoleum.get("Aggrabbage_0.png")
+        self.damageImage = Mausoleum.get("Aggrabbage_1.png")
+        self.deadImage = Mausoleum.get("Aggrabbage_2.png")
+        self.setKnockback(.5)
+        self.setHitTime(5)
+
+
+CRYPT = [WOLF, TUMBLEWEED, AGGRABBAGE]

@@ -12,8 +12,7 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s  - MONSTER')
 
 
-# the amount of time the monster is knocked back after being hit
-HITTIME = 10
+
 # this part will import (for now) all the enemy sprites and adds them to an array
 GraveYardSmash = []
 
@@ -41,10 +40,12 @@ class Monster(pygame.sprite.Sprite):
         self.position = (self.monsterX, self.monsterY)
         self.MonsterMoveSpeed = self.statBlock.SPEED
         self.isHit = False
+        # the amount of time the monster is knocked back after being hit
+        self.hitTime = 10
         self.hitTick = 0
+        self.hitMoveRate = 1
         self.hitMove = (self.hitMoveRate, self.hitMoveRate)
         # This is the knockback rate, how far this enemy moves when slime hits it
-        self.hitMoveRate = 1
         # giving it an image so that it shows up helps to establish position
         # the placeholder I use for this is a skull.
         self.normalImage = EnemyPH
@@ -84,10 +85,15 @@ class Monster(pygame.sprite.Sprite):
 
     #THe knockback is defined as the number of pixels the enemy will be pushed back per frame
     def setKnockback(self, num):
-        self.hitMoveRate = num
+        if num > 0:
+            self.hitMoveRate = num
+        else:
+            self.hitMoveRate = 0
         # set the knockback to the players current attack stat
         self.hitMove = (self.hitMoveRate, self.hitMoveRate)
 
+    def setHitTime(self, time):
+        self.hitTime = time
 
     # These methods deal with setting the look of the beastie
     def setImage(self, Img):
@@ -109,20 +115,21 @@ class Monster(pygame.sprite.Sprite):
         self.AICore.monster = self
 
     def takeDamage(self, player):
-        if self.hitTick == HITTIME:
+        if self.hitTick == self.hitTime:
             self.image = self.damageImage
             self.statBlock.HEALTH = self.statBlock.HEALTH - player.statBlock.ATTACK
         self.hitTick = self.hitTick - 1
         if self.hitTick > 0:
             # Update the Health Block
             self.statBlock.HealthBar.update(self)
-            self.monsterX = self.monsterX + self.hitMove[0]/HITTIME
-            self.monsterY = self.monsterY + self.hitMove[1]/HITTIME
+            self.monsterX = self.monsterX + self.hitMove[0]
+            self.monsterY = self.monsterY + self.hitMove[1]
+
         elif self.hitTick == 0:
             self.image = self.normalImage
             self.isHit = False
         else:
-            self.hitTick = HITTIME
+            self.hitTick = self.hitTime
             self.isHit = True
 
     def update(self, slime):

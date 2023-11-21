@@ -4,8 +4,7 @@ then run until a completion event occurs, be it the player dying or the enemies 
 once the scenario is complete, this main file will return all the local variables to their
 defaults and await the next scenario
 '''
-import MonsterMash, SlimesDelight, GroundMaker, Jukebox, Armory, SetPeice
-from pathlib import Path
+import SlimesDelight, Armory, pygame, math
 
 
 class Scenario:
@@ -38,6 +37,13 @@ class Scenario:
         # slime himself
         self.TheWanderer = SlimesDelight.Slime()
         self.Win = False
+        self.instructions = None
+        #Set this to true when displaying screen text. this makes is to that if there is no text to be shown, the text
+        # queue does not need to be checked
+        self.isScreenText = False
+        #each text item in the next list will be a three-tuple of the text to display and the place to show it, and
+        #whether it should be shown (string, (posx, posy), bool)
+        self.screenText = []
 
     def setTheScene(self, _horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer):
         # an array of monsters
@@ -54,7 +60,6 @@ class Scenario:
         self.TheWanderer = _TheWanderer
         self.Win = False
     def __del__(self):
-        print("This Scenario is being deleted. Calling Del on all attributes.")
         del self.trove
         del self.horde
         del self.vista
