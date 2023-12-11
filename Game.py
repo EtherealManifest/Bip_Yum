@@ -73,6 +73,9 @@ def playScenario(Scenario):
     overlay = Overlay()
 
     while True:  # the main game loop
+        if(pygame.key.get_pressed()[K_BACKSPACE]):
+            while(not pygame.key.get_pressed()[K_BACKSPACE]):
+                pass
         BackGround.draw(DISPLAYSURF)
         # UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
         # And CHanges are not overwritten

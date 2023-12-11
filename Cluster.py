@@ -27,7 +27,7 @@ class TumbleweedMovement(AICore.AICore):
         super().__init__()
         self.movement = tumbeweedMovement
 
-
+#The monster always moves toward the player
 def agressiveMovement(monster, slime):
     if monster.monsterX > slime.slimex and monster.monsterX > 0:
         monster.hitMove = (monster.hitMoveRate, 0)
@@ -70,6 +70,9 @@ def agressiveMovement(monster, slime):
             monster.monsterY -= monster.MonsterMoveSpeed
             monster.direction = 'up'
             monster.hitMove = (0, monster.hitMoveRate)
+
+
+#the monster will randomly move in one of 8 directions, at random intervals.
 def chaoticMovement(monster, slime):
     #this is a vector that corresponds with directions.
     #it is defined as follows:
@@ -117,6 +120,7 @@ def chaoticMovement(monster, slime):
         monster.direction = 'up'
         monster.hitMove = (0, monster.hitMoveRate)
 
+#the monster will constantly move to the left, and bounce according to the function. height width can be universally set
 def tumbeweedMovement(monster, slime):
     #tumbleweed movement just moves the enemy from left to right, bouncing.
     monster.rotations += 1
@@ -130,6 +134,7 @@ def tumbeweedMovement(monster, slime):
     monster.monsterY += heightJump
     monster.bounceCount += 1
 
+#Similar to agressive monement, always moves towards the player
 def simpleMovement(monster, slime):
     if(random.randint(0,100) < 75):
         if monster.monsterX > slime.slimex:

@@ -34,7 +34,7 @@ cloudMoveSpeed = .4
 cloudNum = 6
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
-cloudMoveDirection = 5
+cloudMoveDirection = 1
 
 
 # This class declares coulds and gives them a position. It has methods for
