@@ -1,5 +1,4 @@
-import pygame, sys
-import logging
+import pygame
 import TitleScreen
 pygame.init()
 #this gets the current display surface and sets it to DISPLAYSURF. THis allows THe screen to be passed as a parameter

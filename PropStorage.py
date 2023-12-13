@@ -1,6 +1,11 @@
-#Define the setpieces to be used here
-import SetPeice, os,pygame, Crypt, random
+# Define the setpieces to be used here
 from pathlib import Path
+
+import Crypt
+import SetPeice
+import os
+import pygame
+import random
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -9,15 +14,14 @@ WINY = int(META[1])
 sceneShop = {}
 setPieceList = os.listdir('./setPiecePanels')
 
-
-
-#get all the default sprites(only ones currently generated)
-#for each sprite in the listed directory
-#get all the default sprites(only ones currently generated
+# get all the default sprites(only ones currently generated)
+# for each sprite in the listed directory
+# get all the default sprites(only ones currently generated
 for sprite in setPieceList:
     temp = Path('./setPiecePanels/' + sprite)
-    #scene shop has every entry as a sprite surface and a name as a series of list entries
+    # scene shop has every entry as a sprite surface and a name as a series of list entries
     sceneShop[sprite] = pygame.image.load(temp)
+
 
 class DefaultSetPiece(SetPeice.setPiece):
     def __init__(self):
@@ -25,7 +29,7 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.image = sceneShop.get("Destroyable_0.png", None)
         self.destroyedImage = sceneShop.get("Destroyable_1.png", None)
         self.rect = self.image.get_rect()
-        self.buildSetPiece(self.image, self.rect, (99,123))
+        self.buildSetPiece(self.image, self.rect, (99, 123))
         self.isPassable = False
         self.dealsDamage = True
         self.damage = 10
@@ -38,15 +42,20 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.destroyable = True
         self.setPieceHP = 300
         self.destroyTrigger = self.destroyDefaultSetpiece
+
     def reset(self):
         self.__init__()
+
     def wolfResetEnemy(self):
         self.enemy = Crypt.WOLF()
+
     def destroyDefaultSetpiece(self):
         self.toggleSpawnEnemies()
         self.toggleIsPassable()
 
+
 DEFAULTSETPIECE = DefaultSetPiece()
+
 
 class Round_Cactus(SetPeice.setPiece):
     def __init__(self):
@@ -66,6 +75,7 @@ class Round_Cactus(SetPeice.setPiece):
     def reset(self):
         self.__init__()
 
+
 class Tall_Cactus(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
@@ -83,6 +93,7 @@ class Tall_Cactus(SetPeice.setPiece):
     def reset(self):
         self.__init__()
 
+
 class TumbleweedLord(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
@@ -99,17 +110,18 @@ class TumbleweedLord(SetPeice.setPiece):
         self.tumbleWeedsKilled = 0
 
     def tumbleweedResetEnemy(self):
-        scaleFactor = (.5 + (1.5-.5) * random.random()) #this should generate a number between .5 and 1.5
+        scaleFactor = (.5 + (1.5 - .5) * random.random())  # this should generate a number between .5 and 1.5
         self.enemy = Crypt.TUMBLEWEED()
         self.enemy.baseImage = pygame.transform.scale_by(self.enemy.image, scaleFactor)
         self.enemy.setPosition((WINX + 1, random.randint(32, int(WINY))))
+
 
 class Cabbage(SetPeice.setPiece):
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Cabbage_0.png"))
         self.rect = self.image.get_rect()
-        self.pos = (0,0)
+        self.pos = (0, 0)
         self.dealsDamage = False
         self.isPassable = True
         self.interactable = True
@@ -120,8 +132,7 @@ class Cabbage(SetPeice.setPiece):
         self.setBothImages(sceneShop.get("Cabbage_1.png"))
         self.interactable = False
         self.eaten = True
-        if(slime.statBlock.HEALTH < slime.statBlock.TOTALHEALTH):
+        if slime.statBlock.HEALTH < slime.statBlock.TOTALHEALTH:
             slime.statBlock.HEALTH += 20
-        if(slime.statBlock.HEALTH > slime.statBlock.TOTALHEALTH):
+        if slime.statBlock.HEALTH > slime.statBlock.TOTALHEALTH:
             slime.statBlock.HEALTH = slime.statBlock.TOTALHEALTH
-

@@ -1,9 +1,11 @@
 # Test these to see if they are needed in this file or not
 # from StatusBlock import *
-import pygame, sys
+
+# FIXME: ADD invincibility Frames
+
+import sys
 from pygame.locals import *
 from StatusBlock import *
-import StatusBlock
 from pathlib import Path
 
 META = (open('Meta.txt')).read().split(':')
@@ -14,10 +16,11 @@ WINY = int(META[1])
 pygame.init()
 moveDirection = ''
 
-# these three are constnts to make testing easier. they set the rate of slowing, time of movement, and rate of movement.
+# these three are constants to make testing easier. they set the rate of slowing, time of movement, and rate of movement.
 SLOWR = 1
 MOVET = 100  # determines how long to smooth the movement
-MOVER = 2  # This is used to determine slimes speed across the screen, it is the number of pixels moved per movement of input.
+MOVER = 2  # This is used to determine slimes speed across the screen, it is the number of pixels moved per movement
+# of input.
 FPS = 60  # Should match FPS in Main
 ANIMR = 300  # determines the animation rate, in frames. used in SmoothGrooves
 # I have finally organized my files, and there is some wild pathing involved with
@@ -55,17 +58,17 @@ def SmoothGrooves(self):
     global slimeImgLeft
     global slimeImgRight
 
-    if (self.direction == 'up'):
+    if self.direction == 'up':
         self.image = backSlime1
-        if ((pygame.time.get_ticks() % ANIMR) > ANIMR / 2):
+        if (pygame.time.get_ticks() % ANIMR) > ANIMR / 2:
             self.image = backSlime2
-    elif (self.direction == 'down'):
+    elif self.direction == 'down':
         self.image = frontSlime1
-        if ((pygame.time.get_ticks() % ANIMR) > ANIMR / 2):
+        if (pygame.time.get_ticks() % ANIMR) > ANIMR / 2:
             self.image = frontSlime2
     else:
         self.image = slimeImg1
-        if ((pygame.time.get_ticks() % ANIMR) > ANIMR / 2):
+        if (pygame.time.get_ticks() % ANIMR) > ANIMR / 2:
             self.image = slimeImg2
 
     # These lines redefine the sprite, based on the result from above.
@@ -144,7 +147,7 @@ class Slime(pygame.sprite.Sprite):
     def __init__(self):
         # this initializes it as a sprite object by calling the Parent COnstructor
         pygame.sprite.Sprite.__init__(self)
-        statBlock = StatBlock()
+        self.statBlock = StatBlock()
         # Im going to go ahead and give Bip some Dummy Stats
         self.statBlock.setStats(200, 10, 10, 10, 10, 10, 10)
         # logging.info("PLAYER INITIALIZED: " + self.statBlock.showStats())
@@ -184,7 +187,7 @@ class Slime(pygame.sprite.Sprite):
                 self.image = self.victoryImage
                 self.rect = self.image.get_rect()
                 return
-            #Victory is imminent!
+            # Victory is imminent!
             return
 
         if self.statBlock.HEALTH <= 0:
@@ -200,9 +203,9 @@ class Slime(pygame.sprite.Sprite):
         self.setPosition(self.slimex, self.slimey)
         # this is for the animation, it sets the sprite for the animation frame.
         SmoothGrooves(self)
-        if (self.isHit):
+        if self.isHit:
             self.knockback -= 1
-            if (self.knockback == 0):
+            if self.knockback == 0:
                 self.isHit = False
             elif self.knockDirection == 'up':
                 self.slimey -= self.knockback
@@ -237,7 +240,7 @@ class Slime(pygame.sprite.Sprite):
             self.allowedMoves['left'] = False
 
         # this is jump stuff. he's only in the air for a little bit, but set jump to false once he's back down.
-        if self.jump == True:
+        if self.jump:
             # The last frame before landing
             if self.jumpTime == 1:
                 self.slimey = self.slimey + self.jumpHeight
@@ -246,20 +249,21 @@ class Slime(pygame.sprite.Sprite):
             self.jumpTime = self.jumpTime - 1
             # If slime has landed, jump is no longer true
 
-        # these next few checks update slime's position based on what the player has input, by moveRate (Set above) at a time. It also sets the corresponding direction.
-        # Im also adding a check at the front to see if smoothMovement should be triggered
-        if (self.moveTime > 0 and not (pygame.key.get_focused())):
+        # these next few checks update slime's position based on what the player has input, by moveRate (Set above)
+        # at a time. It also sets the corresponding direction. Im also adding a check at the front to see if
+        # smoothMovement should be triggered
+        if self.moveTime > 0 and not (pygame.key.get_focused()):
             smoothMoves(self)
         if not self.isHit:
             if ((pygame.key.get_pressed()[K_a] and pygame.key.get_pressed()[K_w])
                     or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_UP])):  # A W or <- and ^
                 if self.allowedMoves['up']:
                     self.slimey -= 2 * (self.moveRate) / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey -= 2 * self.moveRate
                 if self.allowedMoves['left']:
                     self.slimex -= 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex -= 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face left
@@ -270,11 +274,11 @@ class Slime(pygame.sprite.Sprite):
                   or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_DOWN])):  # A S <- and \/
                 if self.allowedMoves['down']:
                     self.slimey += 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey += 2 * self.moveRate
                 if self.allowedMoves['left']:
                     self.slimex -= 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex -= 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face left
@@ -285,11 +289,11 @@ class Slime(pygame.sprite.Sprite):
                   or (pygame.key.get_pressed()[K_RIGHT] and pygame.key.get_pressed()[K_UP])):  # D W
                 if self.allowedMoves['up']:
                     self.slimey -= 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey -= 2 * self.moveRate
                 if self.allowedMoves['right']:
                     self.slimex += 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex += 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face right
@@ -300,11 +304,11 @@ class Slime(pygame.sprite.Sprite):
                   or (pygame.key.get_pressed()[K_DOWN] and pygame.key.get_pressed()[K_RIGHT])):  # D S
                 if self.allowedMoves['down']:
                     self.slimey += 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey += 2 * self.moveRate
                 if self.allowedMoves['right']:
                     self.slimex += 2 * self.moveRate / 3
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex += 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face right
@@ -314,7 +318,7 @@ class Slime(pygame.sprite.Sprite):
             elif pygame.key.get_pressed()[K_w] or pygame.key.get_pressed()[K_UP]:
                 if self.allowedMoves['up']:
                     self.slimey -= self.moveRate
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey -= 2 * self.moveRate
                 self.moveTime = MOVET
                 self.direction = 'up'
@@ -322,7 +326,7 @@ class Slime(pygame.sprite.Sprite):
             elif pygame.key.get_pressed()[K_s] or pygame.key.get_pressed()[K_DOWN]:
                 if self.allowedMoves['down']:
                     self.slimey += self.moveRate
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimey += 2 * self.moveRate
                 self.moveTime = MOVET
                 self.direction = 'down'
@@ -330,7 +334,7 @@ class Slime(pygame.sprite.Sprite):
             elif pygame.key.get_pressed()[K_a] or pygame.key.get_pressed()[K_LEFT]:
                 if self.allowedMoves['left']:
                     self.slimex -= self.moveRate
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex -= 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face left
@@ -340,7 +344,7 @@ class Slime(pygame.sprite.Sprite):
             elif pygame.key.get_pressed()[K_d] or pygame.key.get_pressed()[K_RIGHT]:
                 if self.allowedMoves['right']:
                     self.slimex += self.moveRate
-                    if (pygame.key.get_pressed()[K_SPACE]):
+                    if pygame.key.get_pressed()[K_SPACE]:
                         self.slimex += 2 * self.moveRate
                 self.moveTime = MOVET
                 # flip the sprite to face right
@@ -363,9 +367,9 @@ class Slime(pygame.sprite.Sprite):
             # FIX ME: If q is pressed, or maybe E, pull up the menu instead, inside which is an option to quit.
 
         # This section controls which way the sprite faces
-        if (self.direction == 'left' or self.direction == 'up-left' or self.direction == 'down-left'):
+        if self.direction == 'left' or self.direction == 'up-left' or self.direction == 'down-left':
             self.image = slimeImgLeft
-        elif (self.direction == 'right' or self.direction == 'up-right' or self.direction == 'down-right'):
+        elif self.direction == 'right' or self.direction == 'up-right' or self.direction == 'down-right':
             self.image = slimeImgRight
 
         # This is designed to make sure that when one facet of position is updated, all facets of the
@@ -450,6 +454,6 @@ class Slime(pygame.sprite.Sprite):
 # This method will initialize the slime at the beginning of the program. It will
 # have position, color, and animation style.
 def initialize(pos_x=0, pos_y=0):
-    slime = Slime();
+    slime = Slime()
     slime.slimex = pos_x
     slime.slimey = pos_y

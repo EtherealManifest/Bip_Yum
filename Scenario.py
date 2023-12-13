@@ -1,10 +1,11 @@
-'''when the game runs gameplay, it needs to read in a scenario. the scenario will consist of
+"""when the game runs gameplay, it needs to read in a scenario. the scenario will consist of
 enemies and locations, the background tiles, and the music. the scenario will be loaded at gameplay, and
 then run until a completion event occurs, be it the player dying or the enemies all dying.
 once the scenario is complete, this main file will return all the local variables to their
 defaults and await the next scenario
-'''
-import SlimesDelight, Armory, pygame, math
+"""
+import Armory
+import SlimesDelight
 
 
 class Scenario:
@@ -20,7 +21,6 @@ class Scenario:
     weapon = Armory.Weapon()
     # slime himself
     TheWanderer = SlimesDelight.Slime()
-
 
     def __init__(self):
         self.name = ""
@@ -38,11 +38,11 @@ class Scenario:
         self.TheWanderer = SlimesDelight.Slime()
         self.Win = False
         self.instructions = None
-        #Set this to true when displaying screen text. this makes is to that if there is no text to be shown, the text
+        # Set this to true when displaying screen text. this makes is to that if there is no text to be shown, the text
         # queue does not need to be checked
         self.isScreenText = False
-        #each text item in the next list will be a three-tuple of the text to display and the place to show it, and
-        #whether it should be shown (string, (posx, posy), bool)
+        # each text item in the next list will be a three-tuple of the text to display and the place to show it, and
+        # whether it should be shown (string, (posx, posy), bool)
         self.screenText = []
 
     def setTheScene(self, _horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer):
@@ -59,6 +59,7 @@ class Scenario:
         # slime himself
         self.TheWanderer = _TheWanderer
         self.Win = False
+
     def __del__(self):
         del self.trove
         del self.horde
@@ -76,6 +77,3 @@ class Scenario:
     def generate(self):
         temp = self
         return temp
-
-
-

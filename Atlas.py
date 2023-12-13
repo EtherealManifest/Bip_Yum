@@ -1,7 +1,6 @@
-#define the different backgrounds here
+# define the different backgrounds here
 import GroundMaker
 from pathlib import Path
-
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -12,14 +11,20 @@ PLAINS = Path("./GroundPanels/Grass/")
 SANDS = Path("./GroundPanels/Desert/")
 FLAMES = Path("./GroundPanels/Lava/")
 SPACES = Path("./GroundPanels/Space/")
-#each of these is a group of sprites
+
+
+# each of these is a group of sprites
 def GRASS():
     return GroundMaker.BuildTheLand(WINX, WINY, PLAINS)
+
+
 def DESERT():
     return GroundMaker.BuildTheLand(WINX, WINY, SANDS)
+
+
 def LAVA():
     return GroundMaker.BuildTheLand(WINX, WINY, FLAMES)
 
+
 def SPACE():
     return GroundMaker.BuildTheLand(WINX, WINY, SPACES)
-

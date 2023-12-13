@@ -6,10 +6,13 @@ data = (open('Meta.txt')).read()
 META = data.split(':')
 WINX = int(META[0])
 WINY = int(META[1])
+
+
 class AgressiveMovement(AICore.AICore):
     def __init__(self):
         super().__init__()
         self.movement = agressiveMovement
+
 
 class ChaoticMovement(AICore.AICore):
     def __init__(self):
@@ -22,12 +25,14 @@ class SimpleMovement(AICore.AICore):
         super().__init__()
         self.movement = simpleMovement
 
+
 class TumbleweedMovement(AICore.AICore):
     def __init__(self):
         super().__init__()
         self.movement = tumbeweedMovement
 
-#The monster always moves toward the player
+
+# The monster always moves toward the player
 def agressiveMovement(monster, slime):
     if monster.monsterX > slime.slimex and monster.monsterX > 0:
         monster.hitMove = (monster.hitMoveRate, 0)
@@ -72,16 +77,18 @@ def agressiveMovement(monster, slime):
             monster.hitMove = (0, monster.hitMoveRate)
 
 
-#the monster will randomly move in one of 8 directions, at random intervals.
+# the monster will randomly move in one of 8 directions, at random intervals.
+# The parameter slime is here because the number of parameters needs to be standardized so that all the modules
+# work together.
 def chaoticMovement(monster, slime):
-    #this is a vector that corresponds with directions.
-    #it is defined as follows:
-    #[U, UR, R, DR, D, DL, L, UL]
-    #load the vector to determine his movement
-    movementVector = [0,0,0,0,0,0,0,0]
-    #change a random direction to 1
-    movementVector[random.randint(0,7)] = 1
-    if(random.randint(0,5)== 2):
+    # this is a vector that corresponds with directions.
+    # it is defined as follows:
+    # [U, UR, R, DR, D, DL, L, UL]
+    # load the vector to determine his movement
+    movementVector = [0, 0, 0, 0, 0, 0, 0, 0]
+    # change a random direction to 1
+    movementVector[random.randint(0, 7)] = 1
+    if random.randint(0, 5) == 2:
         movementVector[random.randint(0, 7)] = 1
     if movementVector[7] and monster.monsterX > 0 and monster.monsterY > 0:
         monster.monsterY -= monster.MonsterMoveSpeed
@@ -92,7 +99,7 @@ def chaoticMovement(monster, slime):
         monster.monsterX -= monster.MonsterMoveSpeed
         monster.hitMove = (monster.hitMoveRate, 0)
         monster.direction = 'left'
-    elif movementVector[5]  and monster.monsterX > 0 and monster.monsterY < WINY:
+    elif movementVector[5] and monster.monsterX > 0 and monster.monsterY < WINY:
         monster.monsterY += monster.MonsterMoveSpeed
         monster.monsterX -= monster.MonsterMoveSpeed
         monster.direction = 'down-left'
@@ -120,23 +127,26 @@ def chaoticMovement(monster, slime):
         monster.direction = 'up'
         monster.hitMove = (0, monster.hitMoveRate)
 
-#the monster will constantly move to the left, and bounce according to the function. height width can be universally set
+
+# the monster will constantly move to the left, and bounce according to the function. height width can be universally
+# set
 def tumbeweedMovement(monster, slime):
-    #tumbleweed movement just moves the enemy from left to right, bouncing.
+    # tumbleweed movement just moves the enemy from left to right, bouncing.
     monster.rotations += 1
     monster.image = monster.baseImage
-    #the very last number in this is the number of degrees to rotate by per frame
+    # the very last number in this is the number of degrees to rotate by per frame
     monster.image = pygame.transform.rotate(monster.image, monster.rotations * 10)
     monster.monsterX -= monster.MonsterMoveSpeed
     if monster.bounceCount == (1 + monster.bounceWidth):
         monster.bounceCount = 0
-    heightJump = -(    (monster.bounceHeight * (monster.bounceCount - 10))/25   )
+    heightJump = -((monster.bounceHeight * (monster.bounceCount - 10)) / 25)
     monster.monsterY += heightJump
     monster.bounceCount += 1
 
-#Similar to agressive monement, always moves towards the player
+
+# Similar to agressive monement, always moves towards the player
 def simpleMovement(monster, slime):
-    if(random.randint(0,100) < 75):
+    if random.randint(0, 100) < 75:
         if monster.monsterX > slime.slimex:
             monster.hitMove = (monster.hitMoveRate, 0)
             if monster.monsterY > slime.slimey:
@@ -179,12 +189,14 @@ def simpleMovement(monster, slime):
                 monster.direction = 'up'
                 monster.hitMove = (0, monster.hitMoveRate)
 
+
 def Stay(monster, slime):
     return
 
+
 def printDirection(monster):
     return (monster.Name + " : " + monster.direction + ", (" + str(monster.monsterX) + ", " + str(monster.monsterY) +
-        "), Speed: " + str(monster.statBlock.SPEED))
+            "), Speed: " + str(monster.statBlock.SPEED))
 
 
 SIMPLE = AICore.AICore()
@@ -198,4 +210,3 @@ CHAOTIC.movement = chaoticMovement
 AGRESSIVE.movement = agressiveMovement
 STAY.movement = Stay
 TUMBLEWEED.movement = tumbeweedMovement
-

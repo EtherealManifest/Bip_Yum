@@ -21,8 +21,6 @@ import pygame
 from pygame.locals import *
 from pathlib import Path
 import os
-import Crypt
-import copy
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
@@ -90,7 +88,7 @@ class setPiece(pygame.sprite.Sprite):
                       _enemy=None, _spawnRate=1000, _destroyable=False, _setPieceHP=0):
         self.image = _image
         self.baseImage = self.image
-        if _rect == None:
+        if _rect is None:
             self.rect = self.image.get_rect()
         else:
             self.rect = _rect
@@ -138,7 +136,7 @@ class setPiece(pygame.sprite.Sprite):
         self.dealsDamage = not self.dealsDamage
 
     def setDamage(self, newDamage):
-        if (self.dealsDamage):
+        if self.dealsDamage:
             self.damage = newDamage
 
     def toggleIsPassable(self):
@@ -157,14 +155,14 @@ class setPiece(pygame.sprite.Sprite):
         self.spawnEnemies = not self.spawnEnemies
 
     def setEnemy(self, newEnemy):
-        if (self.spawnEnemies):
+        if self.spawnEnemies:
             self.enemy = newEnemy
 
     def toggleDestroyable(self):
         self.destroyable = not self.destroyable
 
     def setSetPieceHP(self, newHP):
-        if (self.destroyable):
+        if self.destroyable:
             self.setPieceHP = newHP
 
     def get_rect(self):
@@ -234,23 +232,23 @@ class setPiece(pygame.sprite.Sprite):
         clipped_line_bottom = self.rect.clipline(slime.rect.topleft, slime.rect.topright)
 
         # go through, one side at a time, and figure out how much of each side slime currently touches.
-        if (clipped_line_top):
+        if clipped_line_top:
             top_cross = lineLength(clipped_line_top[0], clipped_line_top[1])
             sides.append(top_cross)
         else:
             top_cross = 0
 
-        if (clipped_line_bottom):
+        if clipped_line_bottom:
             bottom_cross = lineLength(clipped_line_bottom[0], clipped_line_bottom[1])
         else:
             bottom_cross = 0
 
-        if (clipped_line_left):
+        if clipped_line_left:
             left_cross = lineLength(clipped_line_left[0], clipped_line_left[1])
         else:
             left_cross = 0
 
-        if (clipped_line_right):
+        if clipped_line_right:
             right_cross = lineLength(clipped_line_right[0], clipped_line_right[1])
         else:
             right_cross = 0
@@ -277,7 +275,7 @@ class setPiece(pygame.sprite.Sprite):
 
     # tests to see if Slime is touching the setpiece, used for interaction triggers.
     def slimeCollide(self, slime):
-        return (self.rect.colliderect(slime.rect))
+        return self.rect.colliderect(slime.rect)
 
     # this method is used to render the setpieces taking damage. if it is called, then the sword has struck the
     # setpiece. reduce the health. If it would go past zero, modify the setpiece to no longer take damage and

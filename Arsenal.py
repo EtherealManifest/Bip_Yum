@@ -2,7 +2,6 @@ import Armory
 from pathlib import Path
 import pygame
 
-
 red = Armory.Weapon()
 red.setImage(pygame.image.load(Path("./Weapon Sprites/red_sword_sprite.png")))
 red.setStats(15, 180)
@@ -15,7 +14,6 @@ green = Armory.Weapon()
 green.setImage(pygame.image.load(Path("./Weapon Sprites/green_sword_sprite.png")))
 green.setStats(25, 180)
 
-
-REDSWORD =red
+REDSWORD = red
 BLUESWORD = blue
 GREENSWORD = green

@@ -1,13 +1,22 @@
 # THis is the collection for different scenarios
 
-import Scenario, Jukebox, PropStorage, Arsenal, SlimesDelight, Atlas, MonsterMash, copy, Crypt, random, math
 import pygame
+
+import Arsenal
+import Atlas
+import Crypt
+import PropStorage
+import Scenario
+import SlimesDelight
+import math
+import random
 
 data = (open('Meta.txt')).read()
 META = data.split(':')
 WINX = int(META[0])
 WINY = int(META[1])
 font = pygame.font.SysFont("Planet Comic", math.ceil(.03 * WINY))
+
 
 class DesertScenario(Scenario.Scenario):
     def __init__(self):
@@ -28,7 +37,6 @@ class DesertScenario(Scenario.Scenario):
         super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
         self.Win = False
 
-
     def reset(self):
         self.__init__()
 
@@ -42,7 +50,7 @@ class DesertScenario(Scenario.Scenario):
 
     def alldestroyed(self):
         for pieces in self.trove:
-            if pieces.destroyable != False:
+            if pieces.destroyable:
                 return False
         return True
 
@@ -66,7 +74,7 @@ class PlainsScenario(Scenario.Scenario):
         _horde = [aggrabbage1, aggrabbage2, aggrabbage3, aggrabbage4]
         _trove = []
         instructionText = font.render("Eat the Cabbages!", False, (1.0, 1.0, 0.0, 1.0))
-        self.instructions = (instructionText, (WINX/2 - 20, WINY - 45), True)
+        self.instructions = (instructionText, (WINX / 2 - 20, WINY - 45), True)
         for i in range(0, 5):
             crop = PropStorage.Cabbage()
             crop.setPos((int(random.randrange(0, WINX)), int(random.randrange(0, WINY))))
@@ -105,8 +113,9 @@ def retrieveScenario(target_name):
     # return nothing to indicate that the scenario could not be found.
     return "Is... is " + target_name + " a scenario? I don't know her."
 
-#returns a tuple of the text, the position (tuple) and True
+
+# returns a tuple of the text, the position (tuple) and True
 def text_to_surface(text):
-    instructionText = font.render("Defeat the Wolves", False, (1.0, 1.0, 0.0, 1.0))
+    instructionText = font.render(text, False, (1.0, 1.0, 0.0, 1.0))
     instructions = (instructionText, (WINX / 2 - instructionText.get_width() / 2, WINY - 45), True)
     return instructions

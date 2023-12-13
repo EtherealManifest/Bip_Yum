@@ -1,17 +1,11 @@
-import pygame
 import Cluster
-from StatusBlock import *
 from SlimesDelight import *
-import SlimesDelight
 import logging
 from pathlib import Path
 import os
-import AICore
 
 logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
                     format='%(asctime)s -  %(levelname)s -  %(message)s  - MONSTER')
-
-
 
 # this part will import (for now) all the enemy sprites and adds them to an array
 GraveYardSmash = []
@@ -28,6 +22,7 @@ EnemyPH = GraveYardSmash[0]
 
 class Monster(pygame.sprite.Sprite):
     hitMoveRate = 1
+
     def __init__(self):
         # this initializes it as a sprite object by calling the Parent COnstructor
         pygame.sprite.Sprite.__init__(self)
@@ -60,7 +55,6 @@ class Monster(pygame.sprite.Sprite):
         self.deathAnimFrame = 10
         self.stopOnHit = True
 
-
     # These are a variety of set and mod options for the stats and attributes.
     def setName(self, name):
         self.Name = name
@@ -83,7 +77,7 @@ class Monster(pygame.sprite.Sprite):
         self.Name = name
         self.Description = desc
 
-    #THe knockback is defined as the number of pixels the enemy will be pushed back per frame
+    # THe knockback is defined as the number of pixels the enemy will be pushed back per frame
     def setKnockback(self, num):
         if num > 0:
             self.hitMoveRate = num
@@ -134,7 +128,7 @@ class Monster(pygame.sprite.Sprite):
 
     def update(self, slime):
         if self.statBlock.HEALTH > 0:
-            #as long as he's alive, run the AICore's movement option to determine his new position
+            # as long as he's alive, run the AICore's movement option to determine his new position
             self.position = self.statBlock.pos
             self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
             self.monsterX, self.monsterY = self.statBlock.pos[0], self.statBlock.pos[1]
@@ -154,17 +148,16 @@ class Monster(pygame.sprite.Sprite):
                 # his position will be adjusted here
                 self.takeDamage(slime)
             # make sure that the monster doesnt go inside of slime. IF they arent Overlapping, move enemy
-            elif (not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)) or not self.stopOnHit):
-                #Update from the core to move in the appropriate direction
+            elif not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)) or not self.stopOnHit:
+                # Update from the core to move in the appropriate direction
                 self.AICore.update(slime)
             self.position = (self.monsterX, self.monsterY)
             self.statBlock.pos = self.position
             self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
-        elif self.statBlock.HEALTH <=0 and self.deathAnimFrame != 0: #health is less than 0
+        elif self.statBlock.HEALTH <= 0 and self.deathAnimFrame != 0:  # health is less than 0
             self.image = self.deadImage
             self.isDead = True
             self.deathAnimFrame -= 1
-
 
     def rectangle(self):
         return ("\nMonster:\ntop: " + str(self.rect.top) +

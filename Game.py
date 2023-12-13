@@ -16,13 +16,6 @@ import TestScenario
 # SWINGTIME
 # FRAMERATE
 
-# IN PREPERATION FOR THE SCENARIO UPDATE
-'''I want the map generation to be done 
-completely externally, with random setpieces being 
-included in the new map. the only interaction that 
-needs to be done in this file is checking when the 
-player is over the setpiece, if it has interactions
-then triggering them.'''
 
 data = (open('Meta.txt')).read()
 META = data.split(':')

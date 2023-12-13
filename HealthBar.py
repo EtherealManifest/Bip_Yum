@@ -3,6 +3,8 @@ from pygame import *
 
 HPBARWIDE = 50
 HPBARHIGH = 3
+
+
 class HealthBar(pygame.sprite.Sprite):
     # 2 rectangle objects (may need to be sprites), that represent the 2 parts of the
     # bar
@@ -27,11 +29,12 @@ class HealthBar(pygame.sprite.Sprite):
 
     def noShow(self):
         self.HPBAR_SURFACE.set_colorkey((178, 34, 34))
+
     def update(self, target):
-        if(self.show):
+        if self.show:
             self.HP_Remaining_Wide = int(HPBARWIDE * (target.statBlock.HEALTH / target.statBlock.TOTALHEALTH))
             self.HPBAR_SURFACE.fill((0, 0, 0))
-            if(self.HP_Remaining_Wide <=0):
+            if self.HP_Remaining_Wide <= 0:
                 self.HP_Remaining_Wide = 0
             self.HP_Remaining = pygame.Surface((self.HP_Remaining_Wide, HPBARHIGH))
             self.HP_Remaining.fill((178, 34, 34))
@@ -40,4 +43,3 @@ class HealthBar(pygame.sprite.Sprite):
 
     def dump(self):
         return "HPBARWIDE: " + str(HPBARWIDE) + "\n" + "HP_Remaining_Wide: " + str(self.HP_Remaining_Wide)
-

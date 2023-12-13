@@ -1,6 +1,8 @@
-import pygame, sys, random, os
 from pathlib import Path
-from pygame.locals import *
+
+import os
+import pygame
+import random
 
 pygame.init()
 
@@ -46,7 +48,7 @@ class Plant(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.position = (0, 0)
 
-    def update(DispSurf, self):
+    def update(self, DispSurf):
         ThePlants.draw(DispSurf)
 
 

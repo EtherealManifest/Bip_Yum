@@ -20,11 +20,12 @@ class AICore:
         self.movement = func
 
     def update(self, slime):
-        #call the local movement function, using the local monster.
-        #FIXME: MAY NEED TO RETURN THE STATBLOCK OF SELF.MONSTER TO ACTUALLY UPDATE THE MONSTERS POSITION
+        # call the local movement function, using the local monster.
+        # FIXME: MAY NEED TO RETURN THE STATBLOCK OF SELF.MONSTER TO ACTUALLY UPDATE THE MONSTERS POSITION
         self.movement(self.monster, slime)
 
-#THis is the Default Movement method for the Core.
+
+# THis is the Default Movement method for the Core.
 def defaultMovement(monster, slime):
     if monster.monsterX > slime.slimex:
         monster.hitMove = (monster.hitMoveRate, 0)

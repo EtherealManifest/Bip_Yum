@@ -1,22 +1,27 @@
-#Define the monsters Here
-import MonsterMash, Cluster
-import pygame
-from pathlib import Path
+# Define the monsters Here
 import os
+from pathlib import Path
 
+import pygame
+
+import Cluster
+import MonsterMash
 
 Mausoleum = {}
 BeastList = os.listdir('./EnemySprites')
 
-#get all the default sprites(only ones currently generated)
-#for each sprite in the listed directory
-#get all the default sprites(only ones currently generated
+# get all the default sprites(only ones currently generated)
+# for each sprite in the listed directory
+# get all the default sprites(only ones currently generated
 for sprite in BeastList:
     temp = Path('./EnemySprites/' + sprite)
-    #scene shop has every entry as a sprite surface and a name as a series of list entries
+    # scene shop has every entry as a sprite surface and a name as a series of list entries
     Mausoleum[sprite] = pygame.image.load(temp)
+
+
 def imgPath(image):
     return Path("./EnemySprites/" + image)
+
 
 class WOLF(MonsterMash.Monster):
     def __init__(self):
@@ -30,6 +35,7 @@ class WOLF(MonsterMash.Monster):
         self.normalImage = Mausoleum.get("Wolf_1.png")
         self.damageImage = Mausoleum.get("Wolf_2.png")
         self.deadImage = Mausoleum.get("Wolf_2.png")
+
 
 class TUMBLEWEED(MonsterMash.Monster):
     def __init__(self):
@@ -50,6 +56,7 @@ class TUMBLEWEED(MonsterMash.Monster):
         self.deadImage = Mausoleum.get("Tumbleweed_1.png")
         self.baseImage = self.image
         self.stopOnHit = False
+
 
 class AGGRABBAGE(MonsterMash.Monster):
     def __init__(self):
