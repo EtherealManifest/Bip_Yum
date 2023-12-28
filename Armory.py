@@ -1,4 +1,4 @@
-import math
+import math as PyMath
 
 from SlimesDelight import *
 
@@ -99,18 +99,18 @@ class Weapon(pygame.sprite.Sprite):
         # they are the necessary offset that is added to the position determiner
         adjustX = (player.rect.width + self.rect.height / 3)
         adjustY = (player.rect.height + self.rect.height / 3)
-        swingAngle = math.radians(swingAngle)
+        swingAngle = PyMath.radians(swingAngle)
         # the starting angle is the degrees counterclockwise from the horizontal the swing should start at
-        startAngle = math.radians(startAngle)
+        startAngle = PyMath.radians(startAngle)
         if elapsed == 0:
             self.angle = startAngle + swingAngle
         else:
             self.angle = startAngle + ((elapsed / SWINGTIME) * swingAngle)
         self.pos = (
-            player.rect.x + (adjustX * (math.cos(self.angle)) - self.rect.width / 2),
-            player.rect.y + (adjustY * (math.sin(self.angle))) - self.rect.width / 2)
+            player.rect.x + (adjustX * (PyMath.cos(self.angle)) - self.rect.width / 2),
+            player.rect.y + (adjustY * (PyMath.sin(self.angle))) - self.rect.width / 2)
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
-        self.angle = math.degrees(self.angle)
+        self.angle = PyMath.degrees(self.angle)
         # rotate the image accordingly
         self.image = pygame.transform.rotate(self.image, -self.angle - 90)
         # update (called once per frame)

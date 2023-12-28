@@ -7,7 +7,7 @@ from pathlib import Path
 import TitleSlide
 import Anthology
 import TestScenario
-
+# FIXME: Add invincibility frames. these can be either nullifying knockback or not
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
 # In order, the data is currently:

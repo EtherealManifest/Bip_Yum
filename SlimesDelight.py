@@ -1,7 +1,6 @@
 # Test these to see if they are needed in this file or not
 # from StatusBlock import *
 
-# FIXME: ADD invincibility Frames
 
 import sys
 from pygame.locals import *
@@ -135,6 +134,10 @@ class Slime(pygame.sprite.Sprite):
     # this is used to determine if the weapon is being swung.
     swing = False
     isHit = False
+    # after he takes damage or while dodging, stop him from taking damage
+    immune = False
+    immuneTime = 25
+    immuneTick = 0
     # knockback is going to be determined based on the enemies strength stat, so it will be proportional to damage dealt
     knockback = 0
     knockDirection = ''
@@ -179,8 +182,10 @@ class Slime(pygame.sprite.Sprite):
         self.deathTime = 60
         self.deathFrame = self.deathTime
         self.victoryImage = victorySlime
+        self.immune = False
 
     def update(self, win=False):
+        #Win Animation
         if win:
             if self.deathFrame >= 0:
                 self.deathFrame -= 1
@@ -190,19 +195,29 @@ class Slime(pygame.sprite.Sprite):
             # Victory is imminent!
             return
 
+        #Death Animation
         if self.statBlock.HEALTH <= 0:
             if self.deathFrame > 0:
                 self.image = self.deathImage
                 self.rect = self.image.get_rect()
                 self.deathFrame -= 1
                 return
-            # slimy is uh...done dying (deathframe is 0 or less
+            # slimy is uh...done dying (deathframe is 0 or less)
             return
 
-        # if he is swimming, reassign images
-        self.setPosition(self.slimex, self.slimey)
+        # self.setPosition(self.slimex, self.slimey)
         # this is for the animation, it sets the sprite for the animation frame.
         SmoothGrooves(self)
+
+        #handle the Immunity Timer
+        if self.immune == True:
+            if self.immuneTick > 0:
+                self.immuneTick -= 1
+            if self.immuneTick == 0:
+                self.immune = False
+
+
+        #if slime is hit, move him back.
         if self.isHit:
             self.knockback -= 1
             if self.knockback == 0:
@@ -229,15 +244,20 @@ class Slime(pygame.sprite.Sprite):
                 self.slimex -= self.knockback
 
         # These make sure little slime man doesnt go outside the window
-
+        # to do this, see if he is even a little clipped outside the window.
+        # if he is, set him back in the correct direction to exactly the border of the screen.
         if self.slimex >= WINX - 32:
             self.allowedMoves['right'] = False
-        if self.slimey >= WINY - 32:
+            self.slimex = WINX - 32
+        if self.slimey >= WINY - 24:
             self.allowedMoves['down'] = False
+            self.slimey = WINY - 24
         if self.slimey <= 0:
             self.allowedMoves['up'] = False
+            self.slimey = 0
         if self.slimex <= 0:
             self.allowedMoves['left'] = False
+            self.slimex = 0
 
         # this is jump stuff. he's only in the air for a little bit, but set jump to false once he's back down.
         if self.jump:
@@ -254,6 +274,8 @@ class Slime(pygame.sprite.Sprite):
         # smoothMovement should be triggered
         if self.moveTime > 0 and not (pygame.key.get_focused()):
             smoothMoves(self)
+
+            # if slime isn't hit, hes free to  move in any direction, assuming its allowed
         if not self.isHit:
             if ((pygame.key.get_pressed()[K_a] and pygame.key.get_pressed()[K_w])
                     or (pygame.key.get_pressed()[K_LEFT] and pygame.key.get_pressed()[K_UP])):  # A W or <- and ^
@@ -372,6 +394,10 @@ class Slime(pygame.sprite.Sprite):
         elif self.direction == 'right' or self.direction == 'up-right' or self.direction == 'down-right':
             self.image = slimeImgRight
 
+        #this handles the immunity flashing
+        if self.immune:
+            self.image = pygame.transform.grayscale(self.image)
+
         # This is designed to make sure that when one facet of position is updated, all facets of the
         # position are updated, ensuring that Bip is where he appears to be
         self.setPosition(self.slimex, self.slimey)
@@ -399,8 +425,12 @@ class Slime(pygame.sprite.Sprite):
         return self.position
 
     def takeDamage(self, foe):
+        #if slime is immune, recieve knockback, but no damage.
         self.knockback = foe.statBlock.ATTACK % 12
-        self.statBlock.HEALTH -= foe.statBlock.ATTACK
+        if not self.immune:
+            self.statBlock.HEALTH -= foe.statBlock.ATTACK
+            self.immune = True
+            self.immuneTick = self.immuneTime
         if self.statBlock.HEALTH < 0:
             self.statBlock.HEALTH = 0
         self.isHit = True
@@ -408,7 +438,10 @@ class Slime(pygame.sprite.Sprite):
 
     def setPieceDamage(self, damage):
         self.knockback = damage
-        self.statBlock.HEALTH -= damage
+        if not self.immune:
+            self.statBlock.HEALTH -= damage
+            self.immune = True
+            self.immuneTick = self.immuneTime
         if self.statBlock.HEALTH < 0:
             self.statBlock.HEALTH = 0
         self.isHit = True
