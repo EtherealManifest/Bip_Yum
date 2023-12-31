@@ -11,12 +11,15 @@ PLAINS = Path("./GroundPanels/Grass/")
 SANDS = Path("./GroundPanels/Desert/")
 FLAMES = Path("./GroundPanels/Lava/")
 SPACES = Path("./GroundPanels/Space/")
+LAB = Path("./GroundPanels/TestZone/")
 
 
 # each of these is a group of sprites
 def GRASS():
     return GroundMaker.BuildTheLand(WINX, WINY, PLAINS)
 
+def TEST():
+    return GroundMaker.BuildTheLand(WINX, WINY, LAB)
 
 def DESERT():
     return GroundMaker.BuildTheLand(WINX, WINY, SANDS)

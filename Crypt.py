@@ -1,9 +1,7 @@
 # Define the monsters Here
 import os
 from pathlib import Path
-
 import pygame
-
 import Cluster
 import MonsterMash
 
@@ -74,5 +72,29 @@ class AGGRABBAGE(MonsterMash.Monster):
         self.setKnockback(.5)
         self.setHitTime(5)
 
+class OMEN(MonsterMash.Monster):
+    def __init__(self):
+        super().__init__()
+        self.setAll("OMEN", "A Harbinger of doom, and a loyal test subject",
+                    350, 23, 50, 15, 5, 1.5, 20)
+        self.setImage(Mausoleum.get("Omen_0.png"))
+        self.setRect()
+        self.setCore(Cluster.OmenMovement())
+        self.setPosition((200, 200))
+        self.normalImage = Mausoleum.get("Omen_0.png")
+        self.baseImage = self.normalImage
+        self.damageImage = Mausoleum.get("Omen_1.png")
+        self.deadImage = Mausoleum.get("Omen_2.png")
+        self.setKnockback(15)
+        self.setHitTime(10)
+        self.timer = 100
+        # use this to determine how often a new move may be chosen
+        self.waitClock = 100
+        self.waitTick = 0
+        self.rotations = 0
+        self.bounceCount = 0
+        self.bounceWidth = 10
+        self.bounceHeight = 30
+        self.moveRate = (0,0)
 
-CRYPT = [WOLF, TUMBLEWEED, AGGRABBAGE]
+CRYPT = [WOLF, TUMBLEWEED, AGGRABBAGE, OMEN]

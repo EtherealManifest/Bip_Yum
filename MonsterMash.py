@@ -54,7 +54,9 @@ class Monster(pygame.sprite.Sprite):
         self.isDead = False
         self.deathAnimFrame = 10
         self.stopOnHit = True
-
+        #these two are experimental. they are used by the movement cores to pause the monster for a time.
+        self.waitClock = 0
+        self.waitTick = 0
     # These are a variety of set and mod options for the stats and attributes.
     def setName(self, name):
         self.Name = name
@@ -83,7 +85,6 @@ class Monster(pygame.sprite.Sprite):
             self.hitMoveRate = num
         else:
             self.hitMoveRate = 0
-        # set the knockback to the players current attack stat
         self.hitMove = (self.hitMoveRate, self.hitMoveRate)
 
     def setHitTime(self, time):
@@ -148,9 +149,7 @@ class Monster(pygame.sprite.Sprite):
                 # his position will be adjusted here
                 self.takeDamage(slime)
             # make sure that the monster doesnt go inside of slime. IF they arent Overlapping, move enemy
-            elif not pygame.Rect.colliderect(self.rect, slime.rect.inflate(-5, -5)) or not self.stopOnHit:
-                # Update from the core to move in the appropriate direction
-                self.AICore.update(slime)
+            self.AICore.update(slime)
             self.position = (self.monsterX, self.monsterY)
             self.statBlock.pos = self.position
             self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]

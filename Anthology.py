@@ -98,9 +98,37 @@ class PlainsScenario(Scenario.Scenario):
         self.Win = True
 
 
+class TestZoneScenario(Scenario.Scenario):
+    def __init__(self):
+        super().__init__()
+        self.name = "Delve into the Testing Zone"
+        Omen = Crypt.OMEN()
+        Omen.Name = ("Omar")
+        Omen.setPosition((4, 8))
+        _horde = [Omen]
+        _trove = []
+        instructionText = font.render("Push it to the Limit!", False, (1.0, 1.0, 0.0, 1.0))
+        self.instructions = (instructionText, (WINX / 2 - 20, WINY - 45), True)
+        _vista = Atlas.TEST()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.REDSWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+
+    def reset(self):
+        self.__init__()
+
+    # should see if the wolves are dead. may not work right.
+    def winCondition(self, horde):
+        if len(horde) == 0:
+            self.Win = True
+
+
+TEST = TestZoneScenario()
 DESERT = DesertScenario()
 PLAINS = PlainsScenario()
-ANTHOLOGY = [DESERT, PLAINS]
+ANTHOLOGY = [DESERT, PLAINS, TEST]
 
 
 # in the menu, the button related to each scenario will return the name for that scenario when it is pressed.

@@ -10,7 +10,7 @@ import TestScenario
 # FIXME: Add invincibility frames. these can be either nullifying knockback or not
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
-# In order, the data is currently:
+# In order, the data is currently:a
 # Screen size X
 # Screen size Y
 # SWINGTIME
@@ -66,9 +66,6 @@ def playScenario(Scenario):
     overlay = Overlay()
 
     while True:  # the main game loop
-        if(pygame.key.get_pressed()[K_BACKSPACE]):
-            while(not pygame.key.get_pressed()[K_BACKSPACE]):
-                pass
         BackGround.draw(DISPLAYSURF)
         # UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
         # And CHanges are not overwritten

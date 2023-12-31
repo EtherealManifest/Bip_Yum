@@ -21,7 +21,6 @@ class AICore:
 
     def update(self, slime):
         # call the local movement function, using the local monster.
-        # FIXME: MAY NEED TO RETURN THE STATBLOCK OF SELF.MONSTER TO ACTUALLY UPDATE THE MONSTERS POSITION
         self.movement(self.monster, slime)
 
 
