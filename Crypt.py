@@ -34,6 +34,27 @@ class WOLF(MonsterMash.Monster):
         self.damageImage = Mausoleum.get("Wolf_2.png")
         self.deadImage = Mausoleum.get("Wolf_2.png")
 
+class SNOWMAN(MonsterMash.Monster):
+    def __init__(self):
+        super().__init__()
+        self.setAll("Snowman", "He got invited to a snowball fight, but no one else "
+                               "showed up...", 100, 3, 5, 10, 1, 1, 10)
+        self.setImage(Mausoleum.get("Snowman_0.png"))
+        self.setRect()
+        self.setCore(Cluster.SnowmanMovement())
+        self.setPosition((20, 100))
+        self.normalImage = Mausoleum.get("Snowman_0.png")
+        self.baseImage = self.normalImage
+        self.damageImage = Mausoleum.get("Snowman_1.png")
+        self.deadImage = Mausoleum.get("Snowman_3.png")
+        self.setKnockback(1)
+        self.setHitTime(10)
+        self.timer = 100
+        # use this to determine how often a new move may be chosen
+        self.waitClock = 100
+        self.waitTick = 0
+        self.moveRate = (0, 0)
+
 
 class TUMBLEWEED(MonsterMash.Monster):
     def __init__(self):

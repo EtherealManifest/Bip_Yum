@@ -8,6 +8,35 @@ WINX = int(META[0])
 WINY = int(META[1])
 
 
+class SnowmanMovement(AICore.AICore):
+    def __init__(self):
+        super().__init__()
+        #Create a slow movement for the little guy
+    def update(self, slime):
+        # using the monsters timer, randomly decide on an action.
+        if self.monster.waitTick == 0:
+            newMove = throwSnowball
+        else:
+            self.movement = simpleMovement
+        # occasionally check the time, and if needed, check the player to see if an update can be made
+        # regardless, use the current movement core to update movement.
+        self.monster.waitTick -= 1
+        if self.monster.waitTick < 0:
+            self.monster.waitTick = self.monster.waitClock
+        self.movement(self.monster, slime)
+        # These make sure little Monster man doesnt go outside the window
+        # to do this, see if he is even a little clipped outside the window.
+        # if he is, set him back in the correct direction to exactly the border of the screen.
+        if self.monster.monsterX >= WINX - 32:
+            self.monster.monsterX = WINX - 32
+        if self.monster.monsterY >= WINY - 24:
+            self.monster.monsterY = WINY - 24
+        if self.monster.monsterY <= 0:
+            self.monster.monsterY = 0
+        if self.monster.monsterX <= 0:
+            self.monster.monsterX = 0
+
+
 class AgressiveMovement(AICore.AICore):
     def __init__(self):
         super().__init__()
@@ -110,6 +139,15 @@ def teleport(monster, slime):
     if monster.waitTick < monster.waitClock - 33:
         return
 
+def throwSnowball(monster, slime):
+    #Find the distance between snowman and slime, then have the snowman throw a snowball that follows
+    # a set curve towards the player. It doesn't follow, instead it will have a timer that sets it to exist
+    # it hits a target or reaches its goal location, then it dissapears. Once the snowball is thrown, it is
+    #respoonsible for it's own movement.
+    #The snowball will be a monster
+    #Create a new
+
+def snow
 #double the monsters speed and move towards the player for about a second.
 def lunge(monster, slime):
     moveX, moveY = 0, 0
@@ -242,50 +280,49 @@ def tumbeweedMovement(monster, slime):
     monster.bounceCount += 1
 
 
-# Similar to agressive monement, always moves towards the player
+# Similar to agressive monement, always moves towards the player, but moves slower than regular speed
 def simpleMovement(monster, slime):
-    if random.randint(0, 100) < 75:
-        if monster.monsterX > slime.slimex:
-            monster.hitMove = (monster.hitMoveRate, 0)
-            if monster.monsterY > slime.slimey:
-                monster.monsterY -= monster.MonsterMoveSpeed
-                monster.direction = 'up-left'
-                monster.hitMove = (monster.hitMoveRate, monster.hitMoveRate)
-            else:
-                monster.direction = 'left'
-            if monster.monsterY < slime.slimey:
-                monster.monsterY += monster.MonsterMoveSpeed
-                monster.direction = 'down-left'
-                monster.hitMove = (monster.hitMoveRate, -monster.hitMoveRate)
-            else:
-                monster.direction = 'left'
-            monster.monsterX -= monster.MonsterMoveSpeed
-
-        elif monster.monsterX < slime.slimex:
-            monster.hitMove = (-monster.hitMoveRate, 0)
-            if monster.monsterY > slime.slimey:
-                monster.monsterY -= monster.MonsterMoveSpeed
-                monster.direction = 'up-right'
-                monster.hitMove = (-monster.hitMoveRate, monster.hitMoveRate)
-            else:
-                monster.direction = 'right'
-            if monster.monsterY < slime.slimey:
-                monster.monsterY += monster.MonsterMoveSpeed
-                monster.direction = 'down-right'
-                monster.hitMove = (-monster.hitMoveRate, -monster.hitMoveRate)
-            else:
-                monster.direction = 'right'
-            monster.monsterX += monster.MonsterMoveSpeed
-
+    if monster.monsterX > slime.slimex:
+        monster.hitMove = (monster.hitMoveRate, 0)
+        if monster.monsterY > slime.slimey:
+            monster.monsterY -= int(monster.MonsterMoveSpeed / 2)
+            monster.direction = 'up-left'
+            monster.hitMove = (monster.hitMoveRate, monster.hitMoveRate)
         else:
-            if monster.monsterY < slime.slimey:
-                monster.monsterY += monster.MonsterMoveSpeed
-                monster.hitMove = (0, -monster.hitMoveRate)
-                monster.direction = 'down'
-            else:
-                monster.monsterY -= monster.MonsterMoveSpeed
-                monster.direction = 'up'
-                monster.hitMove = (0, monster.hitMoveRate)
+            monster.direction = 'left'
+        if monster.monsterY < slime.slimey:
+            monster.monsterY += int(monster.MonsterMoveSpeed / 2)
+            monster.direction = 'down-left'
+            monster.hitMove = (monster.hitMoveRate, -monster.hitMoveRate)
+        else:
+            monster.direction = 'left'
+        monster.monsterX -= int(monster.MonsterMoveSpeed / 2)
+
+    elif monster.monsterX < slime.slimex:
+        monster.hitMove = (-monster.hitMoveRate, 0)
+        if monster.monsterY > slime.slimey:
+            monster.monsterY -= int(monster.MonsterMoveSpeed / 2)
+            monster.direction = 'up-right'
+            monster.hitMove = (-monster.hitMoveRate, monster.hitMoveRate)
+        else:
+            monster.direction = 'right'
+        if monster.monsterY < slime.slimey:
+            monster.monsterY += int(monster.MonsterMoveSpeed / 2)
+            monster.direction = 'down-right'
+            monster.hitMove = (-monster.hitMoveRate, -monster.hitMoveRate)
+        else:
+            monster.direction = 'right'
+        monster.monsterX += int(monster.MonsterMoveSpeed / 2)
+
+    else:
+        if monster.monsterY < slime.slimey:
+            monster.monsterY += int(monster.MonsterMoveSpeed / 2)
+            monster.hitMove = (0, -monster.hitMoveRate)
+            monster.direction = 'down'
+        else:
+            monster.monsterY -= int(monster.MonsterMoveSpeed / 2)
+            monster.direction = 'up'
+            monster.hitMove = (0, monster.hitMoveRate)
 
 
 def Stay(monster, slime):

@@ -56,6 +56,7 @@ class DefaultSetPiece(SetPeice.setPiece):
 
 DEFAULTSETPIECE = DefaultSetPiece()
 
+class Snowball(SetPeice.SetPiece)
 
 class Round_Cactus(SetPeice.setPiece):
     def __init__(self):
