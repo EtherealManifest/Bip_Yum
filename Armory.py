@@ -20,6 +20,7 @@ SWINGTIME = int(META[2])
 
 
 class Weapon(pygame.sprite.Sprite):
+    """power, position, and swing handling for weapons used by the player"""
     # this is the position of the BOTTOM-CENTER of the weapon
     pos = (0, 0)
     # The maximum reach, for determining the hitbox
@@ -41,6 +42,7 @@ class Weapon(pygame.sprite.Sprite):
     arc = 0
 
     def __init__(self):
+        """initializes the weapon, sets to defaults"""
         # this initializes it as a Sprite
         pygame.sprite.Sprite.__init__(self)
         # these are Sprite Attributes
@@ -56,14 +58,19 @@ class Weapon(pygame.sprite.Sprite):
         self.arc = 0
 
     def setStats(self, _power, _arc):
+        """sets the arc and the power for this weapon"""
         self.arc = _arc
         self.power = _power
 
     def setImage(self, newImg):
+        """changes the image and the rect for this weapon"""
         self.image = newImg
         self.rect = self.image.get_rect()
 
     def position(self, player):
+        """Based on player direction, sets position and facingRight for this weapon.
+
+        Used with algorithm based generation to position the sword correctly"""
         if player.direction == 'up':
             self.pos = (player.slimex + self.rect.width, player.slimey)
             self.facingRight = False
@@ -94,9 +101,13 @@ class Weapon(pygame.sprite.Sprite):
     '''
 
     def weaponPosition(self, player, SWINGTIME, elapsed, swingAngle, startAngle):
-        # the swing angle is the total arc that the sword will take
-        # these numbers are long, so i decided to declare them here.
-        # they are the necessary offset that is added to the position determiner
+        """
+        Correctly and mathematically positons the sword through the duration of it's swing.
+
+        The swing angle is the total arc that the sword will traverse
+        The startAngle is used to correctly position the Sword at the beginning of the swing
+        Elapsed is how long the sword has been swimnging, so that is is smoothly angled through it's swing
+        """
         adjustX = (player.rect.width + self.rect.height / 3)
         adjustY = (player.rect.height + self.rect.height / 3)
         swingAngle = PyMath.radians(swingAngle)
@@ -116,6 +127,11 @@ class Weapon(pygame.sprite.Sprite):
         # update (called once per frame)
 
     def update(self, player):
+        """Positions the sword and listens for swing actions.
+
+        Calls weaponPosition to correctly position, and redraws the sword in the correct spot based
+        on it's attributes. rotates the sword sprite appropriately, and resets the rectangle and facing
+        direction if appropriate."""
         # it is positioned at the top of the slime, then moved back to
         # center the blade.
         # this will all be implemented in position()

@@ -9,10 +9,13 @@ WINY = int(META[1])
 
 
 class SnowmanMovement(AICore.AICore):
+    """Switches between moving slowly and throwing a snowball"""
     def __init__(self):
+        """initializes this snowman"""
         super().__init__()
         #Create a slow movement for the little guy
     def update(self, slime):
+        """Counts down to the next snowball throw, then changes the AICore between simple and throwSnowball"""
         # using the monsters timer, randomly decide on an action.
         if self.monster.waitTick == 0:
             newMove = throwSnowball
@@ -38,22 +41,30 @@ class SnowmanMovement(AICore.AICore):
 
 
 class AgressiveMovement(AICore.AICore):
+    """Used to contain agressive Movement, moves at top speed towards the player"""
     def __init__(self):
+        """initializes this core, sets the movement method to agressive"""
         super().__init__()
         self.movement = agressiveMovement
 
 class ChaoticMovement(AICore.AICore):
+    """Used to contain chaotic Movement, moves randomly in 8 directions"""
     def __init__(self):
+        """Initializes this core, sets the movement method to chaotic"""
         super().__init__()
         self.movement = chaoticMovement
 
 class SimpleMovement(AICore.AICore):
+    """Used to contain simple movement. slowly move towards the player"""
     def __init__(self):
+        """Initializes this core, sets the movement method to Simple"""
         super().__init__()
         self.movement = simpleMovement
 
 class TumbleweedMovement(AICore.AICore):
+    """Used to contain tubleweed-style movement. Bounce to the left!"""
     def __init__(self):
+        """Initializes this core, sets the movement method to tumbleweed"""
         super().__init__()
         self.movement = tumbeweedMovement
 
@@ -63,13 +74,19 @@ class TumbleweedMovement(AICore.AICore):
 #this will be accomplished by having multiple methods that can be set to the movement attribute
 # at different times. when he uses a 'move', set a new core and his movement will change.
 class OmenMovement(AICore.AICore):
+    """Holds Omen's Movement. Manages the core-switches."""
     def __init__(self):
+        """initializes the defaults for this core."""
         super().__init__()
         self.movement = agressiveMovement
         self.moveRate = (0,0)
 
     #this will handle decision making for OMEN:
     def update(self, slime):
+        """Manages the moves that Omen Uses.
+
+        Every few frames(initially 100), Randomly switches the method for movement, causing Omen to use
+        a different move."""
         # using the monsters timer, randomly decide on an action.
         if self.monster.waitTick == 0:
             newMove = random.randrange(0, 12)
@@ -115,6 +132,7 @@ class OmenMovement(AICore.AICore):
 # in order for a monster to use teleport, it has to have a time counter on it, so that it can
 # complete the action.
 def teleport(monster, slime):
+    """Pauses, then moves the monster to a random location on the screen very quickly."""
     #this location is where the monster moves to, and is used later.
     #these are each the amount that the monster needs to move over the course of the teleport
     moveX = 0
@@ -140,6 +158,7 @@ def teleport(monster, slime):
         return
 
 def throwSnowball(monster, slime):
+    """Adds a snowball to the trove, with a trajectory to the player"""
     #Find the distance between snowman and slime, then have the snowman throw a snowball that follows
     # a set curve towards the player. It doesn't follow, instead it will have a timer that sets it to exist
     # it hits a target or reaches its goal location, then it dissapears. Once the snowball is thrown, it is
@@ -150,6 +169,10 @@ def throwSnowball(monster, slime):
 def snow
 #double the monsters speed and move towards the player for about a second.
 def lunge(monster, slime):
+    """Pause, then quickly move to the player
+
+    Does not follow the player, but reads the players position during the pause and lunges there.
+    the speed will vary depending on how far away the player is"""
     moveX, moveY = 0, 0
     # use the first 5 frames to aim
     if monster.waitTick > monster.waitClock - 5:
@@ -170,6 +193,9 @@ def lunge(monster, slime):
         monster.monsterX += monster.moveRate[0] - (((10 - monster.hitTick) / 10) * monster.moveRate[0])
         monster.monsterY += monster.moveRate[1] - (((10 - monster.hitTick) / 10) * monster.moveRate[1])
 def agressiveMovement(monster, slime):
+    """Read the player's position, then move in that direction.
+
+    also sets the knockback direction correctly. """
     if monster.monsterX > slime.slimex and monster.monsterX > 0:
         monster.hitMove = (monster.hitMoveRate, 0)
         if monster.monsterY > slime.slimey and monster.monsterY > 0:
@@ -217,6 +243,9 @@ def agressiveMovement(monster, slime):
 # The parameter slime is here because the number of parameters needs to be standardized so that all the modules
 # work together.
 def chaoticMovement(monster, slime):
+    """move at speed in one of eight randomly chosen cardinal directions each frame.
+
+    also sets knockback appropriatley."""
     # this is a vector that corresponds with directions.
     # it is defined as follows:
     # [U, UR, R, DR, D, DL, L, UL]
@@ -267,6 +296,13 @@ def chaoticMovement(monster, slime):
 # the monster will constantly move to the left, and bounce according to the function. height width can be universally
 # set
 def tumbeweedMovement(monster, slime):
+    """Moves the Monster to the left while bouncing!
+
+    modifies the monsters rotations attribute
+
+    uses the monsters bounceHeight and bouncewidth to determine how the bounce works on screen.
+
+    """
     # tumbleweed movement just moves the enemy from left to right, bouncing.
     monster.rotations += 1
     monster.image = monster.baseImage
@@ -282,6 +318,9 @@ def tumbeweedMovement(monster, slime):
 
 # Similar to agressive monement, always moves towards the player, but moves slower than regular speed
 def simpleMovement(monster, slime):
+    """Slowly moves towards the player at a constant speed
+
+    speed is half the monsters move speed"""
     if monster.monsterX > slime.slimex:
         monster.hitMove = (monster.hitMoveRate, 0)
         if monster.monsterY > slime.slimey:
@@ -326,19 +365,26 @@ def simpleMovement(monster, slime):
 
 
 def Stay(monster, slime):
+    """Monster Does not Move"""
     return
 
 
 def printDirection(monster):
+    """returns the Monster's current direction and speed as a string"""
     return (monster.Name + " : " + monster.direction + ", (" + str(monster.monsterX) + ", " + str(monster.monsterY) +
             "), Speed: " + str(monster.statBlock.SPEED))
 
 
 SIMPLE = AICore.AICore()
+"""The simple AI Core, move slowly towards the player"""
 AGRESSIVE = AICore.AICore()
+"""The agressive AI Core. Move quickly towards the player"""
 CHAOTIC = AICore.AICore()
+"""The Chaotic Movement Core. Move sprodically in all directions"""
 STAY = AICore.AICore()
+"""The Stay Movement Core. The Monster Does not Move"""
 TUMBLEWEED = AICore.AICore()
+"""The tumbleweed Movement core. bounces the monster to the left"""
 
 SIMPLE.movement = simpleMovement
 CHAOTIC.movement = chaoticMovement

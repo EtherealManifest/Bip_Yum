@@ -15,5 +15,14 @@ green.setImage(pygame.image.load(Path("./Weapon Sprites/green_sword_sprite.png")
 green.setStats(25, 180)
 
 REDSWORD = red
+"""A slightly larger sword. 
+
+Power:15, Arc: 180"""
 BLUESWORD = blue
+"""A short sword
+
+Power: 10, Arc: 180"""
 GREENSWORD = green
+"""A long sword.
+
+Power: 25, Arc: 180"""

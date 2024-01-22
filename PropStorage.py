@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import Crypt
-import SetPeice
+import SetPiece
 import os
 import pygame
 import random
@@ -44,6 +44,7 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.destroyTrigger = self.destroyDefaultSetpiece
 
     def reset(self):
+        """reset this setPiece to it's __init__() form."""
         self.__init__()
 
     def wolfResetEnemy(self):
@@ -56,9 +57,25 @@ class DefaultSetPiece(SetPeice.setPiece):
 
 DEFAULTSETPIECE = DefaultSetPiece()
 
-class Snowball(SetPeice.SetPiece)
+class Snowball(SetPiece.setPiece):
+    def __init__(self):
+        super().__init__()
+        self.image = sceneShop.get("snowball.png", None)
+        self.setBothImages(self.image)
+        self.rect = self.image.get_rect()
+        self.buildSetPiece(self.image, self.rect, (10, 123))
+        self.isPassable = False
+        self.dealsDamage = True
+        self.damage = 10
+        self.killZone = False
+        self.spawnEnemies = False
+        self.destroyable = False
+        self.setPieceHP = 300
 
-class Round_Cactus(SetPeice.setPiece):
+    def reset(self):
+        self.__init__()
+
+class Round_Cactus(SetPiece.setPiece):
     def __init__(self):
         super().__init__()
         self.image = sceneShop.get("Round_Cactus.png", None)
@@ -77,7 +94,7 @@ class Round_Cactus(SetPeice.setPiece):
         self.__init__()
 
 
-class Tall_Cactus(SetPeice.setPiece):
+class Tall_Cactus(SetPiece.setPiece):
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Tall_Cactus.png", None))
@@ -95,7 +112,7 @@ class Tall_Cactus(SetPeice.setPiece):
         self.__init__()
 
 
-class TumbleweedLord(SetPeice.setPiece):
+class TumbleweedLord(SetPiece.setPiece):
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Buzz-Buzz.png"))
@@ -117,7 +134,7 @@ class TumbleweedLord(SetPeice.setPiece):
         self.enemy.setPosition((WINX + 1, random.randint(32, int(WINY))))
 
 
-class Cabbage(SetPeice.setPiece):
+class Cabbage(SetPiece.setPiece):
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Cabbage_0.png"))

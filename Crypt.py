@@ -6,6 +6,9 @@ import Cluster
 import MonsterMash
 
 Mausoleum = {}
+"""Holds the monster Image Sprites, pulls from ./EnemySprites
+
+use Mausoleum.get(_filename_) for setting images, must know the image name and file type."""
 BeastList = os.listdir('./EnemySprites')
 
 # get all the default sprites(only ones currently generated)
@@ -18,11 +21,15 @@ for sprite in BeastList:
 
 
 def imgPath(image):
+    """Used to concat the proper path to the image for efficient retrieval"""
     return Path("./EnemySprites/" + image)
 
 
 class WOLF(MonsterMash.Monster):
+    """A wolf enemy. Fast and relentless"""
+
     def __init__(self):
+        """Initializes the wolf enemy and sets stats."""
         super().__init__()
         self.setAll("Wolf", "A small Canine. Ferocious, but not usually a threat unless attacking in Packs.",
                     150, 5, 5, 0, 5, 3, 20)
@@ -34,8 +41,13 @@ class WOLF(MonsterMash.Monster):
         self.damageImage = Mausoleum.get("Wolf_2.png")
         self.deadImage = Mausoleum.get("Wolf_2.png")
 
+
 class SNOWMAN(MonsterMash.Monster):
+    """A Snowman! He throws Snowballs"""
+
     def __init__(self):
+        # FIXME: INCOMPLETE
+        """Initializes the Snowman"""
         super().__init__()
         self.setAll("Snowman", "He got invited to a snowball fight, but no one else "
                                "showed up...", 100, 3, 5, 10, 1, 1, 10)
@@ -57,7 +69,12 @@ class SNOWMAN(MonsterMash.Monster):
 
 
 class TUMBLEWEED(MonsterMash.Monster):
+    """A bouncing tumbleweed, moves to the left and bounces
+
+        To change the bounces of a tumbleweed, change it's .bounceHeight and .bounceWidth"""
+
     def __init__(self):
+        """Initializes this tumbleweed and sets stats."""
         super().__init__()
         self.setAll("Tumbleweed", "Just a bouncing tumbleweed",
                     1, 1, 1, 0, 0, 5, 1)
@@ -78,7 +95,10 @@ class TUMBLEWEED(MonsterMash.Monster):
 
 
 class AGGRABBAGE(MonsterMash.Monster):
+    """A slow-moving cabbage-looking monster. very tough"""
+
     def __init__(self):
+        """Initializes this monster and it's stats"""
         super().__init__()
         self.setAll("Aggrabbage", "Massive and angry. While it appears to be a cabbage, it is, in fact, made "
                                   "of stone. Very defensive. ",
@@ -93,8 +113,12 @@ class AGGRABBAGE(MonsterMash.Monster):
         self.setKnockback(.5)
         self.setHitTime(5)
 
+
 class OMEN(MonsterMash.Monster):
+    """A Boss enemy. Has a variety of moves and is rather hardy."""
+
     def __init__(self):
+        """Initializes this monster and set's it's stats."""
         super().__init__()
         self.setAll("OMEN", "A Harbinger of doom, and a loyal test subject",
                     350, 23, 50, 15, 5, 1.5, 20)
@@ -116,6 +140,8 @@ class OMEN(MonsterMash.Monster):
         self.bounceCount = 0
         self.bounceWidth = 10
         self.bounceHeight = 30
-        self.moveRate = (0,0)
+        self.moveRate = (0, 0)
+
 
 CRYPT = [WOLF, TUMBLEWEED, AGGRABBAGE, OMEN]
+"""CRYPT is where all monsters are held. Add them to a scenario by using CRYPT.get[_name_]"""

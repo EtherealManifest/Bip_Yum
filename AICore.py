@@ -1,7 +1,9 @@
-# This will be used for enemies to control their movement
-
-
 class AICore:
+    """Used to Control Monster Movement and Actions.
+
+    monster : the monster that this core acts on
+    movement : the method that is executed on update()
+    """
     # the monster that this Core acts on
     # this will have to be a deep copy of the monster, it has to directly modify its stats.
     monster = None
@@ -13,19 +15,25 @@ class AICore:
     movement = None
 
     def __init__(self):
+        """Initializes. Sets monster to none and movement to DefaultMovement"""
         self.monster = None
         self.movement = defaultMovement
 
     def setMovement(self, func):
+        """Sets the current movement attribute.
+
+        func must be a method."""
         self.movement = func
 
     def update(self, slime):
+        """Calls the bound movement method"""
         # call the local movement function, using the local monster.
         self.movement(self.monster, slime)
 
 
 # THis is the Default Movement method for the Core.
 def defaultMovement(monster, slime):
+    """Causes the monster to move towards the player at its set movement rate, and appropriatley sets direction. """
     if monster.monsterX > slime.slimex:
         monster.hitMove = (monster.hitMoveRate, 0)
         if monster.monsterY > slime.slimey:

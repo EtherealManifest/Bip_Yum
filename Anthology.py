@@ -19,7 +19,11 @@ font = pygame.font.SysFont("Planet Comic", math.ceil(.03 * WINY))
 
 
 class DesertScenario(Scenario.Scenario):
+    """Scenario with blowing tumbleweeds and attacking coyotes.
+
+    Goal: Defeat the coyotes to win."""
     def __init__(self):
+        """initializes this scenario"""
         super().__init__()
         self.name = "Desert Battle"
         wolf1 = Crypt.WOLF()
@@ -38,17 +42,20 @@ class DesertScenario(Scenario.Scenario):
         self.Win = False
 
     def reset(self):
+        """Returns this scenario to its native state"""
         self.__init__()
 
     # to win, kill teh wolves. This can be checked by whether or not the first and second
     # enemies are named wolf1 and wolf2
     def winCondition(self, horde):
+        """Determines if the two wolves are dead or not."""
         if (horde[0].Name != "Wolf1" and horde[0].Name != "Wolf2") and horde[1].Name != "Wolf2":
             self.Win = True
         else:
             self.Win = False
 
     def alldestroyed(self):
+        """Checks to see if there are any setPeices in the Trove"""
         for pieces in self.trove:
             if pieces.destroyable:
                 return False
@@ -56,7 +63,12 @@ class DesertScenario(Scenario.Scenario):
 
 
 class PlainsScenario(Scenario.Scenario):
+    """Plains Scenario, eat the Cabbages!
+
+    Four Aggrabbages will try to attack the player.
+    Eat all 5 cabbages to win"""
     def __init__(self):
+        """Initializes this Scenario, creating monsters and cabbages."""
         super().__init__()
         self.name = "Plains Adventure"
         aggrabbage1 = Crypt.AGGRABBAGE()
@@ -88,10 +100,12 @@ class PlainsScenario(Scenario.Scenario):
         self.instructions = ("Eat the Cabbages!", (WINY - 30, (1 / 2) * WINX - 30), True)
 
     def reset(self):
+        """Resets this scenario to it's native form"""
         self.__init__()
 
     # should see if the wolves are dead. may not work right.
     def winCondition(self, horde):
+        """Checks to see if there are any cabbages in teh trove"""
         for cabbage in self.trove:
             if not cabbage.eaten:
                 return
@@ -99,7 +113,9 @@ class PlainsScenario(Scenario.Scenario):
 
 
 class TestZoneScenario(Scenario.Scenario):
+    """Boss arena! Defeat the Omen Character to win!"""
     def __init__(self):
+        """Initializes this scenario, creates Omen."""
         super().__init__()
         self.name = "Delve into the Testing Zone"
         Omen = Crypt.OMEN()
@@ -117,23 +133,30 @@ class TestZoneScenario(Scenario.Scenario):
         self.Win = False
 
     def reset(self):
+        """Returns this scenario to it's native form"""
         self.__init__()
 
     # should see if the wolves are dead. may not work right.
     def winCondition(self, horde):
+        """Checks if the Horde is empty, meaning Omen is defeated"""
         if len(horde) == 0:
             self.Win = True
 
 
 TEST = TestZoneScenario()
+"""TEST is the battle with Omen"""
 DESERT = DesertScenario()
+"""The fight against the wolves"""
 PLAINS = PlainsScenario()
+"""The mad dash for cabbages"""
 ANTHOLOGY = [DESERT, PLAINS, TEST]
+"""A collection of all of the scenarios in one place"""
 
 
 # in the menu, the button related to each scenario will return the name for that scenario when it is pressed.
 # the main menu will then call this, passing the name as a parameter. return the scenario they are looking for.
 def retrieveScenario(target_name):
+    """Searches ANTHOLOGY for the scenario with target_name"""
     for scenario in ANTHOLOGY:
         if scenario.name == target_name:
             scenario.reset()
@@ -144,6 +167,7 @@ def retrieveScenario(target_name):
 
 # returns a tuple of the text, the position (tuple) and True
 def text_to_surface(text):
+    """returns the text as rendered instruction text"""
     instructionText = font.render(text, False, (1.0, 1.0, 0.0, 1.0))
     instructions = (instructionText, (WINX / 2 - instructionText.get_width() / 2, WINY - 45), True)
     return instructions
