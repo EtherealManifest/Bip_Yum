@@ -18,4 +18,6 @@ TitleScreen.Title(WINX, WINY, DISPLAYSURF, FPS)
 #when the user makes certain selections from the title screen, it will return here. 
 #start the game as an old or new file based on that selection.
 #from there, send it to Game.py's main loop, which currently terminates when the player presses Q
-#should the player ever quit, send them back to the title screen. 
+#should the player ever quit, send them back to the title screen.
+
+#You shouldn't be here.

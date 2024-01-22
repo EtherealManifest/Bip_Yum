@@ -8,7 +8,9 @@ WINY = int(META[1])
 
 
 class TestScenario(Scenario.Scenario):
+    """This is the testScenario, a remnant of development"""
     def __init__(self):
+        """initializes this test scenario"""
         super().__init__()
         wolf1 = Crypt.WOLF()
         wolf2 = Crypt.WOLF()
@@ -25,12 +27,15 @@ class TestScenario(Scenario.Scenario):
         super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
         self.Win = False
     def reset(self):
+        """reset the default scenario"""
         self.__init__()
 
 
     def winCondition(self, horde):
+        """just a stub... What was meant to be here???"""
         pass
     def alldestroyed(self):
+        """is everyone Gone?"""
         for pieces in self.trove:
             if pieces.destroyable != False:
                 return False

@@ -1,7 +1,3 @@
-# Test these to see if they are needed in this file or not
-# from StatusBlock import *
-
-
 import sys
 from pygame.locals import *
 from StatusBlock import *
@@ -48,6 +44,7 @@ slimeImgRight = pygame.transform.flip(slimeImg1, True, False)
 
 # This is a controller for the animations
 def SmoothGrooves(self):
+    """This controls the animation for the slime, switching the sprite back and forth every so often."""
     # These are references to the files used, they are declared
     # at the top of this file
     # slimeImg1= pygame.image.load('Slime0.png')
@@ -83,6 +80,7 @@ def SmoothGrooves(self):
 # buttons are being pressed on the keyboard, and moveTime > 0. To create a slowing effect, the game will add movement
 # to slime equal to the moveTime / moveRate, while moveRate approaches 0
 def smoothMoves(slime):
+    """unworking method that smoothes the slime's deceleraton. Not a priority."""
     # moveDirection = ''
     # moveRate = 0
     # moveTime = 30  This is used to determine how long after input stops that the slowing happens
@@ -119,6 +117,9 @@ def smoothMoves(slime):
 
 # Im turning slime into a sprite class, to make him easier to handle
 class Slime(pygame.sprite.Sprite):
+    """My Magnum Opus! He is controllable, adorable, and my pride and joy!
+
+    His name is Bip-Yum. Its a relatively meaningless name, but its important to me!"""
     statBlock = StatBlock()
     slimex = 10  # x position
     slimey = 10  # y position
@@ -148,6 +149,7 @@ class Slime(pygame.sprite.Sprite):
     dodge = True
 
     def __init__(self):
+        """Initializes the player-character and stats"""
         # this initializes it as a sprite object by calling the Parent COnstructor
         pygame.sprite.Sprite.__init__(self)
         self.statBlock = StatBlock()
@@ -185,6 +187,9 @@ class Slime(pygame.sprite.Sprite):
         self.immune = False
 
     def update(self, win=False):
+        """Update the player: including movement and win/loss animations.
+
+        Also controls positioning and player control. """
         #Win Animation
         if win:
             if self.deathFrame >= 0:
@@ -403,18 +408,21 @@ class Slime(pygame.sprite.Sprite):
         self.setPosition(self.slimex, self.slimey)
 
     def allowAllDirections(self):
+        """Allow slime to move in any direction"""
         self.allowedMoves['right'] = True
         self.allowedMoves['left'] = True
         self.allowedMoves['up'] = True
         self.allowedMoves['down'] = True
 
     def preventAllDirections(self):
+        """prevent slime from moving in any directions"""
         self.allowedMoves['right'] = False
         self.allowedMoves['left'] = False
         self.allowedMoves['up'] = False
         self.allowedMoves['down'] = False
 
     def setPosition(self, x, y):
+        """Change the slimes position to a set location"""
         self.slimex = x
         self.slimey = y
         self.position = (self.slimex, self.slimey)
@@ -422,9 +430,11 @@ class Slime(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.statBlock.pos[0], self.statBlock.pos[1]
 
     def getPosition(self):
+        """return a tuple reflecting the slimes position"""
         return self.position
 
     def takeDamage(self, foe):
+        """deal damage to slime, based on a foes stats."""
         #if slime is immune, recieve knockback, but no damage.
         self.knockback = foe.statBlock.ATTACK % 12
         if not self.immune:
@@ -437,6 +447,7 @@ class Slime(pygame.sprite.Sprite):
         self.knockDirection = foe.direction
 
     def setPieceDamage(self, damage):
+        """deal damage to a setpiece equal to damage"""
         self.knockback = damage
         if not self.immune:
             self.statBlock.HEALTH -= damage
@@ -448,6 +459,7 @@ class Slime(pygame.sprite.Sprite):
         self.knockDirection = self.reverseDirection()
 
     def reverseDirection(self):
+        """reverse the direction that the player is facing"""
         if self.direction == 'left':
             return 'right'
         if self.direction == 'down-left':
@@ -466,6 +478,7 @@ class Slime(pygame.sprite.Sprite):
             return 'down-right'
 
     def rectangle(self):
+        """return a string representation of this sprites rectangle"""
         return ("Slime:\ntop: " + str(self.rect.top) +
                 "\nbottom:" + str(self.rect.bottom) +
                 "\nleft: " + str(self.rect.left) +
@@ -474,12 +487,14 @@ class Slime(pygame.sprite.Sprite):
                 "\ny: " + str(self.rect.y))
 
     def printAllowedMoves(self):
+        """return a string representation of the allowed moves for the slime"""
         return ("Right: " + str(self.allowedMoves['right']) +
                 ", Left: " + str(self.allowedMoves['left']) +
                 ", Up: " + str(self.allowedMoves['up']) +
                 ", Down: " + str(self.allowedMoves['down']))
 
     def reset(self, pos):
+        """reset the position of the slime"""
         self.setPosition(pos[0], pos[1])
         self.statBlock.HEALTH = self.statBlock.TOTALHEALTH
 
@@ -487,6 +502,7 @@ class Slime(pygame.sprite.Sprite):
 # This method will initialize the slime at the beginning of the program. It will
 # have position, color, and animation style.
 def initialize(pos_x=0, pos_y=0):
+    """initialize the slime"""
     slime = Slime()
     slime.slimex = pos_x
     slime.slimey = pos_y

@@ -38,6 +38,7 @@ pygame.key.set_repeat(20)
 FPS = int(META[3])  # frames per second setting
 # This sets the size of the display
 DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
+"""THe primary surface that the Game is rendered on"""
 # setting the caption on the screen
 pygame.display.set_caption('Bip Yum')
 pygame.display.set_icon(slimeImg)
@@ -50,6 +51,7 @@ BackGroundLocale = Path('./GroundPanels/Lava/')
 
 
 def playScenario(Scenario):
+    """Take the Scenario and play it through."""
     # play music
     # read the Scenario
     scenario = Scenario
@@ -134,6 +136,7 @@ def playScenario(Scenario):
 
 
 def runScenario(Scenario):
+    """Run this Scenario... Calls playScenario"""
     playScenario(Scenario)
 
 
@@ -143,8 +146,10 @@ def runScenario(Scenario):
 
 logging.info("Game Initialized")
 nextStep = TitleSlide.runTitle(DISPLAYSURF)
-'''nextstep is either going to be Q, or it will be the name of a scenario that can be found
-in ANTHOLOGY.ANTHOLOGY. if it is the latter, go get it and set that as the current scenario, then run it.'''
+"""nextstep is either going to be Q, or it will be the name of a scenario that can be found
+in ANTHOLOGY.ANTHOLOGY. 
+
+if it is the latter, go get it and set that as the current scenario, then run it."""
 if nextStep == 'Q' or nextStep == 'quit-button':
     pygame.quit()
     sys.exit()

@@ -1,20 +1,5 @@
 # this will be used to design and implement the different terrain pieces that the
 # game will utilise.
-
-# each setpiece will have a sprite, a location to be put on the map, and properties that
-# dictate what it will do, should slime interact with it.
-
-'''property ideas:
-Damage on Contact
-block progress
-interactable
-interaction => new sprite?
-swimming?
-death on contact
-regain life
-spawns enemies
-destroyable
-'''
 import math
 
 import pygame
@@ -28,6 +13,7 @@ WINX = int(META[0])
 WINY = int(META[1])
 
 sceneShop = []
+"""Holds all of the Setpieces"""
 setPieceList = os.listdir('./setPiecePanels')
 
 # get all the default sprites(only ones currently generated
@@ -37,10 +23,20 @@ for sprite in setPieceList:
 
 
 def stub():
+    """What? Do you want every method to have drawn out implementation?
+
+    Too bad! Instead, this one has an excessive amount of documentation!
+
+    Worth mentioning is the fact that I am typing all of this out by hand. No chatGPT or anything.
+
+    Why are you still reading this? It's a stub. like, there is obviously not going to be anything here.
+
+    Alright, I like you. YOu're the thourough type. Carry on, and be Excellent!"""
     pass
 
 
 class setPiece(pygame.sprite.Sprite):
+    """All the setpieces that make up the props for this show thing."""
     dealsDamage = False
     damage = 0
     isPassable = False
@@ -55,6 +51,7 @@ class setPiece(pygame.sprite.Sprite):
     setPieceHP = 0
 
     def __init__(self):
+        """Initializes this scenario"""
         pygame.sprite.Sprite.__init__(self)
 
         # sprite Information
@@ -86,6 +83,7 @@ class setPiece(pygame.sprite.Sprite):
                       _dealsDamage=False, _damage=0, _isPassable=False, _interactable=False,
                       _interactionTrigger=None, _killZone=False, _spawnEnemies=False,
                       _enemy=None, _spawnRate=1000, _destroyable=False, _setPieceHP=0):
+        """Define the parameters of this setPiece"""
         self.image = _image
         self.baseImage = self.image
         if _rect is None:
@@ -113,62 +111,79 @@ class setPiece(pygame.sprite.Sprite):
 
     # set the image(does not modify the rectangle, follow with a call to setRect
     def setImage(self, newImage):
+        """Set the image for this setPiece"""
         self.image = newImage
 
     def setBaseImage(self, newImage):
+        """Set the base, unmodified Image"""
         self.baseImage = newImage
 
     def setBothImages(self, newImage):
+        """Set both the base image, and the regular image"""
         self.image = newImage
         self.baseImage = newImage
 
     # set the new rectangle and position
     def setRect(self, newRect):
+        """Set the rectangle, and reposition it. """
         self.rect = newRect
         self.pos = (self.rect.x, self.rect.y)
 
     def setPos(self, newPos):
+        """Sets the position for this setPiece"""
         self.pos = newPos
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
     def toggleDealsDamage(self):
+        """Set whether this setpiece deals damage on contact"""
         self.dealsDamage = not self.dealsDamage
 
     def setDamage(self, newDamage):
+        """Set how much damage this setPiece deals"""
         if self.dealsDamage:
             self.damage = newDamage
 
     def toggleIsPassable(self):
+        """Set whether or not players can pass through this setPiece"""
         self.isPassable = not self.isPassable
 
     def toggleInteractable(self):
+        """Set whether players can interact with this Setpiece"""
         self.interactable = not self.interactable
 
     def setInteractionTrigger(self, trigger):
+        """Set what happens when the player interacts with this setPiece"""
         self.interactionTrigger = trigger
 
     def toggleKillZone(self):
+        """Set whether or not this setpiece kills a player on contact"""
         self.killZone = not self.killZone
 
     def toggleSpawnEnemies(self):
+        """Set whether this setPiece spawns enemies or not"""
         self.spawnEnemies = not self.spawnEnemies
 
     def setEnemy(self, newEnemy):
+        """Set the enemy that this Setpiece spawns"""
         if self.spawnEnemies:
             self.enemy = newEnemy
 
     def toggleDestroyable(self):
+        """set whether this setPiece is destroyable or not"""
         self.destroyable = not self.destroyable
 
     def setSetPieceHP(self, newHP):
+        """Set the HP of this SetPiece"""
         if self.destroyable:
             self.setPieceHP = newHP
 
     def get_rect(self):
+        """Return the rect for this setPiece"""
         return self.rect
 
     def toString(self):
+        """Returns a string representing the setPiece"""
         return ("\n  Deals Damage: " + str(self.dealsDamage) +
                 ",\n Rect: X:" + str(self.rect.x) + ", Y: " + str(self.rect.y) +
                 ",\n Position: " + str(self.pos) +
@@ -181,6 +196,7 @@ class setPiece(pygame.sprite.Sprite):
                 ",\n HP: " + str(self.setPieceHP))
 
     def update(self, slime, horde):
+        """Updates the setPiece, checking for character contact or triggers to spawn enemies."""
         self.image = self.baseImage
         if self.spawnEnemies:
             if self.spawnTime == 0:
@@ -218,6 +234,7 @@ class setPiece(pygame.sprite.Sprite):
     # of the object, or knock them back if damaged.
     # also used to push the object.
     def modifyMovement(self, slime):
+        """Stop the player from moving through this object"""
         # If clipped_line is not an empty tuple then the line
         # collides/overlaps with the rect.
         # This method gets a little icky because I need it to not disable directions
@@ -275,12 +292,14 @@ class setPiece(pygame.sprite.Sprite):
 
     # tests to see if Slime is touching the setpiece, used for interaction triggers.
     def slimeCollide(self, slime):
+        """Returns TRUE if the player is colliding with this object"""
         return self.rect.colliderect(slime.rect)
 
     # this method is used to render the setpieces taking damage. if it is called, then the sword has struck the
     # setpiece. reduce the health. If it would go past zero, modify the setpiece to no longer take damage and
     # set it's image to its broken image and change any other relevant settings.
     def takeDamage(self, slime):
+        """Deal damage to this setpeice based on character stats"""
         self.setPieceHP -= slime.statBlock.ATTACK
         if self.setPieceHP <= 0:
             self.destroyable = False
@@ -293,6 +312,7 @@ class setPiece(pygame.sprite.Sprite):
 
 
 def lineLength(p1, p2):
+    """Determine the linear length of a line given it's endpoints. """
     p1_y = p1[0] - p2[0]
     p1_x = p1[1] - p2[1]
     # use the pythagorean theorem to determine line length

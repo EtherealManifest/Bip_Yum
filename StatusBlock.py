@@ -13,6 +13,7 @@ logging.basicConfig(filename='MainLog.txt', level=logging.INFO,
 # As the monster takes damage, the red rectangle will get smaller to the left.
 
 class StatBlock():
+    """Attribute for this creature"""
     TOTALHEALTH = 0
     HEALTH = 0
     ATTACK = 0
@@ -25,6 +26,7 @@ class StatBlock():
     HealthBar = HealthBar.HealthBar()
 
     def __init__(self):
+        """initialize the stats for this statBlock"""
         self.TOTALHEALTH = 0
         self.HEALTH = 0
         self.ATTACK = 0
@@ -37,6 +39,7 @@ class StatBlock():
         self.pos = (0, 0)
 
     def setStats(self, HP, ATK, DEF, ARC, ARD, SPD, LCK):
+        """Set this Statblocks Attributes"""
         # logging.info("SETTING STATS")
         self.TOTALHEALTH = HP
         self.HEALTH = HP
@@ -49,12 +52,15 @@ class StatBlock():
         self.pos = (0, 0)
 
     def getStats(self):
+        """return a string representation of this StatBlock"""
         return [self.TOTALHEALTH, self.HEALTH, self.ATTACK, self.DEFENSE, self.ARCANA,
                 self.ARCDEF, self.SPEED, self.LUCK, self.pos]
 
     def showStats(self):
+        """returns a string representation of the health Attributes"""
         return ("TOTAL HEALTH: " + str(self.TOTALHEALTH)
                 + "\nHealth: " + str(self.HEALTH))
 
     def setPos(self, newPos):
+        "Set the position attribute"
         self.pos = newPos

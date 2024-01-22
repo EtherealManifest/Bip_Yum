@@ -30,17 +30,22 @@ for panel in cloudList:
 
 cloudGroup = pygame.sprite.Group()
 cloudMoveSpeed = .4
+"""How fast teh clouds Move"""
 # number of clouds to render
 cloudNum = 6
+"""the number of clouds to Generate"""
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
 cloudMoveDirection = 1
+"""the direction of the clouds. can be 1-8. each is a direction. """
 
 
 # This class declares coulds and gives them a position. It has methods for
 # redrawing clouds on the other side of the screen
 class Cloud(pygame.sprite.Sprite):
+    """One of the clouds that floats across teh title screen"""
     def __init__(self):
+        """initialize the cloud sprite"""
         pygame.sprite.Sprite.__init__(self)
         # pick a random cloud sprite
         valid = False
@@ -54,6 +59,7 @@ class Cloud(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.pos[0], self.pos[1]
 
     def update(self):
+        """Update, moving the clouds a little bit in a set direction"""
         # updating the clouds bascially involves moving them.
         # if the cloud goes off screen, remove it from the group and
         # place it on the far edge of teh screen
@@ -90,12 +96,14 @@ class Cloud(pygame.sprite.Sprite):
 
 
 def setTheSkies():
+    """generate a bunch of random clouds to fill the skies. """
     for i in range(0, cloudNum + 1):
         newCloud = Cloud()
         cloudGroup.add(newCloud)
 
 
 def changeTheSkies(currClouds):
+    """if the clouds are off screen, destroy them and move them to teh other side. """
     for cloud in currClouds:
         if cloud.pos[0] < -cloud.rect.width:
             cloud = Cloud()
@@ -105,6 +113,8 @@ def changeTheSkies(currClouds):
 # It bases the position of the buttons on the current number of created scenarios, specifically the number in
 # ANTHOLOGY.ANTHOLOGY. To prevent a scenario from appearing in the menu, remove it from there.
 def set_buttons_scenarios():
+    """This is for the menu. Algorithmically generate a balanced,
+    centered menu based on the number of Scenarios. Then returns the list of buttons"""
     # menu width is the maximum width the menu can occupy
     menu_width = WINX * (7 / 8)
     # menu width is the maximum height the menu can occupy
@@ -113,17 +123,22 @@ def set_buttons_scenarios():
     menu_pos = [(WINX / 8) / 2, (WINY / 8) / 2]  # Center the menu window
     # a constiner for the buttons, an array of all of them
     button_grid = []
+    """All of the buttons, all stored in an array"""
     # a variable that holds the accumulated value of all the buttons
     total_width = 0
+    """The total width of the buttons if laid end-to-end"""
     # the list of buttons
     button_list = []
+    """A list of all of the buttons"""
     # create buttons for Every Scenario
     from Anthology import ANTHOLOGY
     for scenario in ANTHOLOGY:
         # create a button, then add to the button list.
         newButton = Button.Button()
         name_length = len(scenario.name)
+        """The length of this scenario's name"""
         new_width = (name_length * 10)
+        """Length of the button is relative to the name"""
         newButton.modify(_pos=(0, 0), _text=scenario.name,
                          _label=scenario.name, _width=new_width)
         button_list.append(newButton)
@@ -201,6 +216,10 @@ def set_buttons_scenarios():
 
 # this is the loop that runs the title screen
 def runTitle(DISPLAYSURF):
+    """Run the title screen.
+
+    If no buttons are pressed, return nothing. Otherwise, return a string:
+    The label of the button pressed."""
     # Program Start:
     openSky = pygame.Surface((WINX, WINY))
     openSky.fill((25, 186, 255))

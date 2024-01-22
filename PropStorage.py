@@ -12,6 +12,7 @@ META = data.split(':')
 WINX = int(META[0])
 WINY = int(META[1])
 sceneShop = {}
+"""Dictionary that holds all Created SetPeices"""
 setPieceList = os.listdir('./setPiecePanels')
 
 # get all the default sprites(only ones currently generated)
@@ -24,7 +25,9 @@ for sprite in setPieceList:
 
 
 class DefaultSetPiece(SetPeice.setPiece):
+    """A default setpiece"""
     def __init__(self):
+        """initializes this default setpiece"""
         super().__init__()
         self.image = sceneShop.get("Destroyable_0.png", None)
         self.destroyedImage = sceneShop.get("Destroyable_1.png", None)
@@ -48,17 +51,22 @@ class DefaultSetPiece(SetPeice.setPiece):
         self.__init__()
 
     def wolfResetEnemy(self):
+        """Reset the Wolf Enemy"""
         self.enemy = Crypt.WOLF()
 
     def destroyDefaultSetpiece(self):
+        """destroy this default setPiece"""
         self.toggleSpawnEnemies()
         self.toggleIsPassable()
 
 
 DEFAULTSETPIECE = DefaultSetPiece()
+"""The default Setpiece, its attributes are very dynamic"""
 
 class Snowball(SetPiece.setPiece):
+    """A small snowball. hurts if it hits!"""
     def __init__(self):
+        """Initializes the snowball."""
         super().__init__()
         self.image = sceneShop.get("snowball.png", None)
         self.setBothImages(self.image)
@@ -73,10 +81,13 @@ class Snowball(SetPiece.setPiece):
         self.setPieceHP = 300
 
     def reset(self):
+        """Resets the snowball."""
         self.__init__()
 
 class Round_Cactus(SetPiece.setPiece):
+    """Creates a small, round cactus. Hurts to touch"""
     def __init__(self):
+        """Initializes this cactus"""
         super().__init__()
         self.image = sceneShop.get("Round_Cactus.png", None)
         self.setBothImages(self.image)
@@ -91,11 +102,14 @@ class Round_Cactus(SetPiece.setPiece):
         self.setPieceHP = 300
 
     def reset(self):
+        """resets this cactus"""
         self.__init__()
 
 
 class Tall_Cactus(SetPiece.setPiece):
+    """Creates a tall cactus. Hurts to touch!"""
     def __init__(self):
+        """Initializes this cactus"""
         super().__init__()
         self.setBothImages(sceneShop.get("Tall_Cactus.png", None))
         self.rect = self.image.get_rect()
@@ -109,11 +123,14 @@ class Tall_Cactus(SetPiece.setPiece):
         self.setPieceHP = 300
 
     def reset(self):
+        """Resets this cactus"""
         self.__init__()
 
 
 class TumbleweedLord(SetPiece.setPiece):
+    """Creates a small tumbleweed! Scratches as it tumbles by"""
     def __init__(self):
+        """Initializes this tumbleweed"""
         super().__init__()
         self.setBothImages(sceneShop.get("Buzz-Buzz.png"))
         self.rect = self.image.get_rect()
@@ -128,6 +145,7 @@ class TumbleweedLord(SetPiece.setPiece):
         self.tumbleWeedsKilled = 0
 
     def tumbleweedResetEnemy(self):
+        """Resets this tumbleweed"""
         scaleFactor = (.5 + (1.5 - .5) * random.random())  # this should generate a number between .5 and 1.5
         self.enemy = Crypt.TUMBLEWEED()
         self.enemy.baseImage = pygame.transform.scale_by(self.enemy.image, scaleFactor)
@@ -135,6 +153,7 @@ class TumbleweedLord(SetPiece.setPiece):
 
 
 class Cabbage(SetPiece.setPiece):
+    """Creates a round, green cabbage. Tasty!"""
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Cabbage_0.png"))
@@ -147,6 +166,7 @@ class Cabbage(SetPiece.setPiece):
         self.eaten = False
 
     def eat(self, slime, horde):
+        """Om, nom, nom!"""
         self.setBothImages(sceneShop.get("Cabbage_1.png"))
         self.interactable = False
         self.eaten = True
