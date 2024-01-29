@@ -24,7 +24,7 @@ for sprite in setPieceList:
     sceneShop[sprite] = pygame.image.load(temp)
 
 
-class DefaultSetPiece(SetPeice.setPiece):
+class DefaultSetPiece(SetPiece.setPiece):
     """A default setpiece"""
     def __init__(self):
         """initializes this default setpiece"""
@@ -62,27 +62,6 @@ class DefaultSetPiece(SetPeice.setPiece):
 
 DEFAULTSETPIECE = DefaultSetPiece()
 """The default Setpiece, its attributes are very dynamic"""
-
-class Snowball(SetPiece.setPiece):
-    """A small snowball. hurts if it hits!"""
-    def __init__(self):
-        """Initializes the snowball."""
-        super().__init__()
-        self.image = sceneShop.get("snowball.png", None)
-        self.setBothImages(self.image)
-        self.rect = self.image.get_rect()
-        self.buildSetPiece(self.image, self.rect, (10, 123))
-        self.isPassable = False
-        self.dealsDamage = True
-        self.damage = 10
-        self.killZone = False
-        self.spawnEnemies = False
-        self.destroyable = False
-        self.setPieceHP = 300
-
-    def reset(self):
-        """Resets the snowball."""
-        self.__init__()
 
 class Round_Cactus(SetPiece.setPiece):
     """Creates a small, round cactus. Hurts to touch"""

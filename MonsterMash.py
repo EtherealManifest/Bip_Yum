@@ -28,7 +28,7 @@ class Monster(pygame.sprite.Sprite):
     def __init__(self):
         """Initializes this monster."""
         # this initializes it as a sprite object by calling the Parent COnstructor
-        super().__init__(self)
+        pygame.sprite.Sprite.__init__(self)
         self.Name = ""
         self.Description = ""
         self.statBlock = StatBlock()

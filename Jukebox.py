@@ -9,3 +9,7 @@ from pathlib import Path
 
 BattleMusicPath = Path('./Music(not Owned)/Meta Knight s Revenge.mp3')
 BattleMusic = pygame.mixer.Sound(BattleMusicPath)
+
+SwordSwing = Path('Music Projects/Sword Swing 1.wav')
+
+

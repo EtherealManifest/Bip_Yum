@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import Button
 import math
-
+#FIXME: add a Back Button to return to the home screen that is always at the bottom of the screen.
 # in meta, the size of the screen is recorded. Get it
 META = (open('Meta.txt').read()).split(':')
 WINX = int(META[0])

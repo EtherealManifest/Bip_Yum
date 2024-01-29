@@ -6,7 +6,7 @@ from Overlay import *
 from pathlib import Path
 import TitleSlide
 import Anthology
-import TestScenario
+import Jukebox
 # FIXME: Add invincibility frames. these can be either nullifying knockback or not
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
@@ -42,7 +42,7 @@ DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 # setting the caption on the screen
 pygame.display.set_caption('Bip Yum')
 pygame.display.set_icon(slimeImg)
-
+pygame.mixer.init()
 # temporary tester for the new background maker
 BackGroundLocale = Path('./GroundPanels/Lava/')
 

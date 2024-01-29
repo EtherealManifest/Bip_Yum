@@ -166,8 +166,6 @@ def throwSnowball(monster, slime):
     #The snowball will be a monster
     #Create a new
 
-def snow
-#double the monsters speed and move towards the player for about a second.
 def lunge(monster, slime):
     """Pause, then quickly move to the player
 

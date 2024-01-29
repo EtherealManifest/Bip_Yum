@@ -1,6 +1,11 @@
 class AICore:
     """Used to Control Monster Movement and Actions.
 
+    ...
+
+    Attributes
+    ----------
+
     monster : the monster that this core acts on
     movement : the method that is executed on update()
     """
@@ -22,7 +27,12 @@ class AICore:
     def setMovement(self, func):
         """Sets the current movement attribute.
 
-        func must be a method."""
+        ...
+
+        Parameters:
+        -----------
+
+        func: method"""
         self.movement = func
 
     def update(self, slime):
@@ -33,7 +43,7 @@ class AICore:
 
 # THis is the Default Movement method for the Core.
 def defaultMovement(monster, slime):
-    """Causes the monster to move towards the player at its set movement rate, and appropriatley sets direction. """
+    """"""
     if monster.monsterX > slime.slimex:
         monster.hitMove = (monster.hitMoveRate, 0)
         if monster.monsterY > slime.slimey:
