@@ -1,4 +1,4 @@
-import Scenario, Jukebox, PropStorage, Arsenal, SlimesDelight, Atlas, MonsterMash, copy, Crypt
+import Scenario, PropStorage, Arsenal, SlimesDelight, Atlas, MonsterMash, copy, Crypt
 import pygame
 data = (open('Meta.txt')).read()
 META = data.split(':')
