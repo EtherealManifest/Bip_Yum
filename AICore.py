@@ -43,7 +43,7 @@ class AICore:
 
 # THis is the Default Movement method for the Core.
 def defaultMovement(monster, slime):
-    """"""
+    """Always move towards the player"""
     if monster.monsterX > slime.slimex:
         monster.hitMove = (monster.hitMoveRate, 0)
         if monster.monsterY > slime.slimey:

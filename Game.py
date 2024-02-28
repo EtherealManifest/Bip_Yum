@@ -6,8 +6,6 @@ from Overlay import *
 from pathlib import Path
 import TitleSlide
 import Anthology
-
-# FIXME: Add invincibility frames. these can be either nullifying knockback or not
 # I'm going to create a .txt file called meta to store all the overhead information.
 # it will be a string of numbers and words delimited by :
 # In order, the data is currently:a
@@ -42,17 +40,9 @@ DISPLAYSURF = pygame.display.set_mode((WINX, WINY), 0, 32)
 # setting the caption on the screen
 pygame.display.set_caption('Bip Yum')
 pygame.display.set_icon(slimeImg)
-pygame.mixer.init()
-# temporary tester for the new background maker
-BackGroundLocale = Path('./GroundPanels/Lava/')
-
-
-# this method will be used to render the title screen, which is the next project
-
 
 def playScenario(Scenario):
     """Take the Scenario and play it through."""
-    # play music
     # read the Scenario
     scenario = Scenario
     slime = scenario.TheWanderer
@@ -114,8 +104,7 @@ def playScenario(Scenario):
                         setPieces[i].takeDamage(slime)
             # I have become death, destroyer of slimes
             if slime.statBlock.HEALTH <= 0 and slime.deathFrame <= 0:
-                # for now, just exit. In the future, display a death message and then reset the scenario
-                # BattleMusic.stop()
+                #slimes timer is only 0 after his conclusion animation, and therefore he is ready to exit the scenario
                 return
         if scenario.Win and slime.deathFrame <= 0:
             scenario.reset()
@@ -143,13 +132,12 @@ def runScenario(Scenario):
 # Program Start
 
 # this runs the titlescreen, and returns the users selection
-
 logging.info("Game Initialized")
 nextStep = TitleSlide.runTitle(DISPLAYSURF)
 """nextstep is either going to be Q, or it will be the name of a scenario that can be found
-in ANTHOLOGY.ANTHOLOGY. 
-
-if it is the latter, go get it and set that as the current scenario, then run it."""
+in ANTHOLOGY.ANTHOLOGY 
+if it is the latter, go get it and set that as the current scenario, then run it.
+Otherwise:"""
 if nextStep == 'Q' or nextStep == 'quit-button':
     pygame.quit()
     sys.exit()
