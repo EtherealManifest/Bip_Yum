@@ -17,6 +17,52 @@ WINX = int(META[0])
 WINY = int(META[1])
 font = pygame.font.SysFont("Planet Comic", math.ceil(.03 * WINY))
 
+class DesertSandstormScenario(Scenario.Scenario):
+    """Scenario with blowing tumbleweeds and attacking coyotes.
+
+    Goal: Survive. Shows off mechanics."""
+    def __init__(self):
+        """initializes this scenario"""
+        super().__init__()
+        self.name = "Desert Sandstorm"
+        _horde = []
+        round_1 = PropStorage.Round_Cactus()
+        round_1.setPos((100, 250))
+        round_2 = PropStorage.Round_Cactus()
+        round_2.setPos((110, 350))
+        round_3 = PropStorage.Round_Cactus()
+        round_3.setPos((300, 50))
+        tall_1 = PropStorage.Tall_Cactus()
+        tall_1.setPos((10, 25))
+        tall_2 = PropStorage.Tall_Cactus()
+        tall_2.setPos((200, 200))
+        tall_3 = PropStorage.Tall_Cactus()
+        tall_3.setPos((175, 175))
+        _trove = [round_1, round_2, round_3, tall_1, tall_2, tall_3,PropStorage.TumbleweedLord()]
+        # this has to be called as a function, otherwise will just paint as lava
+        _vista = Atlas.DESERT()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.BLUESWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+
+    def reset(self):
+        """Returns this scenario to its native state"""
+        self.__init__()
+
+    # to win, kill teh wolves. This can be checked by whether or not the first and second
+    # enemies are named wolf1 and wolf2
+    def winCondition(self, horde):
+        """Determines if the two wolves are dead or not."""
+        return False
+
+    def alldestroyed(self):
+        """Checks to see if there are any setPeices in the Trove"""
+        for pieces in self.trove:
+            if pieces.destroyable:
+                return False
+        return True
 
 class DesertScenario(Scenario.Scenario):
     """Scenario with blowing tumbleweeds and attacking coyotes.
@@ -147,9 +193,11 @@ TEST = TestZoneScenario()
 """TEST is the battle with Omen"""
 DESERT = DesertScenario()
 """The fight against the wolves"""
+DESERTSANDSTORM = DesertSandstormScenario()
+"""Aimless Desert Wanderings"""
 PLAINS = PlainsScenario()
 """The mad dash for cabbages"""
-ANTHOLOGY = [DESERT, PLAINS, TEST]
+ANTHOLOGY = [DESERT, DESERTSANDSTORM, PLAINS, TEST]
 """A collection of all of the scenarios in one place"""
 
 
