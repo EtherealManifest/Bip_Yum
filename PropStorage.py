@@ -24,8 +24,36 @@ for sprite in setPieceList:
     sceneShop[sprite] = pygame.image.load(temp)
 
 
+class exit(SetPiece.setPiece):
+    """A default setpiece"""
+
+    def __init__(self):
+        """initializes this default setpiece"""
+        super().__init__()
+        self.image = sceneShop.get("Default.png", None)
+        self.rect = self.image.get_rect()
+        self.buildSetPiece(self.image, self.rect, (WINX - 35, WINY - 35))
+        self.isPassable = True
+        self.dealsDamage = False
+        self.killZone = False
+        self.spawnEnemies = False
+        self.destroyable = False
+        self.interactable = True
+        self.interactionTrigger = self.trigger
+        self.triggered = False
+
+    def reset(self):
+        """reset this setPiece to it's __init__() form."""
+        self.__init__()
+
+
+    def trigger(self, slime, horde):
+        self.triggered = True
+
+
 class DefaultSetPiece(SetPiece.setPiece):
     """A default setpiece"""
+
     def __init__(self):
         """initializes this default setpiece"""
         super().__init__()
@@ -63,8 +91,10 @@ class DefaultSetPiece(SetPiece.setPiece):
 DEFAULTSETPIECE = DefaultSetPiece()
 """The default Setpiece, its attributes are very dynamic"""
 
+
 class Round_Cactus(SetPiece.setPiece):
     """Creates a small, round cactus. Hurts to touch"""
+
     def __init__(self):
         """Initializes this cactus"""
         super().__init__()
@@ -74,7 +104,7 @@ class Round_Cactus(SetPiece.setPiece):
         self.buildSetPiece(self.image, self.rect, (10, 123))
         self.isPassable = False
         self.dealsDamage = True
-        self.damage = 10
+        self.damage = 35
         self.killZone = False
         self.spawnEnemies = False
         self.destroyable = False
@@ -87,6 +117,7 @@ class Round_Cactus(SetPiece.setPiece):
 
 class Tall_Cactus(SetPiece.setPiece):
     """Creates a tall cactus. Hurts to touch!"""
+
     def __init__(self):
         """Initializes this cactus"""
         super().__init__()
@@ -95,7 +126,7 @@ class Tall_Cactus(SetPiece.setPiece):
         self.buildSetPiece(self.image, self.rect, (100, 300))
         self.isPassable = False
         self.dealsDamage = True
-        self.damage = 10
+        self.damage = 45
         self.killZone = False
         self.spawnEnemies = False
         self.destroyable = False
@@ -108,6 +139,7 @@ class Tall_Cactus(SetPiece.setPiece):
 
 class TumbleweedLord(SetPiece.setPiece):
     """Creates a small tumbleweed! Scratches as it tumbles by"""
+
     def __init__(self):
         """Initializes this tumbleweed"""
         super().__init__()
@@ -133,6 +165,7 @@ class TumbleweedLord(SetPiece.setPiece):
 
 class Cabbage(SetPiece.setPiece):
     """Creates a round, green cabbage. Tasty!"""
+
     def __init__(self):
         super().__init__()
         self.setBothImages(sceneShop.get("Cabbage_0.png"))

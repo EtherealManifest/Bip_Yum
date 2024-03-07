@@ -32,7 +32,7 @@ cloudGroup = pygame.sprite.Group()
 cloudMoveSpeed = .4
 """How fast teh clouds Move"""
 # number of clouds to render
-cloudNum = 6
+cloudNum = 9
 """the number of clouds to Generate"""
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
@@ -137,7 +137,7 @@ def set_buttons_scenarios():
         newButton = Button.Button()
         name_length = len(scenario.name)
         """The length of this scenario's name"""
-        new_width = (name_length * 10)
+        new_width = (name_length * 7)
         """Length of the button is relative to the name"""
         newButton.modify(_pos=(0, 0), _text=scenario.name,
                          _label=scenario.name, _width=new_width)
@@ -185,7 +185,7 @@ def set_buttons_scenarios():
         index = 0
         # set the x-position for this row
         # the average space between each button in this row
-        spacing_constant = menu_width / (len(button_grid[i]) +1)
+        spacing_constant = menu_width / (len(button_grid[i]) +1) + 5
         for button in button_grid[i]:
             #this looks dumb, and it kinda is. Its a massive coordinate tuple
             button_grid[i][index].pos = (menu_pos[0] + ((spacing_constant * (index + 1)) - ((1 / 2) * button.width)), 0)

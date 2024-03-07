@@ -245,7 +245,7 @@ class Slime(pygame.sprite.Sprite):
             elif self.knockDirection == 'left':
                 self.slimex -= self.knockback
             if self.knockDirection == 'up-left':
-                self.slimey = self.knockback
+                self.slimey -= self.knockback
                 self.slimex -= self.knockback
 
         # These make sure little slime man doesnt go outside the window
@@ -386,10 +386,7 @@ class Slime(pygame.sprite.Sprite):
                 self.jump = True
                 self.jumpTime = self.jumpTick
         '''
-        # if q is pressed, quit
-        if pygame.key.get_pressed()[K_q]:
-            pygame.quit()
-            sys.exit()
+
 
             # FIX ME: If q is pressed, or maybe E, pull up the menu instead, inside which is an option to quit.
 
@@ -448,7 +445,7 @@ class Slime(pygame.sprite.Sprite):
 
     def setPieceDamage(self, damage):
         """deal damage to a setpiece equal to damage"""
-        self.knockback = damage
+        self.knockback = damage%8
         if not self.immune:
             self.statBlock.HEALTH -= damage
             self.immune = True

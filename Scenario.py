@@ -88,7 +88,7 @@ class Scenario:
         del self.TheWanderer
         del self.Win
 
-    def winCondition(self, horde):
+    def winCondition(self, horde, trove):
         """The default win condition"""
         if len(horde) == 0:
             self.Win = True

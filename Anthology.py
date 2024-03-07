@@ -53,7 +53,7 @@ class DesertSandstormScenario(Scenario.Scenario):
 
     # to win, kill teh wolves. This can be checked by whether or not the first and second
     # enemies are named wolf1 and wolf2
-    def winCondition(self, horde):
+    def winCondition(self, horde, trove):
         """Determines if the two wolves are dead or not."""
         return False
 
@@ -93,7 +93,7 @@ class DesertScenario(Scenario.Scenario):
 
     # to win, kill teh wolves. This can be checked by whether or not the first and second
     # enemies are named wolf1 and wolf2
-    def winCondition(self, horde):
+    def winCondition(self, horde, trove):
         """Determines if the two wolves are dead or not."""
         if (horde[0].Name != "Wolf1" and horde[0].Name != "Wolf2") and horde[1].Name != "Wolf2":
             self.Win = True
@@ -150,12 +150,41 @@ class PlainsScenario(Scenario.Scenario):
         self.__init__()
 
     # should see if the wolves are dead. may not work right.
-    def winCondition(self, horde):
+    def winCondition(self, horde, trove):
         """Checks to see if there are any cabbages in teh trove"""
         for cabbage in self.trove:
             if not cabbage.eaten:
                 return
         self.Win = True
+
+class GrassAdventure(Scenario.Scenario):
+
+    def __init__(self):
+        """initializes this scenario"""
+        super().__init__()
+        self.name = "Grass Adventure"
+        _horde = []
+        exit = PropStorage.exit()
+        _trove = [exit]
+        # this has to be called as a function, otherwise will just paint as lava
+        _vista = Atlas.GRASS()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.BLUESWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+
+    def reset(self):
+        """Returns this scenario to its native state"""
+        self.__init__()
+
+    # to win, kill teh wolves. This can be checked by whether or not the first and second
+    # enemies are named wolf1 and wolf2
+    def winCondition(self, horde, trove):
+        for setpiece in trove:
+            if setpiece.triggered:
+                self.Win = True
+
 
 
 class TestZoneScenario(Scenario.Scenario):
@@ -163,7 +192,7 @@ class TestZoneScenario(Scenario.Scenario):
     def __init__(self):
         """Initializes this scenario, creates Omen."""
         super().__init__()
-        self.name = "Delve into the Testing Zone"
+        self.name = "Testing Zone I"
         Omen = Crypt.OMEN()
         Omen.Name = ("Omar")
         Omen.setPosition((4, 8))
@@ -183,21 +212,61 @@ class TestZoneScenario(Scenario.Scenario):
         self.__init__()
 
     # should see if the wolves are dead. may not work right.
-    def winCondition(self, horde):
+    def winCondition(self, horde, trove):
+        """Checks if the Horde is empty, meaning Omen is defeated"""
+        if len(horde) == 0:
+            self.Win = True
+
+class TestHellScenario(Scenario.Scenario):
+    """Boss arena! Defeat the Omen Character to win!"""
+    def __init__(self):
+        """Initializes this scenario, creates Omen."""
+        super().__init__()
+        self.name = "Testing Zone II"
+        Omen_1 = Crypt.OMEN()
+        Omen_1.Name = ("Omar")
+        Omen_1.setKnockback(16)
+        Omen_1.setPosition((4, 8))
+        Omen_2 = Crypt.OMEN()
+        Omen_2.setKnockback(16)
+        Omen_2.Name = ("Omary")
+        Omen_2.setPosition((500, 500))
+        _horde = [Omen_1, Omen_2]
+        _trove = []
+        instructionText = font.render("Push it to the Limit!", False, (1.0, 1.0, 0.0, 1.0))
+        self.instructions = (instructionText, (WINX / 2 - 20, WINY - 45), True)
+        _vista = Atlas.TEST()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.GREENSWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+
+    def reset(self):
+        """Returns this scenario to it's native form"""
+        self.__init__()
+
+    # should see if the wolves are dead. may not work right.
+    def winCondition(self, horde, trove):
         """Checks if the Horde is empty, meaning Omen is defeated"""
         if len(horde) == 0:
             self.Win = True
 
 
+
 TEST = TestZoneScenario()
 """TEST is the battle with Omen"""
+DEATHTEST = TestHellScenario()
+"""SuperBoss???"""
 DESERT = DesertScenario()
 """The fight against the wolves"""
 DESERTSANDSTORM = DesertSandstormScenario()
 """Aimless Desert Wanderings"""
 PLAINS = PlainsScenario()
 """The mad dash for cabbages"""
-ANTHOLOGY = [DESERT, DESERTSANDSTORM, PLAINS, TEST]
+GRASS = GrassAdventure()
+"""No Threat, Good for Demonstrating"""
+ANTHOLOGY = [DESERT, DESERTSANDSTORM, PLAINS, TEST, DEATHTEST, GRASS]
 """A collection of all of the scenarios in one place"""
 
 

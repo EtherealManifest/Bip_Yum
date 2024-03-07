@@ -99,7 +99,8 @@ class Weapon(pygame.sprite.Sprite):
     the amount of time elapsed (SWINGTIME - swingtime), the total angle that this
     sword swing will occupy(in degrees), and the starting angle(also in degrees)
     '''
-
+    def getWeaponImg(self):
+        return self.image
     def weaponPosition(self, player, SWINGTIME, elapsed, swingAngle, startAngle):
         """
         Correctly and mathematically positons the sword through the duration of it's swing.

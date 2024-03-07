@@ -54,6 +54,7 @@ def playScenario(Scenario):
         horde.append(monster)
     weapons = pygame.sprite.Group()
     weapons.add(scenario.weapon)
+    print(scenario.weapon.power)
     # set the overlay
     overlay = Overlay()
 
@@ -71,7 +72,7 @@ def playScenario(Scenario):
             slime.update(win=True)
         else:
             slime.update()
-        scenario.winCondition(horde)
+        scenario.winCondition(horde, setPieces)
         # for each monster in the horde, draw them on the screen in their current position if their health is above 0
         for i in range(0, len(horde)):
             if not horde[i].isDead:
@@ -116,6 +117,9 @@ def playScenario(Scenario):
         DISPLAYSURF.blit(overlay, (0, 0))
         # draw the slime to the screen
         DISPLAYSURF.blit(slime.image, slime.position)
+        # if q is pressed, quit
+        if pygame.key.get_pressed()[K_q]:
+            return
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
