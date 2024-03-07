@@ -1,8 +1,7 @@
 # This is the file for the main game loop, seperated from the class
 # implementation for bip yum
 from Armory import *
-import logging
-from Overlay import *
+import Overlay
 from pathlib import Path
 import TitleSlide
 import Anthology
@@ -52,18 +51,16 @@ def playScenario(Scenario):
     horde = []
     for monster in scenario.horde:
         horde.append(monster)
-    weapons = pygame.sprite.Group()
-    weapons.add(scenario.weapon)
-    print(scenario.weapon.power)
+    sword = scenario.weapon
     # set the overlay
-    overlay = Overlay()
+    overlay = Overlay.Overlay()
 
     while True:  # the main game loop
         BackGround.draw(DISPLAYSURF)
         # UPDATE THE SETPIECES HERE!!! that way, if slime is taking damage, he is updated accordingly
         # And CHanges are not overwritten
         slime.allowAllDirections()
-        weapons.update(slime)
+        sword.update(slime)
         overlay.update(slime)
         for prop in setPieces:
             DISPLAYSURF.blit(prop.image, prop.pos)
@@ -89,24 +86,23 @@ def playScenario(Scenario):
             elif horde[i].isDead and horde[i].deathAnimFrame == 0:
                 continue
         # Draw the Overlays
-        for sword in weapons:
-            if sword.swing:
-                weapons.draw(DISPLAYSURF)
-                # check to see if any monsters are hit by the sword
-                for enemy in horde:
-                    if (pygame.sprite.collide_rect(sword, enemy)
-                            and enemy.statBlock.HEALTH > 0
-                            and not enemy.isHit):
-                        # logging.info("horde[i] has been hit by sword")
-                        enemy.takeDamage(slime)
-                        enemy.statBlock.HealthBar.update(horde[i])
-                for i in range(0, len(setPieces)):
-                    if (pygame.sprite.collide_rect(sword, setPieces[i]) and setPieces[i].destroyable):
-                        setPieces[i].takeDamage(slime)
-            # I have become death, destroyer of slimes
-            if slime.statBlock.HEALTH <= 0 and slime.deathFrame <= 0:
-                #slimes timer is only 0 after his conclusion animation, and therefore he is ready to exit the scenario
-                return
+        if sword.swing and not scenario.Win:
+            DISPLAYSURF.blit(sword.image, sword.pos)
+            # check to see if any monsters are hit by the sword
+            for enemy in horde:
+                if (pygame.sprite.collide_rect(sword, enemy)
+                        and enemy.statBlock.HEALTH > 0
+                        and not enemy.isHit):
+                    # logging.info("horde[i] has been hit by sword")
+                    enemy.takeDamage(slime)
+                    enemy.statBlock.HealthBar.update(horde[i])
+            for i in range(0, len(setPieces)):
+                if (pygame.sprite.collide_rect(sword, setPieces[i]) and setPieces[i].destroyable):
+                    setPieces[i].takeDamage(slime)
+        # I have become death, destroyer of slimes
+        if slime.statBlock.HEALTH <= 0 and slime.deathFrame <= 0:
+            #slimes timer is only 0 after his conclusion animation, and therefore he is ready to exit the scenario
+            return
         if scenario.Win and slime.deathFrame <= 0:
             scenario.reset()
             return None

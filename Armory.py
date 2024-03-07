@@ -48,6 +48,7 @@ class Weapon(pygame.sprite.Sprite):
         # these are Sprite Attributes
         self.pos = (0, 0)
         self.image = weaponDefaultImg
+        self.defaultImage = weaponDefaultImg
         # effectively, the Hitbox
         self.rect = self.image.get_rect()
         self.direction = ''
@@ -66,6 +67,7 @@ class Weapon(pygame.sprite.Sprite):
         """changes the image and the rect for this weapon"""
         self.image = newImg
         self.rect = self.image.get_rect()
+        self.defaultImage = newImg
 
     def position(self, player):
         """Based on player direction, sets position and facingRight for this weapon.
@@ -137,7 +139,7 @@ class Weapon(pygame.sprite.Sprite):
         # center the blade.
         # this will all be implemented in position()
         self.position(player)
-        self.image = weaponDefaultImg
+        self.image = self.defaultImage
         # the documentataion said to call get() before get_pressed()
         pygame.event.get()
         # if the mouse is clicked, swing the sword

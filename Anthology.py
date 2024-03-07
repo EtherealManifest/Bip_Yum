@@ -230,7 +230,7 @@ class GrassAdventure(Scenario.Scenario):
         # this has to be called as a function, otherwise will just paint as lava
         _vista = Atlas.GRASS()
         _slimyPOS = (WINX / 2, WINY / 2)
-        _weapon = Arsenal.BLUESWORD
+        _weapon = Arsenal.GREENSWORD
         _TheWanderer = SlimesDelight.Slime()
         super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
         self.Win = False

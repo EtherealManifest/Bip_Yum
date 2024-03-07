@@ -42,6 +42,11 @@ class WOLF(MonsterMash.Monster):
         self.deadImage = Mausoleum.get("Wolf_2.png")
 
 
+class Chaark(MonsterMash.Monster):
+    """This is a fire monster that will jump towards the player slowly"""
+    # run it on a cyle of 60 frames to jump, 60 frames to rest.
+
+
 class SNOWMAN(MonsterMash.Monster):
     """A Snowman! He throws Snowballs"""
 
