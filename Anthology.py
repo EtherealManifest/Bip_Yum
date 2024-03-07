@@ -107,6 +107,67 @@ class DesertScenario(Scenario.Scenario):
                 return False
         return True
 
+class DesertsWrathScenario(Scenario.Scenario):
+    """Scenario with blowing tumbleweeds and attacking coyotes.
+
+    Goal: Defeat the coyotes to win."""
+    def __init__(self):
+        """initializes this scenario"""
+        super().__init__()
+        self.name = "Desert's Wrath"
+        wolf1 = Crypt.WOLF()
+        wolf2 = Crypt.WOLF()
+        wolf3 = Crypt.WOLF()
+        wolf1.Name = "Wolf1"
+        wolf2.Name = "Wolf2"
+        wolf3.Name = "Wolf3"
+        wolf2.setPosition((500, 500))
+        wolf3.setPosition((150, 666))
+        desertWarden = PropStorage.TumbleweedLord()
+        desertWarden.wrath = 10
+        desertWarden.spawnRate = 1
+        _horde = [wolf1, wolf2, wolf3]
+        _trove = [PropStorage.Round_Cactus(), PropStorage.Tall_Cactus(), desertWarden]
+        _trove += self.cactusSwarm()
+        # this has to be called as a function, otherwise will just paint as lava
+        _vista = Atlas.DESERT()
+        _slimyPOS = (WINX / 2, WINY / 2)
+        _weapon = Arsenal.BLUESWORD
+        _TheWanderer = SlimesDelight.Slime()
+        super().setTheScene(_horde, _trove, _vista, _slimyPOS, _weapon, _TheWanderer)
+        self.Win = False
+
+    def reset(self):
+        """Returns this scenario to its native state"""
+        self.__init__()
+
+    def cactusSwarm(self):
+        foliage = []
+        for i in range(10):
+            newCactus = PropStorage.Tall_Cactus()
+            newCactus.setPos((random.randrange(0,WINX), random.randrange(0,WINY)))
+            foliage.append(newCactus)
+        for i in range(10):
+            newCactus = PropStorage.Round_Cactus()
+            newCactus.setPos((random.randrange(0,WINX), random.randrange(0,WINY)))
+            foliage.append(newCactus)
+        return foliage
+
+    # to win, kill teh wolves. This can be checked by whether or not the first and second
+    # enemies are named wolf1 and wolf2
+    def winCondition(self, horde, trove):
+        """Determines if the two wolves are dead or not."""
+        if (horde[0].Name != "Wolf1" and horde[0].Name != "Wolf2" and horde[0].Name != "Wolf3") and horde[1].Name != "Wolf2":
+            self.Win = True
+        else:
+            self.Win = False
+
+    def alldestroyed(self):
+        """Checks to see if there are any setPeices in the Trove"""
+        for pieces in self.trove:
+            if pieces.destroyable:
+                return False
+        return True
 
 class PlainsScenario(Scenario.Scenario):
     """Plains Scenario, eat the Cabbages!
@@ -262,11 +323,13 @@ DESERT = DesertScenario()
 """The fight against the wolves"""
 DESERTSANDSTORM = DesertSandstormScenario()
 """Aimless Desert Wanderings"""
+DESERTSWRATH = DesertsWrathScenario()
+"""Feel the wrath of the sands"""
 PLAINS = PlainsScenario()
 """The mad dash for cabbages"""
 GRASS = GrassAdventure()
 """No Threat, Good for Demonstrating"""
-ANTHOLOGY = [DESERT, DESERTSANDSTORM, PLAINS, TEST, DEATHTEST, GRASS]
+ANTHOLOGY = [GRASS, DESERT, PLAINS, DESERTSANDSTORM, DESERTSWRATH, TEST, DEATHTEST]
 """A collection of all of the scenarios in one place"""
 
 

@@ -30,9 +30,9 @@ for panel in cloudList:
 
 cloudGroup = pygame.sprite.Group()
 cloudMoveSpeed = .4
-"""How fast teh clouds Move"""
+"""How fast the clouds Move"""
 # number of clouds to render
-cloudNum = 9
+cloudNum = 10
 """the number of clouds to Generate"""
 # cloud move direction will be 1-8, and each will be a 45 degree clockwise angle from the last
 # 1 = left
